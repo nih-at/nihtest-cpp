@@ -873,3 +873,21 @@ sub warn_file_line {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+NiHTest - module to run regression tests
+
+=head1 SYNOPSIS
+
+	use NiHTest;
+	my $test = NiHTest::new();
+	$test->run(@ARGV);
+
+
+
+=head1 DESCRIPTION
+
+NiHTest is a test framework, primarily for testing command line utilities. It sets up a sandbox containing the specified impot files, runs the program, and verifies exit code, standard and error output and output files.
