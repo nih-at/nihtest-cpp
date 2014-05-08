@@ -3,12 +3,14 @@ package NiHTest;
 use strict;
 use warnings;
 
+use Cwd;
 use File::Copy;
-use File::Path qw(make_path);
+use File::Path qw(mkpath);
 use IPC::Open3;
 use Symbol 'gensym';
 use UNIVERSAL;
 
+use Data::Dumper qw(Dumper);
 use Text::Diff;
 
 #  NiHTest -- package to run regression tests
@@ -92,10 +94,17 @@ use Text::Diff;
 #	    multiple stderr commands are used, the messages are
 #	    expected in the order given.
 #
+#       stderr-replace REGEX REPLACEMENT
+#           run regex replacement over expected and got stderr output.
+#
 #	stdout TEXT
 #	    program is expected to print TEXT to stdout.  If multiple
 #	    stdout commands are used, the messages are expected in
 #	    the order given.
+#
+#	touch MTIME FILE
+#	    set last modified timestamp of FILE to MTIME (seconds since epoch).
+#	    If FILE doesn't exist, an empty file is created.
 #
 #	ulimit C VALUE
 #	    set ulimit -C to VALUE while running the program.
@@ -109,7 +118,8 @@ use Text::Diff;
 #
 # environment variables:
 #   RUN_GDB: if set, run gdb on program in test environment
-#   NOCLEANUP: if set, don't delete test environment
+#   KEEP_BROKEN: if set, don't delete test environment if test failed
+#   NO_CLEANUP: if set, don't delete test environment
 #   SETUP_ONLY: if set, exit after creating test environment
 #   VERBOSE: if set, be more verbose (e. g., output diffs)
 
@@ -143,8 +153,10 @@ sub new {
 		'return' => { type => 'int', once => 1, required => 1 },
 		setenv => { type => 'string string' },
 		stderr => { type => 'string' },
+		'stderr-replace' => { type => 'string string' },
 		stdout => { type => 'string' },
-		ulimit => { type => 'char string' },
+		touch => { type => 'int string' },
+		ulimit => { type => 'char string' }
 	};
 	
 	$self->{compare_by_type} = {};
@@ -163,7 +175,9 @@ sub new {
 	$self->{in_sandbox} = 0;
 	
 	$self->{verbose} = $ENV{VERBOSE};
-	$self->{nocleanup} = $ENV{NOCLEANUP};
+	$self->{keep_broken} = $ENV{KEEP_BROKEN};
+	$self->{no_cleanup} = $ENV{NO_CLEANUP};
+	$self->{setup_only} = $ENV{SETUP_ONLY};
 
 	return $self;
 }
@@ -239,9 +253,33 @@ sub runtest {
 	$self->sandbox_create($tag);
 	$self->sandbox_enter();
 	
-	$self->copy_files();
-	$self->run_hook('prepare_sandbox');
+	my $ok = 1;
+	$ok &= $self->copy_files();
+	$ok &= $self->run_hook('post_copy_files');
+	$ok &= $self->touch_files();
+	$ok &= $self->run_hook('prepare_sandbox');
+	return 'ERROR' unless ($ok);
+
+	if ($self->{setup_only}) {
+	    $self->sandbox_leave();
+	    return 'SKIP';
+	}
+
+	for my $env (@{$self->{test}->{'setenv'}}) {
+	    $ENV{$env->[0]} = $env->[1];
+	}
+	if (defined($self->{test}->{'preload'})) {
+	    $ENV{LD_PRELOAD} = cwd() . "/../.libs/$self->{test}->{'preload'}";
+	}
+
 	$self->run_program();
+
+	for my $env (@{$self->{test}->{'setenv'}}) {
+	    delete ${ENV{$env->[0]}};
+	}
+	if (defined($self->{test}->{'preload'})) {
+	    delete ${ENV{LD_PRELOAD}};
+	}
 
 	if ($self->{test}->{stdout}) {
 		$self->{expected_stdout} = [ @{$self->{test}->{stdout}} ];
@@ -278,11 +316,18 @@ sub runtest {
 		push @failed, 'files';
 	}
 	
-	$self->sandbox_leave();
-	$self->sandbox_remove() unless ($self->{nocleanup});
+	$self->{failed} = \@failed;
+	
+	$self->run_hook('checks');
+	
+	my $result = scalar(@{$self->{failed}}) == 0 ? 'PASS' : 'FAIL';
 
-	my $result = scalar(@failed) == 0 ? 'PASS' : 'FAIL';
-	$self->print_test_result($tag, $result, join ', ', @failed);
+	$self->sandbox_leave();
+	if (!($self->{no_cleanup} || ($self->{keep_broken} && $result eq 'FAIL'))) {
+		$self->sandbox_remove();
+	}
+
+	$self->print_test_result($tag, $result, join ', ', @{$self->{failed}});
 
 	return $result;
 }
@@ -372,6 +417,7 @@ sub compare_arrays() {
 	
 	if (!$ok && $self->{verbose}) {
 		print "Unexpected $tag:\n";
+		print "--- expected\n+++ got\n";
 		my @a = map { $_ . "\n"; } @$a;
 		my @b = map { $_ . "\n"; } @$b;
 		print diff(\@a, \@b);
@@ -467,7 +513,7 @@ sub copy_files {
 			my $dir = $file->{destination};
 			$dir =~ s,/[^/]*$,,;
 			if (! -d $dir) {
-				make_path($dir);
+				mkpath($dir);
 			}
 		}
 
@@ -636,6 +682,8 @@ sub parse_case() {
 		
 		unless ($def) {
 			$self->warn_file_line("unknown directive $cmd in test file");
+			$ok = 0;
+			next;
 		}
 		
 		my $args = $self->parse_args($def->{type}, $argstring);
@@ -666,7 +714,11 @@ sub parse_case() {
 	}
 	
 	return undef unless ($ok);
-	
+
+	if (defined($test{'stderr-replace'}) && defined($test{stderr})) {
+	    $test{stderr} = [ map { $self->stderr_rewrite($test{'stderr-replace'}, $_); } @{$test{stderr}} ];
+	}
+
 	if (!defined($test{program})) {
 		$test{program} = $self->{default_program};
 	}
@@ -789,6 +841,9 @@ sub run_program {
 	while (my $line = <$stderr>) {
 		chomp $line;
 		$line =~ s/^[^:]*: //; # TODO: make overridable
+		if (defined($self->{test}->{'stderr-replace'})) {
+		    $line = $self->stderr_rewrite($self->{test}->{'stderr-replace'}, $line);
+		}
 		push @{$self->{stderr}}, $line;
 	}
 	
@@ -852,6 +907,34 @@ sub sandbox_remove {
 }
 
 
+sub touch_files {
+	my ($self) = @_;
+	
+	my $ok = 1;
+	
+	if (defined($self->{test}->{touch})) {
+		for my $args (@{$self->{test}->{touch}}) {
+			my ($mtime, $fname) = @$args;
+			
+			if (!-f $fname) {
+				my $fh;
+				unless (open($fh, "> $fname") and close($fh)) {
+					# TODO: error message
+					$ok = 0;
+					next;
+				}
+			}
+			unless (utime($mtime, $mtime, $fname) == 1) {
+				# TODO: error message
+				$ok = 0;
+			}
+		}
+	}
+	
+	return $ok;
+}
+
+
 sub warn {
 	my ($self, $msg) = @_;
 	
@@ -872,22 +955,12 @@ sub warn_file_line {
 	$self->warn("$self->{testcase_fname}:$.: $msg");
 }
 
+sub stderr_rewrite {
+    my ($self, $pattern, $line) = @_;
+    for my $repl (@{$pattern}) {
+	$line =~ s/$repl->[0]/$repl->[1]/;
+    }
+    return $line;
+}
+
 1;
-
-__END__
-
-=head1 NAME
-
-NiHTest - module to run regression tests
-
-=head1 SYNOPSIS
-
-	use NiHTest;
-	my $test = NiHTest::new();
-	$test->run(@ARGV);
-
-
-
-=head1 DESCRIPTION
-
-NiHTest is a test framework, primarily for testing command line utilities. It sets up a sandbox containing the specified impot files, runs the program, and verifies exit code, standard and error output and output files.
