@@ -6,6 +6,7 @@ use warnings;
 use Cwd;
 use File::Copy;
 use File::Path qw(mkpath);
+use Getopt::Long qw(:config posix_default bundling no_ignore_case);
 use IPC::Open3;
 use Symbol 'gensym';
 use UNIVERSAL;
@@ -348,12 +349,25 @@ sub runtest {
 
 sub setup {
 	my ($self, @argv) = @_;
-	
-	if (scalar(@argv) != 1) {
-		print STDERR "Usage: $0 testcase\n";
+
+	my @save_argv = @ARGV;
+	@ARGV = @argv;
+	my $ok = GetOptions(
+		'help|h' => \my $help,
+		'keep-broken' => \$self->{keep_broken},
+		'no-cleanup' => \$self->{no_cleanup},
+		# 'run-gdb' => \$self->{run_gdb},
+		'setup-only' => \$self->{setup_only},
+		'verbose|v' => \$self->{verbose}
+	);
+	@argv = @ARGV;
+	@ARGV = @save_argv;
+
+	if (!$ok || scalar(@argv) != 1 || $help) {
+		print STDERR "Usage: $0 [-hv] [--keep-broken] [--no-cleanup] [--setup-only] testcase\n";
 		exit(1);
 	}
-	
+
 	my $testcase = shift @argv;
 
 	$testcase .= '.test' unless ($testcase =~ m/\.test$/);
@@ -482,7 +496,7 @@ sub compare_files() {
 	@files_got = sort @files_got;
 	my @files_should = ();
 	
-	for my $file (sort keys $self->{files}) {
+        for my $file (sort keys %{$self->{files}}) {
 		push @files_should, $file if ($self->{files}->{$file}->{result} || $self->{files}->{$file}->{ignore});
 	}
 
