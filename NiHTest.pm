@@ -382,6 +382,8 @@ sub setup {
 	$self->die("error in test case definition") unless $self->parse_case($testcase_file);
 	
 	$self->check_features_requirement() if ($self->{test}->{features});
+
+	$self->end_test('SKIP') if ($self->{test}->{preload} && $^O eq 'darwin');
 }
 
 
@@ -639,9 +641,24 @@ sub parse_args {
 		}
 		my @types = split /\s+/, $type;
 		my @strs = split /\s+/, $str;
-		
-		if (!$ellipsis && scalar(@types) != scalar(@strs)) {
-			$self->warn_file_line("expected " . (scalar(@types)) . " arguments, got " . (scalar(@strs)));
+		my $optional = 0;
+		for (my $i = scalar(@types) - 1; $i >= 0; $i--) {
+			last unless ($types[$i] =~ m/(.*)\?$/);
+			$types[$i] = $1;
+			$optional++;
+		}
+
+		if ($ellipsis && $optional > 0) {
+			# TODO: check this when registering a directive
+			$self->warn_file_line("can't use ellipsis together with optional arguments");
+			return undef;
+		}
+		if (!$ellipsis && (scalar(@strs) < scalar(@types) - $optional || scalar(@strs) > scalar(@types))) {
+			my $expected = scalar(@types);
+			if ($optional > 0) {
+				$expected = ($expected - $optional) . "-$expected";
+			}
+			$self->warn_file_line("expected $expected arguments, got " . (scalar(@strs)));
 			return undef;
 		}
 		
@@ -715,7 +732,10 @@ sub parse_case() {
 		
 		my $args = $self->parse_args($def->{type}, $argstring);
             
-		next unless (defined($args));
+		unless (defined($args)) {
+			$ok = 0;
+			next;
+		}
 		
 		if ($def->{once}) {
 			if (defined($test{$cmd})) {
