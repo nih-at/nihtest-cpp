@@ -5,14 +5,13 @@ use warnings;
 
 use Cwd;
 use File::Copy;
-use File::Path qw(mkpath);
+use File::Path qw(mkpath remove_tree);
 use Getopt::Long qw(:config posix_default bundling no_ignore_case);
 use IPC::Open3;
 use Symbol 'gensym';
 use UNIVERSAL;
 
 use Data::Dumper qw(Dumper);
-use Text::Diff;
 
 #  NiHTest -- package to run regression tests
 #  Copyright (C) 2002-2014 Dieter Baron and Thomas Klausner
@@ -264,6 +263,8 @@ sub run {
 sub runtest {
 	my ($self, $tag) = @_;
 
+	$ENV{TZ} = "UTC";
+	$ENV{LC_CTYPE} = "C";
 	$self->sandbox_create($tag);
 	$self->sandbox_enter();
 	
@@ -275,24 +276,24 @@ sub runtest {
 	return 'ERROR' unless ($ok);
 
 	if ($self->{setup_only}) {
-	    $self->sandbox_leave();
-	    return 'SKIP';
+		$self->sandbox_leave();
+		return 'SKIP';
 	}
 
 	for my $env (@{$self->{test}->{'setenv'}}) {
-	    $ENV{$env->[0]} = $env->[1];
+		$ENV{$env->[0]} = $env->[1];
 	}
 	if (defined($self->{test}->{'preload'})) {
-	    $ENV{LD_PRELOAD} = cwd() . "/../.libs/$self->{test}->{'preload'}";
+		$ENV{LD_PRELOAD} = cwd() . "/../.libs/$self->{test}->{'preload'}";
 	}
 
 	$self->run_program();
 
 	for my $env (@{$self->{test}->{'setenv'}}) {
-	    delete ${ENV{$env->[0]}};
+		delete ${ENV{$env->[0]}};
 	}
 	if (defined($self->{test}->{'preload'})) {
-	    delete ${ENV{LD_PRELOAD}};
+		delete ${ENV{LD_PRELOAD}};
 	}
 
 	if ($self->{test}->{stdout}) {
@@ -417,7 +418,7 @@ sub check_features_requirement() {
 sub comparator_zip {
 	my ($self, $got, $expected) = @_;
 
-	my @args = ($self->{zipcmp}, $self->{verbose} ? '-v' : '-q');
+	my @args = ($self->{zipcmp}, $self->{verbose} ? '-pv' : '-pq');
 	push @args, $self->{zipcmp_flags} if ($self->{zipcmp_flags});
 	push @args, ($expected, $got);
         
@@ -447,16 +448,33 @@ sub compare_arrays() {
 	if (!$ok && $self->{verbose}) {
 		print "Unexpected $tag:\n";
 		print "--- expected\n+++ got\n";
-		my @a = map { $_ . "\n"; } @$a;
-		my @b = map { $_ . "\n"; } @$b;
-		print diff(\@a, \@b);
+
+		diff_arrays($a, $b);
 	}
 	
 	return $ok;
 }
 
+sub file_cmp($$) {
+	my ($a, $b) = @_;
+	my $result = 0;
+	open my $fha, "< $a";
+	open my $fhb, "< $b";
+	binmode $fha;
+	binmode $fhb;
+	BYTE: while (!eof $fha && !eof $fhb) {
+		if (getc $fha ne getc $fhb) {
+			$result = 1;
+			last BYTE;
+		}
+	}
+	$result = 1 if eof $fha != eof $fhb;
+	close $fha;
+	close $fhb;
+	return $result;
+}
 
-sub compare_file() {
+sub compare_file($$$) {
 	my ($self, $got, $expected) = @_;
 	
 	my $real_expected = $self->find_file($expected);
@@ -468,7 +486,13 @@ sub compare_file() {
 	my $ok = $self->run_comparator($got, $real_expected);
 
 	if (!defined($ok)) {
-		my $ret = system('diff', $self->{verbose} ? '-u' : '-q', $real_expected, $got);
+		my $ret;
+		if ($self->{verbose}) {
+			$ret = system('diff', '-u', $real_expected, $got);
+		}
+		else {
+			$ret = file_cmp($real_expected, $got);
+		}
 		$ok = ($ret == 0);
 	}
 
@@ -481,20 +505,13 @@ sub compare_files() {
 	
 	my $ok = 1;
 	
-	my $ls;
-	open $ls, "find . -type f -print |";
+	opendir(my $ls, '.');
 	unless ($ls) {
 		# TODO: handle error
 	}
-	my @files_got = ();
-	
-	while (my $line = <$ls>) {
-		chomp $line;
-		$line =~ s,^\./,,;
-		push @files_got, $line;
-	}
-	close($ls);
-	
+	my @files_got = grep { -f } readdir($ls);
+	closedir($ls);
+
 	@files_got = sort @files_got;
 	my @files_should = ();
 	
@@ -632,8 +649,29 @@ sub get_extension {
 
 sub parse_args {
 	my ($self, $type, $str) = @_;
-	
-	if ($type =~ m/(\s|\.\.\.$)/) {
+
+	if ($type eq 'string...') {
+		my $args = [];
+
+		while ($str ne '') {
+			if ($str =~ m/^\"/) {
+				unless ($str =~ m/^\"([^\"]*)\"\s*(.*)/) {
+					$self->warn_file_line("unclosed quote in [$str]");
+					return undef;
+				}
+				push @$args, $1;
+				$str = $2;
+			}
+			else {
+				$str =~ m/^(\S+)\s*(.*)/;
+				push @$args, $1;
+				$str = $2;
+			}
+		}
+
+		return $args;
+	}
+	elsif ($type =~ m/(\s|\.\.\.$)/) {
 		my $ellipsis = 0;
 		if ($type =~ m/(.*)\.\.\.$/) {
 			$ellipsis = 1;
@@ -721,7 +759,7 @@ sub parse_case() {
 			next;
 		}
 		my ($cmd, $argstring) = ($1, $2//"");
-            
+		
 		my $def = $self->{directives}->{$cmd};
 		
 		unless ($def) {
@@ -763,7 +801,7 @@ sub parse_case() {
 	return undef unless ($ok);
 
 	if (defined($test{'stderr-replace'}) && defined($test{stderr})) {
-	    $test{stderr} = [ map { $self->stderr_rewrite($test{'stderr-replace'}, $_); } @{$test{stderr}} ];
+		$test{stderr} = [ map { $self->stderr_rewrite($test{'stderr-replace'}, $_); } @{$test{stderr}} ];
 	}
 
 	if (!defined($test{program})) {
@@ -864,19 +902,39 @@ sub run_hook {
 	
 	return $ok;
 }
+sub backslash_decode {
+
+
+	my ($str) = @_;
+
+	if ($str =~ m/\\/) {
+		$str =~ s/\\a/\a/gi;
+		$str =~ s/\\b/\b/gi;
+		$str =~ s/\\f/\f/gi;
+		$str =~ s/\\n/\n/gi;
+		$str =~ s/\\r/\r/gi;
+		$str =~ s/\\t/\t/gi;
+		$str =~ s/\\v/\cK/gi;
+		$str =~ s/\\s/ /gi;
+		# TODO: \xhh, \ooo
+		$str =~ s/\\(.)/$1/g;
+	}
+
+	return $str;
+}
 
 
 sub run_program {
 	my ($self) = @_;
-	
+	goto &pipein_win32 if $^O eq 'MSWin32' && $self->{test}->{pipein};
 	my ($stdin, $stdout, $stderr);
 	$stderr = gensym;
-	
-	my $cmd = '../' . $self->{test}->{program} . " " . (join ' ', @{$self->{test}->{args}});
-	
+
+	my @cmd = ('../' . $self->{test}->{program}, map ({ backslash_decode($_); } @{$self->{test}->{args}}));
+
 	### TODO: catch errors?
 	
-	my $pid = open3($stdin, $stdout, $stderr, $cmd);
+	my $pid = open3($stdin, $stdout, $stderr, @cmd);
 	
 	$self->{stdout} = [];
 	$self->{stderr} = [];
@@ -895,17 +953,27 @@ sub run_program {
         }
 	
 	while (my $line = <$stdout>) {
-		chomp $line;
+		if ($^O eq 'MSWin32') {
+			$line =~ s/[\r\n]+$//;
+		}
+		else {
+			chomp $line;
+		}
 		push @{$self->{stdout}}, $line;
 	}
 	my $prg = $self->{test}->{program};
 	$prg =~ s,.*/,,;
 	while (my $line = <$stderr>) {
-		chomp $line;
+		if ($^O eq 'MSWin32') {
+			$line =~ s/[\r\n]+$//;
+		}
+		else {
+			chomp $line;
+		}
 
 		$line =~ s/^[^: ]*$prg: //;
 		if (defined($self->{test}->{'stderr-replace'})) {
-		    $line = $self->stderr_rewrite($self->{test}->{'stderr-replace'}, $line);
+			$line = $self->stderr_rewrite($self->{test}->{'stderr-replace'}, $line);
 		}
 		push @{$self->{stderr}}, $line;
 	}
@@ -915,6 +983,39 @@ sub run_program {
 	$self->{exit_status} = $? >> 8;
 }
 
+sub pipein_win32() {
+	my ($self) = @_;
+
+	my $cmd = "$self->{test}->{pipein}| ..\\$self->{test}->{program} " . join(' ', map ({ backslash_decode($_); } @{$self->{test}->{args}}));
+	my ($success, $error_message, $full_buf, $stdout_buf, $stderr_buf) = IPC::Cmd::run(command => $cmd);
+	if (!$success) {
+		### TODO: catch errors?
+	}
+
+	my @stdout = map { s/[\r\n]+$// } @$stdout_buf;
+	$self->{stdout} = \@stdout;
+        $self->{stderr} = [];
+
+	my $prg = $self->{test}->{program};
+	$prg =~ s,.*/,,;
+	foreach my $line (@$stderr_buf) {
+		$line =~ s/[\r\n]+$//;
+
+		$line =~ s/^[^: ]*$prg: //;
+		if (defined($self->{test}->{'stderr-replace'})) {
+			$line = $self->stderr_rewrite($self->{test}->{'stderr-replace'}, $line);
+		}
+		push @{$self->{stderr}}, $line;
+	}
+
+	$self->{exit_status} = 1;
+	if ($success) {
+		$self->{exit_status} = 0;
+	}
+	elsif ($error_message =~ /exited with value ([0-9]+)$/) {
+		$self->{exit_status} = $1 + 0;
+	}
+}
 
 sub sandbox_create {
 	my ($self, $tag) = @_;
@@ -958,14 +1059,8 @@ sub sandbox_remove {
 	my ($self) = @_;
 
 	my $ok = 1;
-	unless (system('chmod', '-R', 'u+rwx', $self->{sandbox_dir}) == 0) {
-		$self->warn("can't ensure that sandbox is writable: $!");
-	}
-	unless (system('rm', '-rf', $self->{sandbox_dir}) == 0) {
-		$self->warn("can't remove sandbox: $!");
-		$ok = 0;
-	}
-	
+	remove_tree($self->{sandbox_dir});
+
 	return $ok;
 }
 
@@ -1019,11 +1114,87 @@ sub warn_file_line {
 }
 
 sub stderr_rewrite {
-    my ($self, $pattern, $line) = @_;
-    for my $repl (@{$pattern}) {
-	$line =~ s/$repl->[0]/$repl->[1]/;
-    }
-    return $line;
+	my ($self, $pattern, $line) = @_;
+	for my $repl (@{$pattern}) {
+		$line =~ s/$repl->[0]/$repl->[1]/;
+	}
+	return $line;
+}
+
+
+# MARK: array diff
+
+sub diff_arrays {
+	my ($a, $b) = @_;
+
+	my ($i, $j);
+	for ($i = $j = 0; $i < scalar(@$a) || $j < scalar(@$b);) {
+		if ($i >= scalar(@$a)) {
+			print "+$b->[$j]\n";
+			$j++;
+		}
+		elsif ($j >= scalar(@$b)) {
+			print "-$a->[$i]\n";
+			$i++;
+		}
+		elsif ($a->[$i] eq $b->[$j]) {
+			print " $a->[$i]\n";
+			$i++;
+			$j++;
+		}
+		else {
+			my ($off_a, $off_b) = find_best_offsets($a, $i, $b, $j);
+			my ($off_b_2, $off_a_2) = find_best_offsets($b, $j, $a, $i);
+
+			if ($off_a + $off_b > $off_a_2 + $off_b_2) {
+				$off_a = $off_a_2;
+				$off_b = $off_b_2;
+			}
+
+			for (my $off = 0; $off < $off_a; $off++) {
+				print "-$a->[$i]\n";
+				$i++;
+			}
+			for (my $off = 0; $off < $off_b; $off++) {
+				print "+$b->[$j]\n";
+				$j++;
+			}
+		}
+	}
+
+}
+
+sub find_best_offsets {
+	my ($a, $i, $b, $j) = @_;
+
+	my ($best_a, $best_b);
+
+	for (my $off_a = 0; $off_a < (defined($best_a) ? $best_a + $best_b : scalar(@$a) - $i); $off_a++) {
+		my $off_b = find_entry($a->[$i+$off_a], $b, $j, defined($best_a) ? $best_a + $best_b - $off_a : scalar(@$b) - $j);
+
+		next unless (defined($off_b));
+
+		if (!defined($best_a) || $best_a + $best_b > $off_a + $off_b) {
+			$best_a = $off_a;
+			$best_b = $off_b;
+		}
+	}
+
+	if (!defined($best_a)) {
+		return (scalar(@$a) - $i, scalar(@$b) - $j);
+	}
+	
+	return ($best_a, $best_b);
+}
+
+sub find_entry {
+	my ($entry, $array, $start, $max_offset) = @_;
+
+	for (my $offset = 0; $offset < $max_offset; $offset++) {
+		return $offset if ($array->[$start + $offset] eq $entry);
+	}
+
+	return undef;
 }
 
 1;
