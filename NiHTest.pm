@@ -14,7 +14,7 @@ use UNIVERSAL;
 use Data::Dumper qw(Dumper);
 
 #  NiHTest -- package to run regression tests
-#  Copyright (C) 2002-2014 Dieter Baron and Thomas Klausner
+#  Copyright (C) 2002-2016 Dieter Baron and Thomas Klausner
 #
 #  This file is part of ckmame, a program to check rom sets for MAME.
 #  The authors can be contacted at <ckmame@nih.at>
@@ -313,7 +313,7 @@ sub runtest {
 
 	my @failed = ();
 	
-	if ($self->{exit_status} != $self->{test}->{return} // 0) {
+	if ($self->{exit_status} != ($self->{test}->{return} // 0)) {
 		push @failed, 'exit status';
 		if ($self->{verbose}) {
 			print "Unexpected exit status:\n";
