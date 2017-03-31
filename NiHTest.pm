@@ -265,6 +265,7 @@ sub runtest {
 
 	$ENV{TZ} = "UTC";
 	$ENV{LC_CTYPE} = "C";
+	$ENV{POSIXLY_CORRECT} = 1;
 	$self->sandbox_create($tag);
 	$self->sandbox_enter();
 	
@@ -283,8 +284,12 @@ sub runtest {
 	for my $env (@{$self->{test}->{'setenv'}}) {
 		$ENV{$env->[0]} = $env->[1];
 	}
+        my $preload_env_var = 'LD_PRELOAD';
+        if ($^O eq 'darwin') {
+                $preload_env_var = 'DYLD_INSERT_LIBRARIES';
+        }
 	if (defined($self->{test}->{'preload'})) {
-		$ENV{LD_PRELOAD} = cwd() . "/../.libs/$self->{test}->{'preload'}";
+		$ENV{$preload_env_var} = cwd() . "/../.libs/$self->{test}->{'preload'}";
 	}
 
 	$self->run_program();
@@ -293,7 +298,7 @@ sub runtest {
 		delete ${ENV{$env->[0]}};
 	}
 	if (defined($self->{test}->{'preload'})) {
-		delete ${ENV{LD_PRELOAD}};
+		delete ${ENV{$preload_env_var}};
 	}
 
 	if ($self->{test}->{stdout}) {
