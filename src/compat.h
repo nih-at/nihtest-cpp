@@ -44,8 +44,14 @@
 #endif
 
 #ifndef HAVE_GETPROGNAME
+#ifdef __cplusplus
+extern "C" {
+#endif
 const char *getprogname(void);
 void setprogname(const char *);
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 #endif /* compat.h */

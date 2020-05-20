@@ -41,6 +41,10 @@
 
 #include <unistd.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Gnu like getopt_long() and BSD4.4 getsubopt()/optreset extensions
  */
@@ -63,5 +67,9 @@ struct option {
 };
 
 int getopt_long(int, char *const *, const char *, const struct option *, int *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_GETOPT_LONG_H_ */
