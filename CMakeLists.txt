@@ -1,0 +1,68 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
+
+PROJECT(nihtest CXX)
+SET(CMAKE_CXX_STANDARD 14)
+
+
+INCLUDE(CheckFunctionExists)
+
+
+SET(PACKAGE "nihtest")
+SET(PACKAGE_NAME ${PACKAGE})
+SET(PACKAGE_VERSION_MAJOR "0")
+SET(PACKAGE_VERSION_MINOR "1")
+SET(PACKAGE_VERSION_MICRO "0")
+SET(VERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_MICRO}")
+SET(PACKAGE_VERSION ${VERSION})
+SET(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
+
+SET(ARCHIVE_NAME ${PACKAGE_NAME}-${PACKAGE_VERSION})
+
+
+IF(NOT TARGET dist)
+ADD_CUSTOM_TARGET(dist
+  COMMAND git config tar.tar.xz.command "xz -c"
+  COMMAND git archive --prefix=${ARCHIVE_NAME}/ -o ${ARCHIVE_NAME}.tar.gz HEAD
+  COMMAND git archive --prefix=${ARCHIVE_NAME}/ -o ${ARCHIVE_NAME}.tar.xz HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+ADD_CUSTOM_TARGET(distcheck
+  COMMAND chmod -R u+w ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest 2>/dev/null || true
+  COMMAND rm -rf ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest
+  COMMAND ${CMAKE_COMMAND} -E tar xf ${ARCHIVE_NAME}.tar.gz
+  COMMAND chmod -R u-w ${ARCHIVE_NAME}
+  COMMAND mkdir ${ARCHIVE_NAME}-build
+  COMMAND mkdir ${ARCHIVE_NAME}-dest
+  COMMAND cd ${ARCHIVE_NAME}-build && ${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=../${ARCHIVE_NAME}-dest ../${ARCHIVE_NAME}
+  COMMAND cd ${ARCHIVE_NAME}-build && make -j4
+  COMMAND cd ${ARCHIVE_NAME}-build && make test
+  COMMAND cd ${ARCHIVE_NAME}-build && make install
+#  COMMAND cd ${ARCHIVE_NAME}-build && make uninstall
+#  COMMAND if [ `find ${ARCHIVE_NAME}-dest ! -type d | wc -l` -ne 0 ]; then echo leftover files in ${ARCHIVE_NAME}-dest; false; fi
+  COMMAND cd ${ARCHIVE_NAME}-build && make clean
+  COMMAND chmod -R u+w ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest
+  COMMAND rm -rf ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest
+  COMMAND echo "${ARCHIVE_NAME}.tar.gz is ready for distribution."
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+ADD_DEPENDENCIES(distcheck dist)
+ENDIF(NOT TARGET dist)
+
+FIND_PROGRAM(MDOCTOOL NAMES mandoc groff)
+IF (MDOCTOOL)
+  SET(DOCUMENTATION_FORMAT "mdoc" CACHE STRING "Documentation format")
+ELSE()
+  FIND_PROGRAM(MANTOOL NAMES nroff)
+  IF (MANTOOL)
+    SET(DOCUMENTATION_FORMAT "man" CACHE STRING "Documentation format")
+  ELSE()
+    SET(DOCUMENTATION_FORMAT "html" CACHE STRING "Documentation format")
+  ENDIF()
+ENDIF()
+
+CHECK_FUNCTION_EXISTS(getopt_long HAVE_GETOPT_LONG)
+CHECK_FUNCTION_EXISTS(getprogname HAVE_GETPROGNAME)
+
+ADD_SUBDIRECTORY(src)
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)

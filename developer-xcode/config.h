@@ -1,0 +1,10 @@
+#ifndef HAD_NIHTEST_CONFIG_H
+#define HAD_NIHTEST_CONFIG_H
+
+#define PACKAGE "nihtest"
+#define VERSION "0.1.0"
+
+#define HAVE_GETOPT_LONG
+#define HAVE_GETPROGNAME
+
+#endif // HAD_NIHTEST_CONFIG_H

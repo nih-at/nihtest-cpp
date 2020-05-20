@@ -1,0 +1,10 @@
+#ifndef HAD_NIHTEST_CONFIG_H
+#define HAD_NIHTEST_CONFIG_H
+
+#define PACKAGE "@PACKAGE@"
+#define VERSION "@VERSION@"
+
+#cmakedefine HAVE_GETOPT_LONG
+#cmakedefine HAVE_GETPROGNAME
+
+#endif // HAD_NIHTEST_CONFIG_H
