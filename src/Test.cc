@@ -1,5 +1,5 @@
 /*
-  Variables.cc -- collection of variables with fallback to environment
+  Test.cc -- main class for a test case
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,41 +31,37 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "Variables.h"
+#include "Test.h"
 
-void Variables::add(const std::string &assignment) {
-    auto pos = assignment.find('=');
-    if (pos == std::string::npos) {
-        // TOOD: handle error
-        return;
-    }
+#include "OS.h"
 
-    set(assignment.substr(0, pos), assignment.substr(pos + 1, std::string::npos));
-}
-
-
-std::string Variables::get(const std::string &name) const {
-    auto it = variables.find(name);
-    if (it != variables.end()) {
-        return it->second;
-    }
-
-    if (use_environment) {
-        auto env = getenv(name.c_str());
-        if (env != NULL) {
-            return env;
-        }
+bool Test::has_feature(const std::string &name) {
+    if (!features) {
+        features = read_features();
     }
     
-    return "";
+    return features->is_set(name);
 }
 
 
-const bool Variables::is_set(const std::string &name) const {
-    return variables.find(name) != variables.end() || (use_environment && getenv(name.c_str()) != NULL);
+std::string Test::make_filename(const std::string &directory, const std::string name) const {
+    std::string real_directory;
+    if (OS::is_absolute(directory)) {
+        real_directory = directory;
+    }
+    else {
+        real_directory = OS::append_path_component(directory, "..");
+    }
+    return OS::append_path_component(real_directory, name);
 }
 
 
-void Variables::set(const std::string &name, const std::string &value) {
-    variables[name] = value;
+VariablesPointer Test::read_features() {
+    VariablesPointer features(new Variables());
+    
+    auto config_file = make_filename(top_build_directory, "config.h");
+    
+    // TODO: get feature defines
+    
+    return features;
 }

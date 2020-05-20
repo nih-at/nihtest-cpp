@@ -1,5 +1,6 @@
+
 /*
-  Variables.cc -- collection of variables with fallback to environment
+  OS-Windows.h -- Windows specific functions
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,41 +32,14 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "Variables.h"
+#include "OS.h"
 
-void Variables::add(const std::string &assignment) {
-    auto pos = assignment.find('=');
-    if (pos == std::string::npos) {
-        // TOOD: handle error
-        return;
+const std::string OS::path_separator = "\\";
+
+bool OS::is_absolute(const std::string &file_name) {
+    if (file_name.empty()) {
+        return false;
     }
-
-    set(assignment.substr(0, pos), assignment.substr(pos + 1, std::string::npos));
-}
-
-
-std::string Variables::get(const std::string &name) const {
-    auto it = variables.find(name);
-    if (it != variables.end()) {
-        return it->second;
-    }
-
-    if (use_environment) {
-        auto env = getenv(name.c_str());
-        if (env != NULL) {
-            return env;
-        }
-    }
-    
-    return "";
-}
-
-
-const bool Variables::is_set(const std::string &name) const {
-    return variables.find(name) != variables.end() || (use_environment && getenv(name.c_str()) != NULL);
-}
-
-
-void Variables::set(const std::string &name, const std::string &value) {
-    variables[name] = value;
+    // TODO: handle drive letters
+    return file_name[0] == '\\';
 }

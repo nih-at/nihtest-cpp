@@ -39,7 +39,7 @@
 
 class Variables {
 public:
-    Variables() { }
+    Variables(bool use_environment_ = false) : use_environment(use_environment_) { }
     
     void add(const std::string &assignment);
     std::string get(const std::string &name) const;
@@ -47,7 +47,9 @@ public:
     void set(const std::string &name, const std::string &value);
 
 private:
+    bool use_environment;
     std::unordered_map<std::string, std::string> variables;
 };
 
+typedef std::shared_ptr<Variables> VariablesPointer;
 #endif /* HAD_VARIABLES_H */

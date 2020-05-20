@@ -1,5 +1,5 @@
 /*
-  Variables.cc -- collection of variables with fallback to environment
+  Test.h -- main class for a test case
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,41 +31,37 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef HAD_TEST_H
+#define HAD_TEST_H
+
+#include <string>
+
 #include "Variables.h"
 
-void Variables::add(const std::string &assignment) {
-    auto pos = assignment.find('=');
-    if (pos == std::string::npos) {
-        // TOOD: handle error
-        return;
-    }
-
-    set(assignment.substr(0, pos), assignment.substr(pos + 1, std::string::npos));
-}
-
-
-std::string Variables::get(const std::string &name) const {
-    auto it = variables.find(name);
-    if (it != variables.end()) {
-        return it->second;
-    }
-
-    if (use_environment) {
-        auto env = getenv(name.c_str());
-        if (env != NULL) {
-            return env;
-        }
-    }
+class Test {
+    enum When {
+        NEVER,
+        WHEN_BROKEN,
+        ALWAYS
+    };
     
-    return "";
-}
+public:
+    Test() : keep_sandbox(NEVER), print_results(NEVER), run_test(true), in_sandbox(false) { }
+    
+    bool has_feature(const std::string &name);
+    
+    When keep_sandbox;
+    When print_results;
+    bool run_test;
+    std::string top_build_directory;
+    std::string source_directory;
+    VariablesPointer features;
+    
+    bool in_sandbox;
+    
+private:
+    VariablesPointer read_features();
+    std::string make_filename(const std::string &directory, const std::string name) const;
+};
 
-
-const bool Variables::is_set(const std::string &name) const {
-    return variables.find(name) != variables.end() || (use_environment && getenv(name.c_str()) != NULL);
-}
-
-
-void Variables::set(const std::string &name, const std::string &value) {
-    variables[name] = value;
-}
+#endif // HAD_TEST_H

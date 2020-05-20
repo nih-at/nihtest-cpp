@@ -1,5 +1,5 @@
 /*
-  Variables.cc -- collection of variables with fallback to environment
+  OS.h -- operating specific functions
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,41 +31,16 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "Variables.h"
+#ifndef HAD_OS_H
+#define HAD_OS_H
 
-void Variables::add(const std::string &assignment) {
-    auto pos = assignment.find('=');
-    if (pos == std::string::npos) {
-        // TOOD: handle error
-        return;
-    }
+#include <string>
 
-    set(assignment.substr(0, pos), assignment.substr(pos + 1, std::string::npos));
-}
+class OS {
+public:
+    static const std::string path_separator;
+    static std::string append_path_component(const std::string &directory, const std::string &name);
+    static bool is_absolute(const std::string &file_name);
+};
 
-
-std::string Variables::get(const std::string &name) const {
-    auto it = variables.find(name);
-    if (it != variables.end()) {
-        return it->second;
-    }
-
-    if (use_environment) {
-        auto env = getenv(name.c_str());
-        if (env != NULL) {
-            return env;
-        }
-    }
-    
-    return "";
-}
-
-
-const bool Variables::is_set(const std::string &name) const {
-    return variables.find(name) != variables.end() || (use_environment && getenv(name.c_str()) != NULL);
-}
-
-
-void Variables::set(const std::string &name, const std::string &value) {
-    variables[name] = value;
-}
+#endif // HAD_OS_H

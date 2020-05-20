@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D93B2475208900CE8C38 /* nihtest.cc */; };
 		4B55D94A2475355700CE8C38 /* Variables.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9482475355700CE8C38 /* Variables.cc */; };
+		4B55D94D24756B0E00CE8C38 /* Test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D94B24756B0E00CE8C38 /* Test.cc */; };
+		4B55D950247573D500CE8C38 /* OS-Unix.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D94E247573D500CE8C38 /* OS-Unix.cc */; };
+		4B55D9522475745700CE8C38 /* OS.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9512475745700CE8C38 /* OS.cc */; };
+		4B55D9542475783400CE8C38 /* OS-Windows.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9532475783400CE8C38 /* OS-Windows.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +42,12 @@
 		4B55D947247530EF00CE8C38 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compat.h; sourceTree = "<group>"; };
 		4B55D9482475355700CE8C38 /* Variables.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Variables.cc; sourceTree = "<group>"; };
 		4B55D9492475355700CE8C38 /* Variables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Variables.h; sourceTree = "<group>"; };
+		4B55D94B24756B0E00CE8C38 /* Test.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Test.cc; sourceTree = "<group>"; };
+		4B55D94C24756B0E00CE8C38 /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
+		4B55D94E247573D500CE8C38 /* OS-Unix.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "OS-Unix.cc"; sourceTree = "<group>"; };
+		4B55D94F247573D500CE8C38 /* OS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OS.h; sourceTree = "<group>"; };
+		4B55D9512475745700CE8C38 /* OS.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OS.cc; sourceTree = "<group>"; };
+		4B55D9532475783400CE8C38 /* OS-Windows.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "OS-Windows.cc"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +86,12 @@
 				4B55D943247530CF00CE8C38 /* compat */,
 				4B55D93B2475208900CE8C38 /* nihtest.cc */,
 				4B55D93C2475208900CE8C38 /* nihtest.h */,
+				4B55D94E247573D500CE8C38 /* OS-Unix.cc */,
+				4B55D9532475783400CE8C38 /* OS-Windows.cc */,
+				4B55D9512475745700CE8C38 /* OS.cc */,
+				4B55D94F247573D500CE8C38 /* OS.h */,
+				4B55D94B24756B0E00CE8C38 /* Test.cc */,
+				4B55D94C24756B0E00CE8C38 /* Test.h */,
 				4B55D9482475355700CE8C38 /* Variables.cc */,
 				4B55D9492475355700CE8C38 /* Variables.h */,
 			);
@@ -170,8 +186,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B55D9522475745700CE8C38 /* OS.cc in Sources */,
+				4B55D94D24756B0E00CE8C38 /* Test.cc in Sources */,
 				4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */,
 				4B55D94A2475355700CE8C38 /* Variables.cc in Sources */,
+				4B55D9542475783400CE8C38 /* OS-Windows.cc in Sources */,
+				4B55D950247573D500CE8C38 /* OS-Unix.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
