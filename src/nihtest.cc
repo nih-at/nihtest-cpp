@@ -37,6 +37,7 @@
 #include <string>
 
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef HAVE_GETOPT_LONG
 #include <getopt.h>
