@@ -34,6 +34,7 @@
 #ifndef HAD_VARIABLES_H
 #define HAD_VARIABLES_H
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 
