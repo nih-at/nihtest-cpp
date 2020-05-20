@@ -1,0 +1,20 @@
+os:
+- Visual Studio 2017
+
+environment:
+  matrix:
+    - GENERATOR: "Visual Studio 15 2017 Win64"
+      TRIPLET: x64-windows
+      CMAKE_CONFIG: Release
+
+before_build:
+  cmd: >-
+    mkdir build
+    cd build
+    cmake -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake .. -G "%GENERATOR%"
+    appveyor PushArtifact config.h
+    appveyor PushArtifact CMakeCache.txt
+
+build_script:
+  cmd: >-
+    cmake --build . --config %CMAKE_CONFIG% --target INSTALL
