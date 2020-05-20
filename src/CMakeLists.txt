@@ -13,7 +13,6 @@ IF(NOT HAVE_GETPROGNAME)
   LIST(APPEND NIHTEST_SOURCES getprogname.c)
 ENDIF()
 
-MESSAGE(WARNING "nihtest sources are ${NIHTEST_SOURCES}")
 ADD_EXECUTABLE(nihtest ${NIHTEST_SOURCES})
 
 # TODO: make installing optional
