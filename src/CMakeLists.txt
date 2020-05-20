@@ -12,6 +12,7 @@ ENDIF()
 
 SET(NIHTEST_SOURCES
     nihtest.cc
+    Variables.cc
 )
 
 ADD_EXECUTABLE(nihtest ${NIHTEST_SOURCES} ${COMPATIBILITY_SOURCES})

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D93B2475208900CE8C38 /* nihtest.cc */; };
+		4B55D94A2475355700CE8C38 /* Variables.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9482475355700CE8C38 /* Variables.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +36,8 @@
 		4B55D945247530E200CE8C38 /* getopt_long.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = getopt_long.c; sourceTree = "<group>"; };
 		4B55D946247530E200CE8C38 /* getopt_long.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = getopt_long.h; sourceTree = "<group>"; };
 		4B55D947247530EF00CE8C38 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compat.h; sourceTree = "<group>"; };
+		4B55D9482475355700CE8C38 /* Variables.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Variables.cc; sourceTree = "<group>"; };
+		4B55D9492475355700CE8C38 /* Variables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Variables.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,10 +72,12 @@
 		4B55D93024751DD300CE8C38 /* nihtest */ = {
 			isa = PBXGroup;
 			children = (
+				4B55D93E2475271500CE8C38 /* CMakeLists.txt */,
 				4B55D943247530CF00CE8C38 /* compat */,
 				4B55D93B2475208900CE8C38 /* nihtest.cc */,
 				4B55D93C2475208900CE8C38 /* nihtest.h */,
-				4B55D93E2475271500CE8C38 /* CMakeLists.txt */,
+				4B55D9482475355700CE8C38 /* Variables.cc */,
+				4B55D9492475355700CE8C38 /* Variables.h */,
 			);
 			name = nihtest;
 			path = ../src;
@@ -166,6 +171,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */,
+				4B55D94A2475355700CE8C38 /* Variables.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

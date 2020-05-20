@@ -1,5 +1,5 @@
 /*
-  nihtest.c -- main program
+  nihtest.cc -- main program
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -44,7 +44,9 @@
 #include "getopt_long.h"
 #endif
 
-static const std::string usage_tail = " [-hVv] [--keep-broken] [--no-cleanup] [--setup-only] testcase\n";
+#include "Variables.h"
+
+static const std::string usage_tail = " [-hVv] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
 
 static const std::string help_head = PACKAGE " by Dieter Baron and Thomas Klausner\n\n";
 
@@ -81,9 +83,9 @@ struct option options[] = {
 
 static void print_usage(std::ostream &stream);
 
-int
-main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     int c;
+    Variables variables;
     
     setprogname(argv[0]);
     
@@ -123,6 +125,11 @@ main(int argc, char *argv[]) {
         }
     }
     
+    while (optind < argc && strchr(argv[optind], '=') != NULL) {
+        variables.add(argv[optind]);
+        optind += 1;
+    }
+    
     if (optind != argc - 1) {
         print_usage(std::cerr);
         exit(1);
@@ -131,7 +138,6 @@ main(int argc, char *argv[]) {
     // TODO
 }
 
-static void
-print_usage(std::ostream &stream) {
+static void print_usage(std::ostream &stream) {
     stream << "Usage: " << getprogname() << usage_tail;
 }
