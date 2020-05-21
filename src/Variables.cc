@@ -31,13 +31,13 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "Variables.h"
-
 #ifdef _MSC_VER
 // We're okay with using the incredibly insecure function getenv().
 // (Yes, it's not thread save, and we're not multi-threaded.)
 #define _CRT_SECURE_NO_WARNINGS
 #endif
+
+#include "Variables.h"
 
 void Variables::add(const std::string &assignment) {
     auto pos = assignment.find('=');
