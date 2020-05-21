@@ -39,7 +39,23 @@
 #ifndef _GETOPT_LONG_H_
 #define _GETOPT_LONG_H_
 
+#include "config.h"
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#else
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern char *optarg;
+extern int optind;
+extern int optopt;
+extern int opterr;
+extern int optreset;
+#ifdef __cplusplus
+}
+#endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {

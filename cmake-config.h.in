@@ -6,5 +6,6 @@
 
 #cmakedefine HAVE_GETOPT_LONG
 #cmakedefine HAVE_GETPROGNAME
+#cmakedefine HAVE_UNISTD_H
 
 #endif // HAD_NIHTEST_CONFIG_H
