@@ -6,6 +6,10 @@ environment:
     - GENERATOR: "Visual Studio 15 2017 Win64"
       TRIPLET: x64-windows
       CMAKE_CONFIG: Release
+    - GENERATOR: "Visual Studio 15 2017"
+      TRIPLET: x86-windows
+      CMAKE_CONFIG: Release
+
 
 before_build:
   cmd: >-
