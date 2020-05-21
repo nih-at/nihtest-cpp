@@ -33,6 +33,12 @@
 
 #include "Variables.h"
 
+#ifdef _WIN32
+// We're okay with using the incredibly insecure function getenv().
+// (Yes, it's not thread save, and we're not multi-threaded.)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 void Variables::add(const std::string &assignment) {
     auto pos = assignment.find('=');
     if (pos == std::string::npos) {
