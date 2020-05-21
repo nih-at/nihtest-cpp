@@ -1,5 +1,5 @@
 /*
-  OS.h -- operating specific functions
+  Exception.cc -- run time error
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,19 +31,16 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef HAD_OS_H
-#define HAD_OS_H
+#include "Exception.h"
 
-#include <string>
+#include "OS.h"
 
-class OS {
-public:
-    static const std::string path_separator;
-    
-    static std::string append_path_component(const std::string &directory, const std::string &name);
-    static bool file_exists(const std::string &file_name);
-    static std::string get_error_string();
-    static bool is_absolute(const std::string &file_name);
-};
+Exception::Exception(const std::string message_, bool include_system_error) noexcept : message(message_) {
+    if (include_system_error) {
+        message += ": " + OS::get_error_string();
+    }
+}
 
-#endif // HAD_OS_H
+const char* Exception::what() const noexcept {
+    return message.c_str();
+}

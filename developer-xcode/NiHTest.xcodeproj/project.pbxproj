@@ -12,6 +12,7 @@
 		4B55D94D24756B0E00CE8C38 /* Test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D94B24756B0E00CE8C38 /* Test.cc */; };
 		4B55D950247573D500CE8C38 /* OS-Unix.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D94E247573D500CE8C38 /* OS-Unix.cc */; };
 		4B55D9522475745700CE8C38 /* OS.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9512475745700CE8C38 /* OS.cc */; };
+		4B55D95C2476C78D00CE8C38 /* Exception.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D95A2476C78D00CE8C38 /* Exception.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +52,8 @@
 		4B55D95724767D4900CE8C38 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		4B55D95824767D4900CE8C38 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		4B55D95924767D5400CE8C38 /* appveyor.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = appveyor.yml; sourceTree = "<group>"; };
+		4B55D95A2476C78D00CE8C38 /* Exception.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cc; sourceTree = "<group>"; };
+		4B55D95B2476C78D00CE8C38 /* Exception.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +97,8 @@
 				4B55D9532475783400CE8C38 /* OS-Windows.cc */,
 				4B55D9512475745700CE8C38 /* OS.cc */,
 				4B55D94F247573D500CE8C38 /* OS.h */,
+				4B55D95A2476C78D00CE8C38 /* Exception.cc */,
+				4B55D95B2476C78D00CE8C38 /* Exception.h */,
 				4B55D94B24756B0E00CE8C38 /* Test.cc */,
 				4B55D94C24756B0E00CE8C38 /* Test.h */,
 				4B55D9482475355700CE8C38 /* Variables.cc */,
@@ -203,6 +208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B55D9522475745700CE8C38 /* OS.cc in Sources */,
+				4B55D95C2476C78D00CE8C38 /* Exception.cc in Sources */,
 				4B55D94D24756B0E00CE8C38 /* Test.cc in Sources */,
 				4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */,
 				4B55D94A2475355700CE8C38 /* Variables.cc in Sources */,

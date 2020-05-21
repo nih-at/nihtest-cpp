@@ -43,3 +43,15 @@ bool OS::is_absolute(const std::string &file_name) {
     // TODO: handle drive letters
     return file_name[0] == '\\';
 }
+
+
+bool OS::file_exists(const std::string &file_name) {
+    // TODO: implement
+    return true;
+}
+
+
+std::string OS::get_error_string() {
+    // TODO: implement
+    return "";
+}

@@ -39,17 +39,19 @@
 #include "Variables.h"
 
 class Test {
+public:
     enum When {
         NEVER,
         WHEN_BROKEN,
         ALWAYS
     };
     
-public:
-    Test() : keep_sandbox(NEVER), print_results(NEVER), run_test(true), in_sandbox(false) { }
+    Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
     
-    bool has_feature(const std::string &name);
+    void initialize(const std::string &name, const Variables &variables);
+    int run(void);
     
+    std::string name;
     When keep_sandbox;
     When print_results;
     bool run_test;
@@ -60,8 +62,11 @@ public:
     bool in_sandbox;
     
 private:
+    std::string find_file(const std::string &name);
+    bool has_feature(const std::string &name);
     VariablesPointer read_features();
     std::string make_filename(const std::string &directory, const std::string name) const;
+    void process_line(const std::string &line);
 };
 
 #endif // HAD_TEST_H

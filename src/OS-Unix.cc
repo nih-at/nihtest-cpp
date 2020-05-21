@@ -33,6 +33,10 @@
 
 #include "OS.h"
 
+#include <sys/stat.h>
+#include <errno.h>
+#include <string.h>
+
 const std::string OS::path_separator = "/";
 
 bool OS::is_absolute(const std::string &file_name) {
@@ -40,4 +44,16 @@ bool OS::is_absolute(const std::string &file_name) {
         return false;
     }
     return file_name[0] == '/';
+}
+
+
+bool OS::file_exists(const std::string &file_name) {
+    struct stat st;
+    
+    return stat(file_name.c_str(), &st) == 0;
+}
+
+
+std::string OS::get_error_string() {
+    return strerror(errno);
 }

@@ -45,9 +45,11 @@
 #include "getopt_long.h"
 #endif
 
+#include "Exception.h"
+#include "Test.h"
 #include "Variables.h"
 
-static const std::string usage_tail = " [-hVv] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
+static const std::string usage_tail = " [-hqVv] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
 
 static const std::string help_head = PACKAGE " by Dieter Baron and Thomas Klausner\n\n";
 
@@ -59,6 +61,7 @@ static const std::string help_tail = "\n"
     "  -h, --help         display this help message and exit\n"
     "      --keep-broken  keep sandbox if test fails\n"
     "      --no-cleanup   keep sandbox\n"
+    "  -q, --quiet        don't print test results\n"
     "      --setup-only   set up sandbox, but don't run test\n"
     "  -v, --verbose      print detailed test results\n"
     "  -V, --version      display version number and exit\n";
@@ -77,6 +80,7 @@ struct option options[] = {
     
     { "keep-broken", 0, 0, OPT_KEEP_BROKEN },
     { "no-cleanup", 0, 0, OPT_NO_CLEANUP },
+    { "quiet", 0, 0, 'q' },
     { "setup-only", 0, 0, OPT_SETUP_ONLY },
     { "verbose", 0, 0, 'v' }
 };
@@ -86,7 +90,8 @@ static void print_usage(std::ostream &stream);
 
 int main(int argc, char *argv[]) {
     int c;
-    Variables variables;
+    auto variables = Variables(true);
+    auto test = Test();
     
     setprogname(argv[0]);
     
@@ -103,26 +108,32 @@ int main(int argc, char *argv[]) {
             std::cout << version_string;
             exit(0);
             
+        case 'q': // quiet
+            test.print_results = Test::NEVER;
+            break;
+            
         case 'v': // verbose
-            // TODO
+            test.print_results = Test::ALWAYS;
             break;
             
         case OPT_KEEP_BROKEN:
-            // TODO
+            if (test.keep_sandbox != Test::ALWAYS) {
+                test.keep_sandbox = Test::WHEN_BROKEN;
+            }
             break;
             
         case OPT_NO_CLEANUP:
-            // TODO
+            test.keep_sandbox = Test::ALWAYS;
             break;
             
         case OPT_SETUP_ONLY:
-            // TODO
+            test.keep_sandbox = Test::ALWAYS;
+            test.run_test = false;
             break;
             
         default:
             print_usage(std::cerr);
             exit(1);
-
         }
     }
     
@@ -136,7 +147,21 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     
-    // TODO
+    if (test.print_results != Test::NEVER && variables.is_set("VERBOSE")) {
+        test.print_results = Test::ALWAYS;
+    }
+    if (test.keep_sandbox == Test::NEVER && variables.is_set("KEEP_BROKEN")) {
+        test.print_results = Test::WHEN_BROKEN;
+    }
+    
+    try {
+        test.initialize(argv[optind], variables);
+        exit(test.run());
+    }
+    catch (Exception e) {
+        std::cerr << getprogname() << ": " << e.what() << "\n";
+        exit(1);
+    }
 }
 
 static void print_usage(std::ostream &stream) {
