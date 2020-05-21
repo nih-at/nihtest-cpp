@@ -44,6 +44,11 @@
 
 #include "getopt_long.h"
 
+#ifndef HAVE_GETPROGNAME
+const char *getprogname(void);
+#endif
+
+
 static void mywarnx(const char *fmt, ...);
 #define warnx mywarnx
 
@@ -436,12 +441,11 @@ int *idx;
     return retval;
 }
 
-extern const char *prg;
 static void
 mywarnx(const char *fmt, ...) {
     va_list ap;
 
-    fprintf(stderr, "%s", prg);
+    fprintf(stderr, "%s", getprogname());
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
