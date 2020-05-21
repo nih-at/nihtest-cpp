@@ -47,6 +47,10 @@
 		4B55D94F247573D500CE8C38 /* OS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OS.h; sourceTree = "<group>"; };
 		4B55D9512475745700CE8C38 /* OS.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OS.cc; sourceTree = "<group>"; };
 		4B55D9532475783400CE8C38 /* OS-Windows.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "OS-Windows.cc"; sourceTree = "<group>"; };
+		4B55D95624767D4900CE8C38 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4B55D95724767D4900CE8C38 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
+		4B55D95824767D4900CE8C38 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		4B55D95924767D5400CE8C38 /* appveyor.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = appveyor.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,7 @@
 		4B55D92524751DD300CE8C38 = {
 			isa = PBXGroup;
 			children = (
+				4B55D95524767D2E00CE8C38 /* Info */,
 				4B55D940247527CC00CE8C38 /* Build */,
 				4B55D93024751DD300CE8C38 /* nihtest */,
 				4B55D93824751FCA00CE8C38 /* perl */,
@@ -110,8 +115,9 @@
 		4B55D940247527CC00CE8C38 /* Build */ = {
 			isa = PBXGroup;
 			children = (
-				4B55D941247527EF00CE8C38 /* CMakeLists.txt */,
+				4B55D95924767D5400CE8C38 /* appveyor.yml */,
 				4B55D94224752A5000CE8C38 /* cmake-config.h.in */,
+				4B55D941247527EF00CE8C38 /* CMakeLists.txt */,
 			);
 			name = Build;
 			path = ..;
@@ -126,6 +132,17 @@
 				4B55D944247530E200CE8C38 /* getprogname.c */,
 			);
 			name = compat;
+			sourceTree = "<group>";
+		};
+		4B55D95524767D2E00CE8C38 /* Info */ = {
+			isa = PBXGroup;
+			children = (
+				4B55D95824767D4900CE8C38 /* LICENSE */,
+				4B55D95624767D4900CE8C38 /* README.md */,
+				4B55D95724767D4900CE8C38 /* TODO.md */,
+			);
+			name = Info;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
