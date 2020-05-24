@@ -34,6 +34,7 @@
 #include "Test.h"
 
 #include <fstream>
+#include <iostream>
 #include <regex>
 
 #include "Exception.h"
@@ -87,6 +88,13 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
     auto parser = TestParser(test_file_name, this, directives);
     
     parser.parse();
+    
+    if (program.empty()) {
+        program = variables.get("DEFAULT_PROGRAM");
+        if (program.empty()) {
+            throw Exception("no program specified");
+        }
+    }
 }
 
 
@@ -96,6 +104,12 @@ bool Test::has_feature(const std::string &name) {
     }
     
     return features->is_set(name);
+}
+
+
+int Test::get_int(const std::string &string) {
+    // TODO: error handling
+    return std::stoi(string.c_str());
 }
 
 
@@ -128,7 +142,85 @@ std::string Test::make_filename(const std::string &directory, const std::string 
 
 
 void Test::process_directive(const Directive *directive, const std::vector<std::string> &args) {
-    
+    if (directive->name == "args") {
+        arguments = args;
+    }
+    else if (directive->name == "features") {
+        required_features = args;
+    }
+    else if (directive->name == "file") {
+        files.push_back(File(args[0], args[1], args[2]));
+    }
+    else if (directive->name == "file-del") {
+        files.push_back(File(args[0], args[1], ""));
+    }
+    else if (directive->name == "file-new") {
+        files.push_back(File(args[0], "", args[1]));
+    }
+    else if (directive->name == "mkdir") {
+        if (directories.find(args[1]) != directories.end()) {
+            throw Exception("duplicate mkdir for '" + args[1], "'");
+        }
+        directories[args[1]] = get_int(args[2]);
+    }
+    else if (directive->name == "pipefile") {
+        if (!pipe_command.empty()) {
+            throw Exception("only one of 'pipefile' or 'pipein' allowed");
+        }
+        pipe_file = args[0];
+    }
+    else if (directive->name == "pipein") {
+        if (!pipe_command.empty()) {
+            throw Exception("only one of 'pipefile' or 'pipein' allowed");
+        }
+        pipe_command = args;
+    }
+    else if (directive->name == "precheck") {
+        precheck_command = args;
+    }
+    else if (directive->name == "preload") {
+        preload_library = args[0];
+    }
+    else if (directive->name == "program") {
+        program = args[0];
+    }
+    else if (directive->name == "return") {
+        exit_code = get_int(args[0]);
+    }
+    else if (directive->name == "setenv") {
+        if (environment.find(args[0]) != environment.end()) {
+            throw Exception("duplicate setenv for '" + args[0], "'");
+        }
+        environment[args[0]] = args[1];
+    }
+    else if (directive->name == "stderr") {
+        error_output.push_back(args[0]);
+    }
+    else if (directive->name == "stderr-replace") {
+        // TODO: error_output_pattern;
+        error_output_replacement = args[1];
+    }
+    else if (directive->name == "stdout") {
+        output.push_back(args[0]);
+    }
+    else if (directive->name == "touch") {
+        if (touch_files.find(args[1]) != touch_files.end()) {
+            throw Exception("duplicate setenv for '" + args[1], "'");
+        }
+        touch_files[args[1]] = get_int(args[0]);
+    }
+    else if (directive->name == "ulimit") {
+        if (args[0].size() != 1) {
+            throw Exception("invalid limit '" + args[0] + "'");
+        }
+        auto limit = args[0][0];
+        // TODO: check for valid limit
+        if (limits.find(limit) != limits.end()) {
+            throw Exception("duplicate limit for '" + args[0] + "'");
+        }
+        // TODO: handle unlimited
+        limits[limit] = get_int(args[1]);
+    }
 }
 
 

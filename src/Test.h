@@ -35,6 +35,8 @@
 #define HAD_TEST_H
 
 #include <string>
+#include <regex>
+#include <unordered_map>
 #include <vector>
 
 #include "Variables.h"
@@ -76,6 +78,14 @@ public:
     bool in_sandbox;
     
 private:
+    struct File {
+        std::string name;
+        std::string input;
+        std::string output;
+        
+        File(const std::string &name_, const std::string &input_, const std::string &output_) : name(name_), input(input_), output(output_) { }
+    };
+    
     static const std::vector<Directive> directives;
     
     std::string find_file(const std::string &name);
@@ -84,6 +94,26 @@ private:
     std::string make_filename(const std::string &directory, const std::string name) const;
     void process_line(const std::string &line);
     std::vector<std::string> tokenize(const std::string &line) const;
+    
+    int get_int(const std::string &string);
+    
+    std::vector<std::string> arguments;
+    std::unordered_map<std::string, int> directories;
+    std::unordered_map<std::string, std::string> environment;
+    std::vector<std::string> error_output;
+    std::regex error_output_pattern;
+    std::string error_output_replacement;
+    int exit_code;
+    std::vector<File> files;
+    std::unordered_map<char, int> limits;
+    std::vector<std::string> output;
+    std::vector<std::string> pipe_command;
+    std::string pipe_file;
+    std::vector<std::string> precheck_command;
+    std::string preload_library;
+    std::string program;
+    std::vector<std::string> required_features;
+    std::unordered_map<std::string, time_t> touch_files;
 };
 
 #endif // HAD_TEST_H

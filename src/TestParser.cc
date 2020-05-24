@@ -43,7 +43,7 @@ TestParser::TestParser(const std::string &file_name_, Test *test_, const std::ve
     if (!file) {
         throw Exception("cannot open test case '" + file_name + "'", true);
     }
-    for (auto directive : directives_) {
+    for (auto &directive : directives_) {
         directives[directive.name] = &directive;
     }
 }
