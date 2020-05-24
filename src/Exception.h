@@ -40,7 +40,10 @@
 class Exception: std::exception {
 public:
     Exception(const std::string message_, bool include_system_error = false) noexcept;
+    Exception() noexcept: print_message(false) { }
     
+    bool print_message;
+
     virtual const char* what() const noexcept;
 
 private:

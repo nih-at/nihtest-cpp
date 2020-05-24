@@ -1,5 +1,5 @@
 /*
-  Test.h -- main class for a test case
+  TestParser.h -- parse test case
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,59 +31,35 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef HAD_TEST_H
-#define HAD_TEST_H
+#ifndef HAD_TEST_PARSER_H
+#define HAD_TEST_PARSER_H
 
+#include <fstream>
+#include <map>
 #include <string>
-#include <vector>
+#include <unordered_set>
 
-#include "Variables.h"
+#include "Test.h"
 
-class Test {
+class TestParser {
 public:
-    enum When {
-        NEVER,
-        WHEN_BROKEN,
-        ALWAYS
-    };
+    TestParser(const std::string &file_name_, Test *test_, const std::vector<Test::Directive> &directives_);
     
-    struct Directive {
-        std::string name;
-        std::string usage;
-        bool only_once;
-        bool required;
-        int minimum_arguments;
-        int maximum_arguments;
-        
-        Directive(const std::string name_, const std::string usage_, int minimum_arguments_, bool required_ = false, bool only_once = false, int maximum_arguments_ = 0);
-    };
-
-    Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
-    
-    void initialize(const std::string &name, const Variables &variables);
-    int run(void);
-    
-    void process_directive(const Directive *directive, const std::vector<std::string> &args);
-    
-    std::string name;
-    When keep_sandbox;
-    When print_results;
-    bool run_test;
-    std::string top_build_directory;
-    std::string source_directory;
-    VariablesPointer features;
-    
-    bool in_sandbox;
+    void parse();
     
 private:
-    static const std::vector<Directive> directives;
+    void print_error(const std::string &message);
+    void tokenize(std::vector<std::string> *args, const std::string &line, std::string::size_type start);
     
-    std::string find_file(const std::string &name);
-    bool has_feature(const std::string &name);
-    VariablesPointer read_features();
-    std::string make_filename(const std::string &directory, const std::string name) const;
-    void process_line(const std::string &line);
-    std::vector<std::string> tokenize(const std::string &line) const;
+    Test *test;
+    std::string file_name;
+    size_t line_no;
+    std::ifstream file;
+    bool ok;
+    std::unordered_set<const Test::Directive *> seen_directives;
+    
+    std::map<std::string, const Test::Directive *> directives;
 };
 
-#endif // HAD_TEST_H
+#endif // HAD_TEST_PARSER_H
+

@@ -35,7 +35,7 @@
 
 #include "OS.h"
 
-Exception::Exception(const std::string message_, bool include_system_error) noexcept : message(message_) {
+Exception::Exception(const std::string message_, bool include_system_error) noexcept : print_message(true), message(message_) {
     if (include_system_error) {
         message += ": " + OS::get_error_string();
     }

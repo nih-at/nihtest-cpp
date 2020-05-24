@@ -159,7 +159,9 @@ int main(int argc, char *argv[]) {
         exit(test.run());
     }
     catch (Exception e) {
-        std::cerr << getprogname() << ": " << e.what() << "\n";
+        if (e.print_message) {
+            std::cerr << getprogname() << ": " << e.what() << "\n";
+        }
         exit(1);
     }
 }

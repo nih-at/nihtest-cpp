@@ -38,6 +38,34 @@
 
 #include "Exception.h"
 #include "OS.h"
+#include "TestParser.h"
+
+Test::Directive::Directive(const std::string name_, const std::string usage_, int minimum_arguments_, bool only_once_, bool required_, int maximum_arguments_) : name(name_), usage(usage_), only_once(only_once_), required(required_), minimum_arguments(minimum_arguments_) {
+    maximum_arguments = maximum_arguments_ == 0 ? minimum_arguments : maximum_arguments_;
+}
+
+const std::vector<Test::Directive> Test::directives = {
+    Test::Directive("args", "[arg ...]", 0, true, true, -1),
+    Test::Directive("description", "text", -1, true),
+    Test::Directive("features", "feature ...", 1, true, false, -1),
+    Test::Directive("file", "test in out", 3),
+    Test::Directive("file-del", "test in", 2),
+    Test::Directive("file-new", "test out", 2),
+    Test::Directive("mkdir", "mode name", 2),
+    Test::Directive("pipefile", "file", 1, true),
+    Test::Directive("pipein", "command [args ...]", 1, true, false, -1),
+    Test::Directive("precheck", "command [args ...]", 1, false, false, -1),
+    Test::Directive("preload", "library", 1, true),
+    Test::Directive("program", "name", 1, true),
+    Test::Directive("return", "exit-code", 1, true, true),
+    Test::Directive("setenv", "variable value", 2),
+    Test::Directive("stderr", "text", -1),
+    Test::Directive("stderr-replace", "pattern replacement", 2, true),
+    Test::Directive("stdout", "text", -1),
+    Test::Directive("touch", "mtime file", 2),
+    Test::Directive("ulimit", "limit value", 2)
+};
+
 
 void Test::initialize(const std::string &test_case, const Variables &variables) {
     top_build_directory = variables.get("TOP_BUILD_DIRECTORY");
@@ -52,21 +80,13 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
         name = test_case;
         file_name = test_case + ".test";
     }
+    // TODO: strip dir from test name
     
-    auto test_file_name = find_file(name);
+    auto test_file_name = find_file(file_name);
     
-    auto test_file = std::ifstream(test_file_name);
-    if (!test_file) {
-        throw Exception("cannot open test case '" + test_file_name + "'", true);
-    }
+    auto parser = TestParser(test_file_name, this, directives);
     
-    std::string line;
-    
-    while (std::getline(test_file, line)) {
-        process_line(line);
-    }
-    
-    // TODO: validate test case
+    parser.parse();
 }
 
 
@@ -94,6 +114,7 @@ std::string Test::find_file(const std::string &name) {
     throw Exception("can't find input file '" + name + "'");
 }
 
+
 std::string Test::make_filename(const std::string &directory, const std::string name) const {
     std::string real_directory;
     if (OS::is_absolute(directory)) {
@@ -105,8 +126,9 @@ std::string Test::make_filename(const std::string &directory, const std::string 
     return OS::append_path_component(real_directory, name);
 }
 
-void Test::process_line(const std::string &line) {
-    // TODO: implement
+
+void Test::process_directive(const Directive *directive, const std::vector<std::string> &args) {
+    
 }
 
 

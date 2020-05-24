@@ -6,6 +6,7 @@ SET(NIHTEST_SOURCES
     Exception.cc
     OS.cc
     Test.cc
+    TestParser.cc
     Variables.cc
 )
 
