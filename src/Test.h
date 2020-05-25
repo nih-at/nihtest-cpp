@@ -48,6 +48,12 @@ public:
         WHEN_BROKEN,
         ALWAYS
     };
+
+    enum Result {
+	PASSED,
+	FAILED,
+	SKIPPED
+    };
     
     struct Directive {
         std::string name;
@@ -63,7 +69,7 @@ public:
     Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
     
     void initialize(const std::string &name, const Variables &variables);
-    int run(void);
+    Result run(void);
     
     void process_directive(const Directive *directive, const std::vector<std::string> &args);
     
@@ -71,11 +77,10 @@ public:
     When keep_sandbox;
     When print_results;
     bool run_test;
-    std::string top_build_directory;
+    std::string sandbox_directory;
     std::string source_directory;
+    std::string top_build_directory;
     VariablesPointer features;
-    
-    bool in_sandbox;
     
 private:
     struct File {
@@ -88,15 +93,18 @@ private:
     
     static const std::vector<Directive> directives;
     
+    void enter_sandbox();
     std::string find_file(const std::string &name);
-    bool has_feature(const std::string &name);
-    VariablesPointer read_features();
-    std::string make_filename(const std::string &directory, const std::string name) const;
-    void process_line(const std::string &line);
-    std::vector<std::string> tokenize(const std::string &line) const;
-    
     int get_int(const std::string &string);
+    bool has_feature(const std::string &name);
+    void leave_sandbox(bool keep);
+    std::string make_filename(const std::string &directory, const std::string name) const;
+    VariablesPointer read_features();
     
+    bool in_sandbox;
+    std::string sandbox_name;
+    bool failed;
+
     std::vector<std::string> arguments;
     std::unordered_map<std::string, int> directories;
     std::unordered_map<std::string, std::string> environment;
@@ -105,9 +113,9 @@ private:
     std::string error_output_replacement;
     int exit_code;
     std::vector<File> files;
+    std::vector<std::string> input;
     std::unordered_map<char, int> limits;
     std::vector<std::string> output;
-    std::vector<std::string> pipe_command;
     std::string pipe_file;
     std::vector<std::string> precheck_command;
     std::string preload_library;

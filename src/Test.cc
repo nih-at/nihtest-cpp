@@ -54,7 +54,6 @@ const std::vector<Test::Directive> Test::directives = {
     Test::Directive("file-new", "test out", 2),
     Test::Directive("mkdir", "mode name", 2),
     Test::Directive("pipefile", "file", 1, true),
-    Test::Directive("pipein", "command [args ...]", 1, true, false, -1),
     Test::Directive("precheck", "command [args ...]", 1, false, false, -1),
     Test::Directive("preload", "library", 1, true),
     Test::Directive("program", "name", 1, true),
@@ -62,6 +61,7 @@ const std::vector<Test::Directive> Test::directives = {
     Test::Directive("setenv", "variable value", 2),
     Test::Directive("stderr", "text", -1),
     Test::Directive("stderr-replace", "pattern replacement", 2, true),
+    Test::Directive("stdin", "text", -1),
     Test::Directive("stdout", "text", -1),
     Test::Directive("touch", "mtime file", 2),
     Test::Directive("ulimit", "limit value", 2)
@@ -69,8 +69,9 @@ const std::vector<Test::Directive> Test::directives = {
 
 
 void Test::initialize(const std::string &test_case, const Variables &variables) {
-    top_build_directory = variables.get("TOP_BUILD_DIRECTORY");
+    sandbox_directory = variables.get("SANDBOX_DIRECTORY");
     source_directory = variables.get("SOURCE_DIRECTORY");
+    top_build_directory = variables.get("TOP_BUILD_DIRECTORY");
     
     auto file_name = test_case;
     auto dot = test_case.find('.');
@@ -88,6 +89,8 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
     auto parser = TestParser(test_file_name, this, directives);
     
     parser.parse();
+
+    // TODO: read pipefile into input
     
     if (program.empty()) {
         program = variables.get("DEFAULT_PROGRAM");
@@ -98,18 +101,14 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
 }
 
 
-bool Test::has_feature(const std::string &name) {
-    if (!features) {
-        features = read_features();
+void Test::enter_sandbox() {
+    if (in_sandbox) {
+	throw Exception("already in sandbox");
     }
-    
-    return features->is_set(name);
-}
 
+    sandbox_name = OS::make_temp_directory(sandbox_directory, "sandbox_" + name);
 
-int Test::get_int(const std::string &string) {
-    // TODO: error handling
-    return std::stoi(string.c_str());
+    OS::change_directory(sandbox_name);
 }
 
 
@@ -126,6 +125,27 @@ std::string Test::find_file(const std::string &name) {
     }
     
     throw Exception("can't find input file '" + name + "'");
+}
+
+
+int Test::get_int(const std::string &string) {
+    // TODO: error handling
+    return std::stoi(string.c_str());
+}
+
+
+bool Test::has_feature(const std::string &name) {
+    if (!features) {
+        features = read_features();
+    }
+    
+    return features->is_set(name);
+}
+
+
+void Test::leave_sandbox(bool keep) {
+    // TODO: implement
+    return;
 }
 
 
@@ -164,16 +184,10 @@ void Test::process_directive(const Directive *directive, const std::vector<std::
         directories[args[1]] = get_int(args[2]);
     }
     else if (directive->name == "pipefile") {
-        if (!pipe_command.empty()) {
-            throw Exception("only one of 'pipefile' or 'pipein' allowed");
+        if (!input.empty()) {
+            throw Exception("only one of 'pipefile' or 'stdin' allowed");
         }
         pipe_file = args[0];
-    }
-    else if (directive->name == "pipein") {
-        if (!pipe_command.empty()) {
-            throw Exception("only one of 'pipefile' or 'pipein' allowed");
-        }
-        pipe_command = args;
     }
     else if (directive->name == "precheck") {
         precheck_command = args;
@@ -199,6 +213,12 @@ void Test::process_directive(const Directive *directive, const std::vector<std::
     else if (directive->name == "stderr-replace") {
         // TODO: error_output_pattern;
         error_output_replacement = args[1];
+    }
+    else if (directive->name == "stdin") {
+        if (!pipe_file.empty()) {
+            throw Exception("only one of 'pipefile' or 'stdin' allowed");
+        }
+        input.push_back(args[0]);
     }
     else if (directive->name == "stdout") {
         output.push_back(args[0]);
@@ -248,7 +268,41 @@ VariablesPointer Test::read_features() {
 }
 
 
-int Test::run(void) {
-    // TODO: implement
-    return 0;
+Test::Result Test::run(void) {
+    if (!required_features.empty()) {
+	read_features();
+	for (auto feature : required_features) {
+	    if (!features->is_set(feature)) {
+		return SKIPPED;
+	    }
+	}
+    }
+
+    // TODO: skip if preload &c not supported
+    
+    enter_sandbox();
+
+    try {
+	for (auto file : files) {
+	    if (!file.input.empty()) {
+		OS::copy_file(find_file(file.input), file.name);
+	    }
+	}
+
+	// TODO: setenv, limits, &c
+
+	std::vector<std::string> error_output_got;
+	std::vector<std::string> output_got;
+
+	auto exit_code_got = OS::run_command(program, arguments, environment, input, &output_got, &error_output_got);
+
+	// TODO: implement
+    }
+    catch (Exception e) {
+	leave_sandbox(keep_sandbox != NEVER);
+	throw e;
+    }
+
+    leave_sandbox(keep_sandbox == ALWAYS || (keep_sandbox == WHEN_BROKEN && failed));
+    return failed ? FAILED : PASSED;
 }

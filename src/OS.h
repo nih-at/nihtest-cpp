@@ -35,15 +35,21 @@
 #define HAD_OS_H
 
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 class OS {
 public:
     static const std::string path_separator;
-    
+
     static std::string append_path_component(const std::string &directory, const std::string &name);
+    static void change_directory(const std::string &directory);
+    static void copy_file(const std::string &from, const std::string &to);
     static bool file_exists(const std::string &file_name);
     static std::string get_error_string();
     static bool is_absolute(const std::string &file_name);
+    static std::string make_temp_directory(const std::string &directory, const std::string &name);
+    static int run_command(const std::string &program, const std::vector<std::string> &arguments, const std::unordered_map<std::string, std::string> &environment, const std::vector<std::string> &input, std::vector<std::string> *output, std::vector<std::string> *error_output);
 };
 
 #endif // HAD_OS_H
