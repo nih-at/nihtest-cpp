@@ -296,11 +296,16 @@ Test::Result Test::run(void) {
 
 	auto exit_code_got = OS::run_command(program, arguments, environment, input, &output_got, &error_output_got);
 
+        if (exit_code != exit_code_got) {
+            // TODO: output
+            failed = true;
+        }
+        
 	// TODO: implement
     }
     catch (Exception e) {
 	leave_sandbox(keep_sandbox != NEVER);
-	throw e;
+        throw;
     }
 
     leave_sandbox(keep_sandbox == ALWAYS || (keep_sandbox == WHEN_BROKEN && failed));

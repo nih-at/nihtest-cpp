@@ -44,7 +44,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <Exception.h>
+#include "Exception.h"
 
 #define BUFFER_SIZE (1024 * 1024)
 
@@ -300,7 +300,6 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 	nfds_t nfds = 3;
 	
 
-	auto end = false;
 	while (nfds > 0) {
 	    auto ret = poll(fds, nfds, -1); // TODO: timeout
 	    if (ret < 0) {
