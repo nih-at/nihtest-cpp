@@ -36,12 +36,14 @@
 
 const std::string OS::path_separator = "\\";
 
-bool OS::is_absolute(const std::string &file_name) {
-    if (file_name.empty()) {
-        return false;
-    }
-    // TODO: handle drive letters
-    return file_name[0] == '\\';
+
+void OS::change_directory(const std::string &directory) {
+    // TODO: implement
+}
+
+
+void OS::copy_file(const std::string &from, const std::string &to) {
+    // TODO: implement
 }
 
 
@@ -54,4 +56,25 @@ bool OS::file_exists(const std::string &file_name) {
 std::string OS::get_error_string() {
     // TODO: implement
     return "";
+}
+
+
+bool OS::is_absolute(const std::string &file_name) {
+    if (file_name.empty()) {
+        return false;
+    }
+    // TODO: handle drive letters
+    return file_name[0] == '\\';
+}
+
+
+std::string OS::make_temp_directory(const std::string &directory, const std::string &name) {
+    // TODO: implement
+    return "";
+}
+
+
+int OS::run_command(const std::string &program, const std::vector<std::string> &arguments, const std::unordered_map<std::string, std::string> &environment, const std::vector<std::string> &input, std::vector<std::string> *output, std::vector<std::string> *error_output) {
+    // TODO: implement
+    return 0;
 }
