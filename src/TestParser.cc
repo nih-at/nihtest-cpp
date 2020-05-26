@@ -76,10 +76,17 @@ void TestParser::parse() {
         std::vector<std::string> args;
         
         if (directive->minimum_arguments == -1) {
-            args.push_back(line.substr(space + 1));
+            if (space != std::string::npos) {
+                args.push_back(line.substr(space + 1));
+            }
+            else {
+                args.push_back("");
+            }
         }
         else {
-            tokenize(&args, line, space + 1);
+            if (space != std::string::npos) {
+                tokenize(&args, line, space + 1);
+            }
             if (args.size() < directive->minimum_arguments || args.size() > directive->maximum_arguments) {
                 
             }

@@ -37,6 +37,7 @@
 #include <iostream>
 #include <regex>
 
+#include "CompareArrays.h"
 #include "Exception.h"
 #include "OS.h"
 #include "TestParser.h"
@@ -99,6 +100,14 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
         }
     }
 }
+
+void Test::compare_arrays(const std::vector<std::string> &expected, const std::vector<std::string> &got, const std::string &what) {
+    auto compare = CompareArrays(expected, got, what, print_results != NEVER);
+    if (!compare.compare()) {
+        failed.push_back(what);
+    }
+}
+
 
 
 void Test::enter_sandbox() {
@@ -359,7 +368,10 @@ Test::Result Test::run(void) {
             }
         }
         
-	// TODO: implement
+        compare_arrays(output, output_got, "output");
+        compare_arrays(error_output, error_output_got, "error output");
+        
+        // TODO: compare files
     }
     catch (Exception e) {
 	leave_sandbox(keep_sandbox != NEVER);

@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(BEFORE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DI
 
 SET(NIHTEST_SOURCES
     nihtest.cc
+    CompareArrays.cc
     Exception.cc
     OS.cc
     Test.cc

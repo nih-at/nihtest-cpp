@@ -95,6 +95,7 @@ private:
     
     static const std::vector<Directive> directives;
     
+    void compare_arrays(const std::vector<std::string> &expected, const std::vector<std::string> &got, const std::string &what);
     void enter_sandbox();
     std::string find_file(const std::string &name);
     int get_int(const std::string &string);

@@ -15,6 +15,7 @@
 		4B55D95C2476C78D00CE8C38 /* Exception.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D95A2476C78D00CE8C38 /* Exception.cc */; };
 		4B55D95F2478249B00CE8C38 /* TestParser.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D95D2478249B00CE8C38 /* TestParser.cc */; };
 		4BF1D825247CF90000353959 /* OS-Unix-run.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4BF1D824247CF90000353959 /* OS-Unix-run.cc */; };
+		4BF1D828247D242900353959 /* CompareArrays.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4BF1D826247D242900353959 /* CompareArrays.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -59,6 +60,11 @@
 		4B55D95D2478249B00CE8C38 /* TestParser.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestParser.cc; sourceTree = "<group>"; };
 		4B55D95E2478249B00CE8C38 /* TestParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestParser.h; sourceTree = "<group>"; };
 		4BF1D824247CF90000353959 /* OS-Unix-run.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "OS-Unix-run.cc"; sourceTree = "<group>"; };
+		4BF1D826247D242900353959 /* CompareArrays.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompareArrays.cc; sourceTree = "<group>"; };
+		4BF1D827247D242900353959 /* CompareArrays.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompareArrays.h; sourceTree = "<group>"; };
+		4BF1D82A247D2CCF00353959 /* cat.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = cat.test; sourceTree = "<group>"; };
+		4BF1D82B247D2CCF00353959 /* skip.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = skip.test; sourceTree = "<group>"; };
+		4BF1D82C247D2CDD00353959 /* echo.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = echo.test; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +84,7 @@
 				4B55D95524767D2E00CE8C38 /* Info */,
 				4B55D940247527CC00CE8C38 /* Build */,
 				4B55D93024751DD300CE8C38 /* nihtest */,
+				4BF1D829247D2CA300353959 /* regress */,
 				4B55D93824751FCA00CE8C38 /* perl */,
 				4B55D92F24751DD300CE8C38 /* Products */,
 			);
@@ -96,13 +103,15 @@
 			isa = PBXGroup;
 			children = (
 				4B55D93E2475271500CE8C38 /* CMakeLists.txt */,
+				4BF1D826247D242900353959 /* CompareArrays.cc */,
+				4BF1D827247D242900353959 /* CompareArrays.h */,
 				4B55D943247530CF00CE8C38 /* compat */,
 				4B55D95A2476C78D00CE8C38 /* Exception.cc */,
 				4B55D95B2476C78D00CE8C38 /* Exception.h */,
 				4B55D93B2475208900CE8C38 /* nihtest.cc */,
 				4B55D93C2475208900CE8C38 /* nihtest.h */,
-				4B55D94E247573D500CE8C38 /* OS-Unix.cc */,
 				4BF1D824247CF90000353959 /* OS-Unix-run.cc */,
+				4B55D94E247573D500CE8C38 /* OS-Unix.cc */,
 				4B55D9532475783400CE8C38 /* OS-Windows.cc */,
 				4B55D9512475745700CE8C38 /* OS.cc */,
 				4B55D94F247573D500CE8C38 /* OS.h */,
@@ -157,6 +166,17 @@
 			);
 			name = Info;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		4BF1D829247D2CA300353959 /* regress */ = {
+			isa = PBXGroup;
+			children = (
+				4BF1D82A247D2CCF00353959 /* cat.test */,
+				4BF1D82C247D2CDD00353959 /* echo.test */,
+				4BF1D82B247D2CCF00353959 /* skip.test */,
+			);
+			name = regress;
+			path = ../regress;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,6 +237,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4B55D9522475745700CE8C38 /* OS.cc in Sources */,
+				4BF1D828247D242900353959 /* CompareArrays.cc in Sources */,
 				4B55D95C2476C78D00CE8C38 /* Exception.cc in Sources */,
 				4B55D95F2478249B00CE8C38 /* TestParser.cc in Sources */,
 				4B55D94D24756B0E00CE8C38 /* Test.cc in Sources */,

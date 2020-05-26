@@ -1,0 +1,4 @@
+program /bin/echo
+args Hello
+return 0
+stdout Hello
