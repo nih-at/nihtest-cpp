@@ -88,5 +88,5 @@ std::string OS::make_temp_directory(const std::string &directory, const std::str
     if (mkdtemp(temp_directory) == NULL) {
 	throw Exception("can't create temporary directory '" + name + "'", true);
     }
-    return directory;
+    return temp_directory;
 }

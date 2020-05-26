@@ -6,3 +6,4 @@ developer-xcode/NiHTest.xcodeproj/xcuserdata
 /.vs
 /out
 /CMakeSettings.json
+.DS_Store
