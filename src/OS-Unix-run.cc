@@ -261,6 +261,14 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 	    }
 
 	    for (nfds_t i = 0; i < nfds; i++) {
+                if (fds[i].revents & POLLIN) {
+                    if (fds[i].fd == pipe_output.read_fd) {
+                        buffer_output.read(pipe_output.read_fd);
+                    }
+                    if (fds[i].fd == pipe_error.read_fd) {
+                        buffer_error.read(pipe_error.read_fd);
+                    }
+                }
 		if (fds[i].revents & POLLHUP) {
 		    if (fds[i].fd == pipe_input.write_fd) {
 			if (!buffer_input.end()) {
@@ -281,14 +289,6 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 			    continue;
 			}
 		    }	
-		}
-		if (fds[i].revents & POLLIN) {
-		    if (fds[i].fd == pipe_output.read_fd) {
-			buffer_output.read(pipe_output.read_fd);
-		    }
-		    if (fds[i].fd == pipe_error.read_fd) {
-			buffer_error.read(pipe_error.read_fd);
-		    }
 		}
 	    }
 	}
