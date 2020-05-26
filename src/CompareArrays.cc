@@ -82,11 +82,13 @@ bool CompareArrays::compare_verbose() {
 
     while (expected_iter != expected.cend()) {
         print_line('-', *expected_iter);
+        ok = false;
         expected_iter++;
     }
 
     while (got_iter != got.cend()) {
         print_line('+', *got_iter);
+        ok = false;
         got_iter++;
     }
     
