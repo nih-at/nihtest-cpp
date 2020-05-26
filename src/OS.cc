@@ -41,3 +41,15 @@ std::string OS::append_path_component(const std::string &directory, const std::s
         return directory + path_separator + name;
     }
 }
+
+
+std::string OS::basename(const std::string &name) {
+    auto pos = name.rfind(path_separator);
+    
+    if (pos == std::string::npos) {
+        return name;
+    }
+    else {
+        return name.substr(pos + 1);
+    }
+}

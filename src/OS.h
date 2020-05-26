@@ -43,6 +43,7 @@ public:
     static const std::string path_separator;
 
     static std::string append_path_component(const std::string &directory, const std::string &name);
+    static std::string basename(const std::string &name);
     static void change_directory(const std::string &directory);
     static void copy_file(const std::string &from, const std::string &to);
     static bool file_exists(const std::string &file_name);

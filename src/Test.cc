@@ -75,15 +75,14 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
     top_build_directory = variables.get("TOP_BUILD_DIRECTORY");
     
     auto file_name = test_case;
-    auto dot = test_case.find('.');
+    name = OS::basename(test_case);
+    auto dot = name.find('.');
     if (dot != std::string::npos) {
-        name = test_case.substr(0, dot);
+        name = name.substr(0, dot);
     }
     else {
-        name = test_case;
-        file_name = test_case + ".test";
+        file_name += ".test";
     }
-    // TODO: strip dir from test name
     
     auto test_file_name = find_file(file_name);
     

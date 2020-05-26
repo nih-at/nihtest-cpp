@@ -75,9 +75,6 @@ bool CompareArrays::compare_verbose() {
             print_line('-', *exptected_iter);
             print_line('+', *got_iter);
         }
-        else {
-            print_line(' ', *exptected_iter);
-        }
         
         exptected_iter++;
         got_iter++;

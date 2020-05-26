@@ -275,6 +275,7 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 		if (fds[i].revents & POLLOUT) {
 		    if (fds[i].fd == pipe_input.write_fd) {
 			if (buffer_input.do_write(pipe_input.write_fd)) {
+                            pipe_input.close_write();
 			    nfds = pollfds_remove(fds, nfds, i);
 			    --i;
 			    continue;
