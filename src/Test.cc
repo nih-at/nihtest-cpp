@@ -49,7 +49,7 @@ const std::vector<Test::Directive> Test::directives = {
     Test::Directive("args", "[arg ...]", 0, true, true, -1),
     Test::Directive("description", "text", -1, true),
     Test::Directive("features", "feature ...", 1, true, false, -1),
-    Test::Directive("file", "test in out", 3),
+    Test::Directive("file", "test in [out]", 2, false, false, 3),
     Test::Directive("file-del", "test in", 2),
     Test::Directive("file-new", "test out", 2),
     Test::Directive("mkdir", "mode name", 2),
@@ -172,7 +172,12 @@ void Test::process_directive(const Directive *directive, const std::vector<std::
         required_features = args;
     }
     else if (directive->name == "file") {
-        files.push_back(File(args[0], args[1], args[2]));
+        if (args.size() == 2) {
+            files.push_back(File(args[0], args[1], args[1]));
+        }
+        else {
+            files.push_back(File(args[0], args[1], args[2]));
+        }
     }
     else if (directive->name == "file-del") {
         files.push_back(File(args[0], args[1], ""));
