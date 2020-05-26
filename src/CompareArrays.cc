@@ -61,30 +61,30 @@ bool CompareArrays::compare_quiet() {
 
 bool CompareArrays::compare_verbose() {
     printed_header = false;
-    
-    auto exptected_iter = expected.cbegin();
+
+    auto expected_iter = expected.cbegin();
     auto got_iter = got.cbegin();
     
     // TODO: find more common lines
     
     bool ok = true;
-    while (exptected_iter != expected.cend() && got_iter != got.cend()) {
-        if (*exptected_iter != *got_iter) {
+    while (expected_iter != expected.cend() && got_iter != got.cend()) {
+        if (*expected_iter != *got_iter) {
             ok = false;
-            
-            print_line('-', *exptected_iter);
+
+            print_line('-', *expected_iter);
             print_line('+', *got_iter);
         }
-        
-        exptected_iter++;
+
+        expected_iter++;
         got_iter++;
     }
 
-    while (exptected_iter != expected.cend()) {
-        print_line('-', *exptected_iter);
-        exptected_iter++;
+    while (expected_iter != expected.cend()) {
+        print_line('-', *expected_iter);
+        expected_iter++;
     }
-    
+
     while (got_iter != got.cend()) {
         print_line('+', *got_iter);
         got_iter++;
