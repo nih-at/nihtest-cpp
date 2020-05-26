@@ -49,6 +49,7 @@ public:
     static std::string get_error_string();
     static bool is_absolute(const std::string &file_name);
     static std::string make_temp_directory(const std::string &directory, const std::string &name);
+    static void remove_directory(const std::string &directory);
     static int run_command(const std::string &program, const std::vector<std::string> &arguments, const std::unordered_map<std::string, std::string> &environment, const std::vector<std::string> &input, std::vector<std::string> *output, std::vector<std::string> *error_output);
 };
 

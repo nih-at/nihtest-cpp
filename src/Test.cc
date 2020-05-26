@@ -144,14 +144,17 @@ bool Test::has_feature(const std::string &name) {
 
 
 void Test::leave_sandbox(bool keep) {
-    // TODO: implement
+    OS::change_directory("..");
+    if (!keep) {
+        OS::remove_directory(sandbox_name);
+    }
     return;
 }
 
 
 std::string Test::make_filename(const std::string &directory, const std::string name) const {
     std::string real_directory;
-    if (OS::is_absolute(directory)) {
+    if (!in_sandbox || OS::is_absolute(directory)) {
         real_directory = directory;
     }
     else {
@@ -244,6 +247,52 @@ void Test::process_directive(const Directive *directive, const std::vector<std::
 }
 
 
+void Test::print_result(Result result) const {
+    switch (result) {
+        case PASSED:
+        case SKIPPED:
+            if (print_results != ALWAYS) {
+                return;
+            }
+        case FAILED:
+        case ERROR:
+            if (print_results == NEVER) {
+                return;
+            }
+    }
+
+    std::cout << name << " -- ";
+    switch (result) {
+        case PASSED:
+            std::cout << "PASS";
+            break;
+            
+        case SKIPPED:
+            std::cout << "SKIP";
+            break;
+            
+        case FAILED: {
+            std::cout << "FAIL: ";
+            auto first = true;
+            for (auto type : failed) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    std::cout << ", ";
+                }
+                std::cout << type;
+            }
+            break;
+        }
+            
+        case ERROR:
+            std::cout << "ERROR";
+    }
+    std::cout << "\n";
+}
+
+
 VariablesPointer Test::read_features() {
     VariablesPointer features(new Variables());
     
@@ -270,9 +319,8 @@ VariablesPointer Test::read_features() {
 
 Test::Result Test::run(void) {
     if (!required_features.empty()) {
-	read_features();
 	for (auto feature : required_features) {
-	    if (!features->is_set(feature)) {
+	    if (!has_feature(feature)) {
 		return SKIPPED;
 	    }
 	}
@@ -297,8 +345,13 @@ Test::Result Test::run(void) {
 	auto exit_code_got = OS::run_command(program, arguments, environment, input, &output_got, &error_output_got);
 
         if (exit_code != exit_code_got) {
-            // TODO: output
-            failed = true;
+            failed.push_back("exit status");
+            if (print_results != NEVER) {
+                // TODO: handle signal exit (exit_code_got < 0)
+                std::cout << "Unexpected exit status:\n";
+                std::cout << "-" << exit_code << "\n";
+                std::cout << "+" << exit_code_got << "\n";
+            }
         }
         
 	// TODO: implement
@@ -308,6 +361,6 @@ Test::Result Test::run(void) {
         throw;
     }
 
-    leave_sandbox(keep_sandbox == ALWAYS || (keep_sandbox == WHEN_BROKEN && failed));
-    return failed ? FAILED : PASSED;
+    leave_sandbox(keep_sandbox == ALWAYS || (keep_sandbox == WHEN_BROKEN && !failed.empty()));
+    return failed.empty() ? PASSED : FAILED;
 }

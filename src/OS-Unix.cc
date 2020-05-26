@@ -90,3 +90,9 @@ std::string OS::make_temp_directory(const std::string &directory, const std::str
     }
     return temp_directory;
 }
+
+void OS::remove_directory(const std::string &directory) {
+    // TODO: proper implementation
+    auto command = "rm -r " + directory;
+    system(command.c_str());
+}

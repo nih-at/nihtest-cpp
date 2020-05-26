@@ -74,6 +74,11 @@ std::string OS::make_temp_directory(const std::string &directory, const std::str
 }
 
 
+void OS::remove_directory(const std::string &directory) {
+    // TODO: implement
+}
+
+
 int OS::run_command(const std::string &program, const std::vector<std::string> &arguments, const std::unordered_map<std::string, std::string> &environment, const std::vector<std::string> &input, std::vector<std::string> *output, std::vector<std::string> *error_output) {
     // TODO: implement
     return 0;

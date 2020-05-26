@@ -156,13 +156,15 @@ int main(int argc, char *argv[]) {
     
     try {
         test.initialize(argv[optind], variables);
-        exit(test.run());
+        auto result = test.run();
+        test.print_result(result);
+        exit(result);
     }
     catch (Exception e) {
         if (e.print_message) {
             std::cerr << getprogname() << ": " << e.what() << "\n";
         }
-        exit(1);
+        exit(Test::ERROR);
     }
 }
 

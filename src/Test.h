@@ -50,9 +50,10 @@ public:
     };
 
     enum Result {
-	PASSED,
-	FAILED,
-	SKIPPED
+        PASSED = 0,
+        FAILED = 1,
+        SKIPPED = 77,
+        ERROR = 99
     };
     
     struct Directive {
@@ -69,8 +70,9 @@ public:
     Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
     
     void initialize(const std::string &name, const Variables &variables);
+    void print_result(Result result) const;
     Result run(void);
-    
+
     void process_directive(const Directive *directive, const std::vector<std::string> &args);
     
     std::string name;
@@ -103,7 +105,7 @@ private:
     
     bool in_sandbox;
     std::string sandbox_name;
-    bool failed;
+    std::vector<std::string> failed;
 
     std::vector<std::string> arguments;
     std::unordered_map<std::string, int> directories;
