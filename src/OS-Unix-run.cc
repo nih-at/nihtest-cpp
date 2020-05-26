@@ -64,8 +64,8 @@ public:
 
     bool end() { return offset == size; }
     void get_lines(std::vector<std::string> *lines);
-    bool do_write(int fd);
-    void do_read(int fd);
+    bool write(int fd);
+    void read(int fd);
 
   private:
     char *data;
@@ -105,8 +105,8 @@ Buffer::~Buffer() {
 
 
 void
-Buffer::do_read(int fd) {
-    auto n = read(fd, data + offset, size - offset);
+Buffer::read(int fd) {
+    auto n = ::read(fd, data + offset, size - offset);
 
     if (n < 0) {
 	throw Exception("read error", true);
@@ -122,12 +122,12 @@ Buffer::do_read(int fd) {
 
 
 bool
-Buffer::do_write(int fd) {
+Buffer::write(int fd) {
     if (offset == size) {
 	return true;
     }
 
-    auto n = write(fd, data + offset, size - offset);
+    auto n = ::write(fd, data + offset, size - offset);
 
     if (n < 0) {
 	throw Exception("write error", true);
@@ -274,7 +274,7 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 		}
 		if (fds[i].revents & POLLOUT) {
 		    if (fds[i].fd == pipe_input.write_fd) {
-			if (buffer_input.do_write(pipe_input.write_fd)) {
+			if (buffer_input.write(pipe_input.write_fd)) {
                             pipe_input.close_write();
 			    nfds = pollfds_remove(fds, nfds, i);
 			    --i;
@@ -284,10 +284,10 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 		}
 		if (fds[i].revents & POLLIN) {
 		    if (fds[i].fd == pipe_output.read_fd) {
-			buffer_output.do_read(pipe_output.read_fd);
+			buffer_output.read(pipe_output.read_fd);
 		    }
 		    if (fds[i].fd == pipe_error.read_fd) {
-			buffer_error.do_read(pipe_error.read_fd);
+			buffer_error.read(pipe_error.read_fd);
 		    }
 		}
 	    }
