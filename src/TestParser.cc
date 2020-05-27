@@ -120,10 +120,15 @@ void TestParser::print_error(const std::string &message) {
 
 
 void TestParser::tokenize(std::vector<std::string> *args, const std::string &line, std::string::size_type start) {
+    auto whitespace = " \t";
+    
+    start = line.find_first_not_of(whitespace, start);
     auto end = line.size();
         
     while (start < end) {
         if (line[start] == '"') {
+            print_error("quoted arguments not impleented yet");
+            return;
             // TODO: parse quoted arg
         }
         else {
@@ -134,7 +139,7 @@ void TestParser::tokenize(std::vector<std::string> *args, const std::string &lin
             }
             else {
                 args->push_back(line.substr(start, space-start));
-                start = space + 1;
+                start = line.find_first_not_of(whitespace, space + 1);
             }
         }
     }

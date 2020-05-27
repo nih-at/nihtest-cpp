@@ -128,26 +128,11 @@ void Test::enter_sandbox() {
     sandbox_name = OS::make_temp_directory(sandbox_directory, "sandbox_" + name);
 
     OS::change_directory(sandbox_name);
+    in_sandbox = true;
 }
 
 
 Test::Result Test::execute_test() {
-    if (!required_features.empty()) {
-        for (auto feature : required_features) {
-            if (!has_feature(feature)) {
-                return SKIPPED;
-            }
-        }
-    }
-    
-    auto operating_system = OS::operating_system();
-    if (!preload_library.empty()) {
-        if (operating_system == "Darwin" || operating_system == "Windows") {
-            return SKIPPED;
-        }
-    }
-    // TODO: skip if preload &c not supported
-    
     enter_sandbox();
     
     try {
@@ -165,7 +150,6 @@ Test::Result Test::execute_test() {
         if (exit_code != exit_code_got) {
             failed.push_back("exit status");
             if (print_results != NEVER) {
-                // TODO: handle signal exit (exit_code_got < 0)
                 std::cout << "Unexpected exit status:\n";
                 std::cout << "-" << exit_code << "\n";
                 std::cout << "+" << exit_code_got << "\n";
@@ -187,9 +171,21 @@ Test::Result Test::execute_test() {
 }
 
 
-std::string Test::find_file(const std::string &name) {
-    if (OS::file_exists(name)) {
+std::string Test::find_file(const std::string &name) const {
+    if (OS::is_absolute(name)) {
         return name;
+    }
+    
+    std::string build_name;
+    if (in_sandbox) {
+        build_name = OS::append_path_component("..", name);
+    }
+    else {
+        build_name = name;
+    }
+    
+    if (OS::file_exists(build_name)) {
+        return build_name;
     }
     
     if (!source_directory.empty()) {
@@ -233,7 +229,7 @@ std::string Test::make_filename(const std::string &directory, const std::string 
         real_directory = directory;
     }
     else {
-        real_directory = OS::append_path_component(directory, "..");
+        real_directory = OS::append_path_component("..", directory);
     }
     return OS::append_path_component(real_directory, name);
 }
@@ -398,8 +394,24 @@ VariablesPointer Test::read_features() {
 
 
 Test::Result Test::run() {
+    auto operating_system = OS::operating_system();
+    if (!preload_library.empty()) {
+        if (operating_system == "Darwin" || operating_system == "Windows") {
+            return SKIPPED;
+        }
+    }
+
+    // TODO: skip if limits &c not supported
+
+    if (!required_features.empty()) {
+        for (auto feature : required_features) {
+            if (!has_feature(feature)) {
+                return SKIPPED;
+            }
+        }
+    }
+
     auto result = execute_test();
-    
     print_result(result);
     return result;
 }

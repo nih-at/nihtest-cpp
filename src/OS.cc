@@ -75,11 +75,11 @@ OS::copy_file(const std::string &from, const std::string &to) {
         char buf[8192];
         
         from_file.read(buf, sizeof(buf));
-        if (from_file.fail()) {
+        if (from_file.bad()) {
             throw Exception("error reading from '" + from + "'", true);
         }
         to_file.write(buf, from_file.gcount());
-        if (to_file.fail()) {
+        if (to_file.bad()) {
             throw Exception("error writing to '" + from + "'", true);
         }
     }

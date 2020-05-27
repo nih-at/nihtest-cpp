@@ -199,6 +199,9 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
     Pipe pipe_output, pipe_error;
     std::shared_ptr<Pipe> pipe_input;
     std::string preload_library;
+    std::string program;
+    
+    program = test->find_file(test->program);
     
     if (!test->preload_library.empty()) {
         char *cwd_c = getcwd(NULL, 0);
@@ -269,7 +272,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
 
 	size_t index = 0;
 	argv[index++] = test->program.c_str();
-	for (auto arg : test->arguments) {
+	for (auto &arg : test->arguments) {
 	    argv[index++] = arg.c_str();
 	}
 	argv[index++] = NULL;
@@ -280,7 +283,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
             setenv("LD_PRELOAD", preload_library.c_str(), 1);
         }
 
-	execv(argv[0], const_cast<char *const *>(argv));
+        execv(program.c_str(), const_cast<char *const *>(argv));
 	std::cerr << "can't start program '" << test->program << "': " << strerror(errno) << "\n";
 	exit(17);
     }

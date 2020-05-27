@@ -82,7 +82,8 @@ struct option options[] = {
     { "no-cleanup", 0, 0, OPT_NO_CLEANUP },
     { "quiet", 0, 0, 'q' },
     { "setup-only", 0, 0, OPT_SETUP_ONLY },
-    { "verbose", 0, 0, 'v' }
+    { "verbose", 0, 0, 'v' },
+    { NULL, 0, 0, 0 }
 };
     
 

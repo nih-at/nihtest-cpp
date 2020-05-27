@@ -80,9 +80,9 @@ public:
     Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
     
     void initialize(const std::string &name, const Variables &variables);
-    void print_result(Result result) const;
     Result run();
 
+    std::string find_file(const std::string &name) const;
     void process_directive(const Directive *directive, const std::vector<std::string> &args);
     
     std::string name;
@@ -118,11 +118,11 @@ private:
     void compare_files();
     void enter_sandbox();
     Result execute_test();
-    std::string find_file(const std::string &name);
     int get_int(const std::string &string);
     bool has_feature(const std::string &name);
     void leave_sandbox(bool keep);
     std::string make_filename(const std::string &directory, const std::string name) const;
+    void print_result(Result result) const;
     VariablesPointer read_features();
     
     bool in_sandbox;
