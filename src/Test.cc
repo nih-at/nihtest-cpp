@@ -49,7 +49,7 @@ Test::Directive::Directive(const std::string name_, const std::string usage_, in
 }
 
 const std::vector<Test::Directive> Test::directives = {
-    Test::Directive("args", "[arg ...]", 0, true, true, -1),
+    Test::Directive("args", "[arg ...]", 0, true, false, -1),
     Test::Directive("description", "text", -1, true),
     Test::Directive("features", "feature ...", 1, true, false, -1),
     Test::Directive("file", "test in [out]", 2, false, false, 3),
@@ -133,6 +133,23 @@ void Test::enter_sandbox() {
 
 
 Test::Result Test::execute_test() {
+    auto operating_system = OS::operating_system();
+    if (!preload_library.empty()) {
+        if (operating_system == "Darwin" || operating_system == "Windows") {
+            return SKIPPED;
+        }
+    }
+    
+    // TODO: skip if limits &c not supported
+    
+    if (!required_features.empty()) {
+        for (auto feature : required_features) {
+            if (!has_feature(feature)) {
+                return SKIPPED;
+            }
+        }
+    }
+    
     enter_sandbox();
     
     try {
@@ -379,7 +396,7 @@ VariablesPointer Test::read_features() {
         throw Exception("cannot open config header '" + config_file_name + "'", true);
     }
     
-    auto define = std::regex("^#define ([_A-Za-z0-9]*)$");
+    auto define = std::regex("^#define HAVE_([_A-Za-z0-9]*)$");
     
     std::string line;
     while (std::getline(config_file, line)) {
@@ -394,23 +411,6 @@ VariablesPointer Test::read_features() {
 
 
 Test::Result Test::run() {
-    auto operating_system = OS::operating_system();
-    if (!preload_library.empty()) {
-        if (operating_system == "Darwin" || operating_system == "Windows") {
-            return SKIPPED;
-        }
-    }
-
-    // TODO: skip if limits &c not supported
-
-    if (!required_features.empty()) {
-        for (auto feature : required_features) {
-            if (!has_feature(feature)) {
-                return SKIPPED;
-            }
-        }
-    }
-
     auto result = execute_test();
     print_result(result);
     return result;
