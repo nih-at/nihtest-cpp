@@ -67,11 +67,21 @@ public:
         Directive(const std::string name_, const std::string usage_, int minimum_arguments_, bool required_ = false, bool only_once = false, int maximum_arguments_ = 0);
     };
 
+    struct File {
+        std::string name;
+        std::string input;
+        std::string output;
+        
+        File(const std::string &name_, const std::string &input_, const std::string &output_) : name(name_), input(input_), output(output_) { }
+        
+        bool operator<(File other) const { return name < other.name; }
+    };
+
     Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
     
     void initialize(const std::string &name, const Variables &variables);
     void print_result(Result result) const;
-    Result run(void);
+    Result run();
 
     void process_directive(const Directive *directive, const std::vector<std::string> &args);
     
@@ -85,18 +95,12 @@ public:
     VariablesPointer features;
     
 private:
-    struct File {
-        std::string name;
-        std::string input;
-        std::string output;
-        
-        File(const std::string &name_, const std::string &input_, const std::string &output_) : name(name_), input(input_), output(output_) { }
-    };
-    
     static const std::vector<Directive> directives;
     
     void compare_arrays(const std::vector<std::string> &expected, const std::vector<std::string> &got, const std::string &what);
+    void compare_files();
     void enter_sandbox();
+    Result execute_test();
     std::string find_file(const std::string &name);
     int get_int(const std::string &string);
     bool has_feature(const std::string &name);

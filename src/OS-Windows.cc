@@ -34,15 +34,12 @@
 
 #include "OS.h"
 
+#include <algorithm>
+
 const std::string OS::path_separator = "\\";
 
 
 void OS::change_directory(const std::string &directory) {
-    // TODO: implement
-}
-
-
-void OS::copy_file(const std::string &from, const std::string &to) {
     // TODO: implement
 }
 
@@ -68,6 +65,16 @@ bool OS::is_absolute(const std::string &file_name) {
 }
 
 
+std::vector<std::string> OS::list_files(const std::string &directory) {
+    std::vector<std::string> files;
+    
+    // TODO: implement
+
+    std::sort(files.begin(), files.end());
+    
+    return files;
+}
+    
 std::string OS::make_temp_directory(const std::string &directory, const std::string &name) {
     // TODO: implement
     return "";

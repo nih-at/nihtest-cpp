@@ -33,11 +33,13 @@
 
 #include "Test.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <regex>
 
 #include "CompareArrays.h"
+#include "CompareFiles.h"
 #include "Exception.h"
 #include "OS.h"
 #include "TestParser.h"
@@ -90,14 +92,16 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
     
     parser.parse();
 
-    // TODO: read pipefile into input
-    
     if (program.empty()) {
         program = variables.get("DEFAULT_PROGRAM");
         if (program.empty()) {
             throw Exception("no program specified");
         }
     }
+
+    // TODO: read pipefile into input
+
+    std::sort(files.begin(), files.end());
 }
 
 void Test::compare_arrays(const std::vector<std::string> &expected, const std::vector<std::string> &got, const std::string &what) {
@@ -108,6 +112,15 @@ void Test::compare_arrays(const std::vector<std::string> &expected, const std::v
 }
 
 
+void Test::compare_files() {
+    std::vector<std::string> files_got = OS::list_files(".");
+    
+    auto compare = CompareFiles(files, files_got, print_results != NEVER);
+    if (!compare.compare()) {
+        failed.push_back("files");
+    }
+}
+
 
 void Test::enter_sandbox() {
     if (in_sandbox) {
@@ -117,6 +130,58 @@ void Test::enter_sandbox() {
     sandbox_name = OS::make_temp_directory(sandbox_directory, "sandbox_" + name);
 
     OS::change_directory(sandbox_name);
+}
+
+
+Test::Result Test::execute_test() {
+    if (!required_features.empty()) {
+        for (auto feature : required_features) {
+            if (!has_feature(feature)) {
+                return SKIPPED;
+            }
+        }
+    }
+    
+    // TODO: skip if preload &c not supported
+    
+    enter_sandbox();
+    
+    try {
+        for (auto file : files) {
+            if (!file.input.empty()) {
+                OS::copy_file(find_file(file.input), file.name);
+            }
+        }
+        
+        // TODO: setenv, limits, &c
+        
+        std::vector<std::string> error_output_got;
+        std::vector<std::string> output_got;
+        
+        auto exit_code_got = OS::run_command(program, arguments, environment, input, &output_got, &error_output_got);
+        
+        if (exit_code != exit_code_got) {
+            failed.push_back("exit status");
+            if (print_results != NEVER) {
+                // TODO: handle signal exit (exit_code_got < 0)
+                std::cout << "Unexpected exit status:\n";
+                std::cout << "-" << exit_code << "\n";
+                std::cout << "+" << exit_code_got << "\n";
+            }
+        }
+        
+        compare_arrays(output, output_got, "output");
+        compare_arrays(error_output, error_output_got, "error output");
+        
+        compare_files();
+    }
+    catch (Exception e) {
+        leave_sandbox(keep_sandbox != NEVER);
+        throw;
+    }
+    
+    leave_sandbox(keep_sandbox == ALWAYS || (keep_sandbox == WHEN_BROKEN && !failed.empty()));
+    return failed.empty() ? PASSED : FAILED;
 }
 
 
@@ -330,53 +395,9 @@ VariablesPointer Test::read_features() {
 }
 
 
-Test::Result Test::run(void) {
-    if (!required_features.empty()) {
-	for (auto feature : required_features) {
-	    if (!has_feature(feature)) {
-		return SKIPPED;
-	    }
-	}
-    }
-
-    // TODO: skip if preload &c not supported
+Test::Result Test::run() {
+    auto result = execute_test();
     
-    enter_sandbox();
-
-    try {
-	for (auto file : files) {
-	    if (!file.input.empty()) {
-		OS::copy_file(find_file(file.input), file.name);
-	    }
-	}
-
-	// TODO: setenv, limits, &c
-
-	std::vector<std::string> error_output_got;
-	std::vector<std::string> output_got;
-
-	auto exit_code_got = OS::run_command(program, arguments, environment, input, &output_got, &error_output_got);
-
-        if (exit_code != exit_code_got) {
-            failed.push_back("exit status");
-            if (print_results != NEVER) {
-                // TODO: handle signal exit (exit_code_got < 0)
-                std::cout << "Unexpected exit status:\n";
-                std::cout << "-" << exit_code << "\n";
-                std::cout << "+" << exit_code_got << "\n";
-            }
-        }
-        
-        compare_arrays(output, output_got, "output");
-        compare_arrays(error_output, error_output_got, "error output");
-        
-        // TODO: compare files
-    }
-    catch (Exception e) {
-	leave_sandbox(keep_sandbox != NEVER);
-        throw;
-    }
-
-    leave_sandbox(keep_sandbox == ALWAYS || (keep_sandbox == WHEN_BROKEN && !failed.empty()));
-    return failed.empty() ? PASSED : FAILED;
+    print_result(result);
+    return result;
 }

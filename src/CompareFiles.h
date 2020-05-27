@@ -1,5 +1,5 @@
 /*
-  OS.h -- operating specific functions
+  CompareFiles.h -- compare files
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,28 +31,28 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef HAD_OS_H
-#define HAD_OS_H
+#ifndef HAD_COMPARE_FILES_H
+#define HAD_COMPARE_FILES_H
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 
-class OS {
-public:
-    static const std::string path_separator;
+#include "Test.h"
 
-    static std::string append_path_component(const std::string &directory, const std::string &name);
-    static std::string basename(const std::string &name);
-    static void change_directory(const std::string &directory);
-    static void copy_file(const std::string &from, const std::string &to);
-    static bool file_exists(const std::string &file_name);
-    static std::string get_error_string();
-    static std::vector<std::string> list_files(const std::string &directory);
-    static bool is_absolute(const std::string &file_name);
-    static std::string make_temp_directory(const std::string &directory, const std::string &name);
-    static void remove_directory(const std::string &directory);
-    static int run_command(const std::string &program, const std::vector<std::string> &arguments, const std::unordered_map<std::string, std::string> &environment, const std::vector<std::string> &input, std::vector<std::string> *output, std::vector<std::string> *error_output);
+class CompareFiles {
+public:
+    CompareFiles(const std::vector<Test::File> &expected_, const std::vector<std::string> &got_, bool verbose_) : expected(expected_), got(got_), verbose(verbose_), ok(true) { }
+
+    bool compare();
+    
+private:
+    void print_line(char indicator, const std::string &line);
+    
+    const std::vector<Test::File> &expected;
+    const std::vector<std::string> &got;
+    bool verbose;
+    
+    bool ok;
 };
 
-#endif // HAD_OS_H
+#endif // HAD_COMPARE_FILES_H

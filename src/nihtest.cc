@@ -156,9 +156,7 @@ int main(int argc, char *argv[]) {
     
     try {
         test.initialize(argv[optind], variables);
-        auto result = test.run();
-        test.print_result(result);
-        exit(result);
+        exit(test.run());
     }
     catch (Exception e) {
         if (e.print_message) {

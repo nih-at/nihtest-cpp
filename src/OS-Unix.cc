@@ -34,11 +34,13 @@
 #include "OS.h"
 
 #include <sys/stat.h>
+#include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#include <algorithm>
 #include <iostream>
 
 #include "Exception.h"
@@ -52,11 +54,6 @@ void OS::change_directory(const std::string &directory) {
     }
 }
 
-void
-OS::copy_file(const std::string &from, const std::string &to) {
-    // TODO: implement
-    return;
-}
 
 bool OS::file_exists(const std::string &file_name) {
     struct stat st;
@@ -75,6 +72,29 @@ bool OS::is_absolute(const std::string &file_name) {
         return false;
     }
     return file_name[0] == '/';
+}
+
+
+std::vector<std::string> OS::list_files(const std::string &directory) {
+    DIR *dir = opendir(directory.c_str());
+    if (dir == NULL) {
+        throw Exception("can't list directory '" + directory + "'", true);
+    }
+
+    std::vector<std::string> files;
+    
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+        files.push_back(entry->d_name);
+    }
+    closedir(dir);
+
+    std::sort(files.begin(), files.end());
+    
+    return files;
 }
 
 

@@ -33,6 +33,10 @@
 
 #include "OS.h"
 
+#include <fstream>
+
+#include "Exception.h"
+
 std::string OS::append_path_component(const std::string &directory, const std::string &name) {
     if (directory.empty()) {
         return name;
@@ -51,5 +55,32 @@ std::string OS::basename(const std::string &name) {
     }
     else {
         return name.substr(pos + 1);
+    }
+}
+
+
+void
+OS::copy_file(const std::string &from, const std::string &to) {
+    auto from_file = std::ifstream(from);
+    if (!from_file) {
+        throw Exception("cannot open '" + from + "'", true);
+    }
+    
+    auto to_file = std::ofstream(to);
+    if (!to_file) {
+        throw Exception("cannot create '" + from + "'", true);
+    }
+
+    while (!from_file.eof()) {
+        char buf[8192];
+        
+        from_file.read(buf, sizeof(buf));
+        if (from_file.fail()) {
+            throw Exception("error reading from '" + from + "'", true);
+        }
+        to_file.write(buf, from_file.gcount());
+        if (to_file.fail()) {
+            throw Exception("error writing to '" + from + "'", true);
+        }
     }
 }
