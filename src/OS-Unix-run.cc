@@ -217,7 +217,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
         if (preload_directory != ".") {
             dir += "/" + preload_directory;
         }
-        preload_library = dir + "/.libs/" + preload_name;
+        preload_library = dir + "/.libs/lib" + preload_name;
         if (!OS::file_exists(preload_library)) {
             preload_library = dir + "/lib" + preload_name;
             if (!OS::file_exists(preload_library)) {
