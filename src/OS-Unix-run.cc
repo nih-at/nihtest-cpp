@@ -219,7 +219,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
         }
         preload_library = dir + "/.libs/" + preload_name;
         if (!OS::file_exists(preload_library)) {
-            preload_library = dir + "/" + preload_name;
+            preload_library = dir + "/lib" + preload_name;
             if (!OS::file_exists(preload_library)) {
                 throw Exception("preload library '" + test->preload_library + "' doesn't exist");
             }
