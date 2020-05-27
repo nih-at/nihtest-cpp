@@ -84,3 +84,15 @@ OS::copy_file(const std::string &from, const std::string &to) {
         }
     }
 }
+
+
+std::string OS::dirname(const std::string &name) {
+    auto pos = name.rfind(path_separator);
+    
+    if (pos == std::string::npos) {
+        return ".";
+    }
+    else {
+        return name.substr(0, pos);
+    }
+}

@@ -99,8 +99,6 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
         }
     }
 
-    // TODO: read pipefile into input
-
     std::sort(files.begin(), files.end());
 }
 
@@ -142,6 +140,12 @@ Test::Result Test::execute_test() {
         }
     }
     
+    auto operating_system = OS::operating_system();
+    if (!preload_library.empty()) {
+        if (operating_system == "Darwin" || operating_system == "Windows") {
+            return SKIPPED;
+        }
+    }
     // TODO: skip if preload &c not supported
     
     enter_sandbox();
@@ -153,12 +157,10 @@ Test::Result Test::execute_test() {
             }
         }
         
-        // TODO: setenv, limits, &c
-        
         std::vector<std::string> error_output_got;
         std::vector<std::string> output_got;
         
-        auto exit_code_got = OS::run_command(program, arguments, environment, input, &output_got, &error_output_got);
+        auto exit_code_got = OS::run_command(this, &output_got, &error_output_got);
         
         if (exit_code != exit_code_got) {
             failed.push_back("exit status");
@@ -280,7 +282,7 @@ void Test::process_directive(const Directive *directive, const std::vector<std::
         program = args[0];
     }
     else if (directive->name == "return") {
-        exit_code = get_int(args[0]);
+        exit_code = args[0];
     }
     else if (directive->name == "setenv") {
         if (environment.find(args[0]) != environment.end()) {

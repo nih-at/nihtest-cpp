@@ -37,6 +37,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <poll.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -194,61 +195,118 @@ void Pipe::close_write() {
 }
 
 
-int OS::run_command(const std::string &program, const std::vector<std::string> &arguments, const std::unordered_map<std::string, std::string> &environment, const std::vector<std::string> &input, std::vector<std::string> *output, std::vector<std::string> *error_output) {
-    Pipe pipe_input, pipe_output, pipe_error;
+std::string OS::run_command(const Test *test, std::vector<std::string> *output, std::vector<std::string> *error_output) {
+    Pipe pipe_output, pipe_error;
+    std::shared_ptr<Pipe> pipe_input;
+    std::string preload_library;
+    
+    if (!test->preload_library.empty()) {
+        char *cwd_c = getcwd(NULL, 0);
+        if (cwd_c == NULL) {
+            throw Exception("can't get current directory", true);
+        }
+        auto dir = std::string(cwd_c) + "/..";
+        free(cwd_c);
 
+        auto preload_directory = OS::dirname(test->preload_library);
+        auto preload_name = OS::basename(test->preload_library);
+        
+        if (preload_directory != ".") {
+            dir += "/" + preload_directory;
+        }
+        preload_library = dir + "/.libs/" + preload_name;
+        if (!OS::file_exists(preload_library)) {
+            preload_library = dir + "/" + preload_name;
+            if (!OS::file_exists(preload_library)) {
+                throw Exception("preload library '" + test->preload_library + "' doesn't exist");
+            }
+        }
+    }
+
+    if (!test->input.empty()) {
+        pipe_input = std::make_shared<Pipe>();
+    }
+    
     pid_t pid = fork();
-
+    
     switch (pid) {
     case -1:
 	throw Exception("can't fork", true);
 
     case 0: { // child
-	pipe_input.close_write();
+        if (pipe_input) {
+            pipe_input->close_write();
+        }
 	pipe_output.close_read();
 	pipe_error.close_read();
 
-	if (dup2(pipe_input.read_fd, 0) < 0 || dup2(pipe_output.write_fd, 1) < 0 || dup2(pipe_error.write_fd, 2) < 0) {
+        auto ok = true;
+        
+        // TODO: handle pipein-file
+        
+        if (pipe_input) {
+            if (dup2(pipe_input->read_fd, 0) < 0) {
+                ok = false;
+            }
+            
+        }
+        if (ok) {
+            if (dup2(pipe_output.write_fd, 1) < 0 || dup2(pipe_error.write_fd, 2) < 0) {
+                ok = false;
+            }
+        }
+        if (!ok) {
 	    std::string message = "can't set up standard file descriptors: " + std::string(strerror(errno)) + "\n";
 	    write(pipe_error.write_fd, message.c_str(), message.size());
 	    exit(17);
 	}
 
-	for (auto pair : environment) {
+	for (auto pair : test->environment) {
 	    setenv(pair.first.c_str(), pair.second.c_str(), 1);
 	}
 
-	const char * argv[arguments.size() + 2];
+	const char * argv[test->arguments.size() + 2];
 
 	size_t index = 0;
-	argv[index++] = program.c_str();
-	for (auto arg : arguments) {
+	argv[index++] = test->program.c_str();
+	for (auto arg : test->arguments) {
 	    argv[index++] = arg.c_str();
 	}
 	argv[index++] = NULL;
-			
+        
+        // TODO: set limits
+        
+        if (!preload_library.empty()) {
+            setenv("LD_PRELOAD", preload_library.c_str(), 1);
+        }
+
 	execv(argv[0], const_cast<char *const *>(argv));
-	std::cerr << "can't start program '" << program << "': " << strerror(errno) << "\n";
+	std::cerr << "can't start program '" << test->program << "': " << strerror(errno) << "\n";
 	exit(17);
     }
 
     default: { // parent
-	pipe_input.close_read();
+        if (pipe_input) {
+            pipe_input->close_read();
+        }
 	pipe_output.close_write();
 	pipe_error.close_write();
-	// TODO: write stin, read stdout/stderr
 
-	auto buffer_input = Buffer(input);
+        std::shared_ptr<Buffer> buffer_input;
 	auto buffer_output = Buffer(BUFFER_SIZE);
 	auto buffer_error = Buffer(BUFFER_SIZE);
 
 	struct pollfd fds[] = {
-			       { pipe_input.write_fd, POLLOUT, 0 },
-			       { pipe_output.read_fd, POLLIN, 0 },
-			       { pipe_error.read_fd, POLLIN, 0 }
+            { pipe_output.read_fd, POLLIN, 0 },
+            { pipe_error.read_fd, POLLIN, 0 },
+            { -1, POLLOUT, 0 }
 	};
-	nfds_t nfds = 3;
-	
+	nfds_t nfds = 2;
+
+        if (pipe_input) {
+            buffer_input = std::make_shared<Buffer>(test->input);
+            fds[nfds++].fd = pipe_input->write_fd;
+        }
 
 	while (nfds > 0) {
 	    auto ret = poll(fds, nfds, -1); // TODO: timeout
@@ -270,8 +328,8 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
                     }
                 }
 		if (fds[i].revents & POLLHUP) {
-		    if (fds[i].fd == pipe_input.write_fd) {
-			if (!buffer_input.end()) {
+		    if (pipe_input && fds[i].fd == pipe_input->write_fd) {
+			if (!buffer_input->end()) {
 			    // TODO: stdin closed before we wrote all data
 			}
 		    }
@@ -281,9 +339,9 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 		    continue;
 		}
 		if (fds[i].revents & POLLOUT) {
-		    if (fds[i].fd == pipe_input.write_fd) {
-			if (buffer_input.write(pipe_input.write_fd)) {
-                            pipe_input.close_write();
+		    if (pipe_input && fds[i].fd == pipe_input->write_fd) {
+			if (buffer_input->write(pipe_input->write_fd)) {
+                            pipe_input->close_write();
 			    nfds = pollfds_remove(fds, nfds, i);
 			    --i;
 			    continue;
@@ -300,14 +358,46 @@ int OS::run_command(const std::string &program, const std::vector<std::string> &
 	waitpid(pid, &status, 0);
 
 	if (WIFEXITED(status)) {
-	    return WEXITSTATUS(status);
+	    return std::to_string(WEXITSTATUS(status));
 	}
 	else if (WIFSIGNALED(status)) {
-	    return -WTERMSIG(status);
+            switch WTERMSIG(status) {
+            case SIGABRT:
+                return "SIGABRT";
+            case SIGALRM:
+                return "SIGALRM";
+            case SIGBUS:
+                return "SIGBUS";
+            case SIGFPE:
+                return "SIGFPE";
+            case SIGHUP:
+                return "SIGHUP";
+            case SIGILL:
+                return "SIGILL";
+            case SIGINT:
+                return "SIGINT";
+            case SIGKILL:
+                return "SIGKILL";
+            case SIGPIPE:
+                return "SIGPIPE";
+            case SIGQUIT:
+                return "SIGQUIT";
+            case SIGSEGV:
+                return "SIGSEGV";
+            case SIGSYS:
+                return "SIGSYS";
+            case SIGTERM:
+                return "SIGTERM";
+            case SIGTRAP:
+                return "SIGTRAP";
+                
+            default:
+                return "unknown signal " + std::to_string(WTERMSIG(status));
+            }
 	}
 	else {
 	    // can this happen?!
-	    return -1700;
+	    return "unknown status " + std::to_string(status);
 	}
     }
     }

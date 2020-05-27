@@ -92,7 +92,24 @@ public:
     std::string sandbox_directory;
     std::string source_directory;
     std::string top_build_directory;
-    VariablesPointer features;
+    
+    std::vector<std::string> arguments;
+    std::unordered_map<std::string, int> directories;
+    std::unordered_map<std::string, std::string> environment;
+    std::vector<std::string> error_output;
+    std::regex error_output_pattern;
+    std::string error_output_replacement;
+    std::string exit_code;
+    std::vector<File> files;
+    std::vector<std::string> input;
+    std::unordered_map<char, int> limits;
+    std::vector<std::string> output;
+    std::string pipe_file;
+    std::vector<std::string> precheck_command;
+    std::string preload_library;
+    std::string program;
+    std::vector<std::string> required_features;
+    std::unordered_map<std::string, time_t> touch_files;
     
 private:
     static const std::vector<Directive> directives;
@@ -111,24 +128,7 @@ private:
     bool in_sandbox;
     std::string sandbox_name;
     std::vector<std::string> failed;
-
-    std::vector<std::string> arguments;
-    std::unordered_map<std::string, int> directories;
-    std::unordered_map<std::string, std::string> environment;
-    std::vector<std::string> error_output;
-    std::regex error_output_pattern;
-    std::string error_output_replacement;
-    int exit_code;
-    std::vector<File> files;
-    std::vector<std::string> input;
-    std::unordered_map<char, int> limits;
-    std::vector<std::string> output;
-    std::string pipe_file;
-    std::vector<std::string> precheck_command;
-    std::string preload_library;
-    std::string program;
-    std::vector<std::string> required_features;
-    std::unordered_map<std::string, time_t> touch_files;
+    VariablesPointer features;
 };
 
 #endif // HAD_TEST_H

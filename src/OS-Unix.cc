@@ -34,6 +34,7 @@
 #include "OS.h"
 
 #include <sys/stat.h>
+#include <sys/utsname.h>
 #include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -115,4 +116,14 @@ void OS::remove_directory(const std::string &directory) {
     // TODO: proper implementation
     auto command = "rm -r " + directory;
     system(command.c_str());
+}
+
+std::string OS::operating_system() {
+    struct utsname name;
+    
+    if (uname(&name) < 0) {
+        throw Exception("can't get system information", true);
+    }
+    
+    return name.sysname;
 }
