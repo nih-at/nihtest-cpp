@@ -127,9 +127,60 @@ void TestParser::tokenize(std::vector<std::string> *args, const std::string &lin
         
     while (start < end) {
         if (line[start] == '"') {
-            print_error("quoted arguments not impleented yet");
-            return;
-            // TODO: parse quoted arg
+            std::string arg;
+            start += 1;
+            while (start < end && line[start] != '"') {
+                auto next = line.find_first_of("\\\"", start);
+                if (next == std::string::npos) {
+                    start = end;
+                    break;
+                }
+                arg += line.substr(start, next - start);
+                if (line[next] == '"') {
+                    start = next + 1;
+                    break;
+                }
+                else {
+                    if (next == end - 1) {
+                        print_error("trailing \\ esacpe");
+                        return;
+                    }
+                    switch (line[next + 1]) {
+                    case '\\':
+                    case '"':
+                        arg += '\\';
+                        break;
+                        
+                    case 'b':
+                        arg += '\b';
+                        break;
+                        
+                    case 'f':
+                        arg += '\f';
+                        break;
+                        
+                    case 'n':
+                        arg += '\n';
+                        break;
+
+                    case 'r':
+                        arg += '\r';
+                        break;
+
+                    case 't':
+                        arg += '\t';
+                        break;
+                    }
+                    start = next + 2;
+                }
+            }
+
+            if (start == end) {
+                print_error("unterminated quoted argument");
+                return;
+            }
+            args->push_back(arg);
+            start = line.find_first_not_of(whitespace, start + 1);
         }
         else {
             auto space = line.find(' ', start);
