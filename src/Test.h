@@ -76,6 +76,13 @@ public:
         
         bool operator<(File other) const { return name < other.name; }
     };
+    
+    struct Replace {
+        std::regex pattern;
+        std::string replacement;
+        
+        Replace(const std::regex &pattern_, const std::string &replacement_) : pattern(pattern_), replacement(replacement_) { }
+    };
 
     Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
     
@@ -97,8 +104,7 @@ public:
     std::unordered_map<std::string, int> directories;
     std::unordered_map<std::string, std::string> environment;
     std::vector<std::string> error_output;
-    std::regex error_output_pattern;
-    std::string error_output_replacement;
+    std::vector<Replace> error_output_replace;
     std::string exit_code;
     std::vector<File> files;
     std::vector<std::string> input;
@@ -124,6 +130,7 @@ private:
     std::string make_filename(const std::string &directory, const std::string name) const;
     void print_result(Result result) const;
     VariablesPointer read_features();
+    void rewrite_lines(const std::vector<Replace> &replacements, std::vector<std::string> *lines);
     
     bool in_sandbox;
     std::string sandbox_name;

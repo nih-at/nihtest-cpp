@@ -63,7 +63,7 @@ const std::vector<Test::Directive> Test::directives = {
     Test::Directive("return", "exit-code", 1, true, true),
     Test::Directive("setenv", "variable value", 2),
     Test::Directive("stderr", "text", -1),
-    Test::Directive("stderr-replace", "pattern replacement", 2, true),
+    Test::Directive("stderr-replace", "pattern replacement", 2),
     Test::Directive("stdin", "text", -1),
     Test::Directive("stdout", "text", -1),
     Test::Directive("touch", "mtime file", 2),
@@ -100,6 +100,8 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
     }
 
     std::sort(files.begin(), files.end());
+    
+    rewrite_lines(error_output_replace, &error_output);
 }
 
 void Test::compare_arrays(const std::vector<std::string> &expected, const std::vector<std::string> &got, const std::string &what) {
@@ -172,6 +174,13 @@ Test::Result Test::execute_test() {
                 std::cout << "+" << exit_code_got << "\n";
             }
         }
+        
+        std::vector<Replace> replacements;
+        
+        replacements.push_back(Replace(std::regex("^[^: ]*" + OS::basename(program) + ": "), ""));
+        replacements.insert(replacements.end(), error_output_replace.begin(), error_output_replace.end());
+        
+        rewrite_lines(replacements, &error_output_got);
         
         compare_arrays(output, output_got, "output");
         compare_arrays(error_output, error_output_got, "error output");
@@ -307,8 +316,7 @@ void Test::process_directive(const Directive *directive, const std::vector<std::
         error_output.push_back(args[0]);
     }
     else if (directive->name == "stderr-replace") {
-        // TODO: error_output_pattern;
-        error_output_replacement = args[1];
+        error_output_replace.push_back(Replace(std::regex(args[0]), args[1]));
     }
     else if (directive->name == "stdin") {
         if (!pipe_file.empty()) {
@@ -407,6 +415,15 @@ VariablesPointer Test::read_features() {
     }
 
     return features;
+}
+
+
+void Test::rewrite_lines(const std::vector<Replace> &replacements, std::vector<std::string> *lines) {
+    for (auto &line : *lines) {
+        for (auto replace : replacements) {
+            line = std::regex_replace(line, replace.pattern, replace.replacement);
+        }
+    }
 }
 
 
