@@ -36,6 +36,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -198,6 +199,7 @@ void Pipe::close_write() {
 std::string OS::run_command(const Test *test, std::vector<std::string> *output, std::vector<std::string> *error_output) {
     Pipe pipe_output, pipe_error;
     std::shared_ptr<Pipe> pipe_input;
+    int fd_input = -1;
     std::string preload_library;
     std::string program;
     
@@ -229,6 +231,12 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
     if (!test->input.empty()) {
         pipe_input = std::make_shared<Pipe>();
     }
+    else if (!test->pipe_file.empty()) {
+        auto name = test->find_file(test->pipe_file);
+        if ((fd_input = open(name.c_str(), O_RDONLY)) < 0) {
+            throw Exception("can't open '" + name + "'", true);
+        }
+    }
     
     pid_t pid = fork();
     
@@ -252,6 +260,11 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
                 ok = false;
             }
             
+        }
+        else if (fd_input >= 0) {
+            if (dup2(fd_input, 0) < 0) {
+                ok = false;
+            }
         }
         if (ok) {
             if (dup2(pipe_output.write_fd, 1) < 0 || dup2(pipe_error.write_fd, 2) < 0) {
@@ -291,6 +304,9 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
     default: { // parent
         if (pipe_input) {
             pipe_input->close_read();
+        }
+        if (fd_input >= 0) {
+            close(fd_input);
         }
 	pipe_output.close_write();
 	pipe_error.close_write();
