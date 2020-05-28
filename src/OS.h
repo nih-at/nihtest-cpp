@@ -38,10 +38,19 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Test.h"
-
 class OS {
 public:
+    struct Command {
+        std::vector<std::string> arguments;
+        std::unordered_map<std::string, std::string> *environment;
+        std::vector<std::string> *input;
+        std::string input_file;
+        std::unordered_map<char, int> *limits;
+        std::vector<std::string> path;
+        std::string preload_library;
+        std::string program;
+    };
+
     static const std::string path_separator;
 
     static std::string append_path_component(const std::string &directory, const std::string &name);
@@ -55,7 +64,7 @@ public:
     static bool is_absolute(const std::string &file_name);
     static std::string make_temp_directory(const std::string &directory, const std::string &name);
     static void remove_directory(const std::string &directory);
-    static std::string run_command(const Test *test, std::vector<std::string> *output, std::vector<std::string> *error_output);
+    static std::string run_command(const Command *test, std::vector<std::string> *output, std::vector<std::string> *error_output);
     static std::string operating_system();
 };
 

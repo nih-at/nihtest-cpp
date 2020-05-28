@@ -196,16 +196,32 @@ void Pipe::close_write() {
 }
 
 
-std::string OS::run_command(const Test *test, std::vector<std::string> *output, std::vector<std::string> *error_output) {
+std::string OS::run_command(const Command *command, std::vector<std::string> *output, std::vector<std::string> *error_output) {
     Pipe pipe_output, pipe_error;
     std::shared_ptr<Pipe> pipe_input;
     int fd_input = -1;
     std::string preload_library;
     std::string program;
     
-    program = test->find_file(test->program);
+    if (is_absolute(command->program)) {
+        if (file_exists(program)) {
+            program = command->program;
+        }
+    }
+    else {
+        for (const auto &dir : command->path) {
+            auto file = dir + "/" + command->program;
+            if (file_exists(file)) {
+                program = file;
+                break;
+            }
+        }
+    }
+    if (program.empty()) {
+        throw Exception("can't find program '" + command->program + "'");
+    }
     
-    if (!test->preload_library.empty()) {
+    if (!command->preload_library.empty()) {
         char *cwd_c = getcwd(NULL, 0);
         if (cwd_c == NULL) {
             throw Exception("can't get current directory", true);
@@ -213,8 +229,8 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
         auto dir = std::string(cwd_c) + "/..";
         free(cwd_c);
 
-        auto preload_directory = OS::dirname(test->preload_library);
-        auto preload_name = OS::basename(test->preload_library);
+        auto preload_directory = OS::dirname(command->preload_library);
+        auto preload_name = OS::basename(command->preload_library);
         
         if (preload_directory != ".") {
             dir += "/" + preload_directory;
@@ -223,18 +239,17 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
         if (!OS::file_exists(preload_library)) {
             preload_library = dir + "/lib" + preload_name;
             if (!OS::file_exists(preload_library)) {
-                throw Exception("preload library '" + test->preload_library + "' doesn't exist");
+                throw Exception("preload library '" + command->preload_library + "' doesn't exist");
             }
         }
     }
 
-    if (!test->input.empty()) {
+    if (command->input != NULL) {
         pipe_input = std::make_shared<Pipe>();
     }
-    else if (!test->pipe_file.empty()) {
-        auto name = test->find_file(test->pipe_file);
-        if ((fd_input = open(name.c_str(), O_RDONLY)) < 0) {
-            throw Exception("can't open '" + name + "'", true);
+    else if (!command->input_file.empty()) {
+        if ((fd_input = open(command->input_file.c_str(), O_RDONLY)) < 0) {
+            throw Exception("can't open '" + command->input_file + "'", true);
         }
     }
     
@@ -285,15 +300,17 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
         pipe_output.close_write();
         pipe_error.close_write();
 
-	for (const auto &pair : test->environment) {
-	    setenv(pair.first.c_str(), pair.second.c_str(), 1);
-	}
+        if (command->environment != NULL) {
+            for (const auto &pair : *command->environment) {
+                setenv(pair.first.c_str(), pair.second.c_str(), 1);
+            }
+        }
 
-	const char * argv[test->arguments.size() + 2];
+	const char * argv[command->arguments.size() + 2];
 
 	size_t index = 0;
-	argv[index++] = test->program.c_str();
-	for (const auto &arg : test->arguments) {
+	argv[index++] = command->program.c_str();
+	for (const auto &arg : command->arguments) {
 	    argv[index++] = arg.c_str();
 	}
 	argv[index++] = NULL;
@@ -305,7 +322,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
         }
 
         execv(program.c_str(), const_cast<char *const *>(argv));
-	std::cerr << "can't start program '" << test->program << "': " << strerror(errno) << "\n";
+	std::cerr << "can't start program '" << command->program << "': " << strerror(errno) << "\n";
 	exit(17);
     }
 
@@ -331,7 +348,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
 	nfds_t nfds = 2;
 
         if (pipe_input) {
-            buffer_input = std::make_shared<Buffer>(test->input);
+            buffer_input = std::make_shared<Buffer>(*command->input);
             fds[nfds++].fd = pipe_input->write_fd;
         }
 

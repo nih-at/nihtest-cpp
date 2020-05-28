@@ -164,7 +164,24 @@ Test::Result Test::execute_test() {
         std::vector<std::string> error_output_got;
         std::vector<std::string> output_got;
         
-        auto exit_code_got = OS::run_command(this, &output_got, &error_output_got);
+        OS::Command command;
+        command.arguments = arguments;
+        if (!environment.empty()) {
+            command.environment = &environment;
+        }
+        if (!input.empty()) {
+            command.input = &input;
+        }
+        command.input_file = pipe_file;
+        if (!limits.empty()) {
+            command.limits = &limits;
+        }
+        command.path.push_back("..");
+        command.path.push_back(OS::append_path_component(source_directory, ".."));
+        command.preload_library = preload_library;
+        command.program = program;
+
+        auto exit_code_got = OS::run_command(&command, &output_got, &error_output_got);
         
         if (exit_code != exit_code_got) {
             failed.push_back("exit status");

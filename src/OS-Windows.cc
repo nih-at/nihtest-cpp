@@ -86,7 +86,7 @@ void OS::remove_directory(const std::string &directory) {
 }
 
 
-std::string OS::run_command(const Test *test, std::vector<std::string> *output, std::vector<std::string> *error_output) {
+std::string OS::run_command(const Command *command, std::vector<std::string> *output, std::vector<std::string> *error_output) {
     // TODO: implement
     return "0";
 }
