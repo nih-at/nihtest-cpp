@@ -44,6 +44,7 @@
 #include <unistd.h>
 
 #include <iostream>
+#include <memory>
 #include <sstream>
 
 #include "Exception.h"
