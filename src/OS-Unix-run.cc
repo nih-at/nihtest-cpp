@@ -276,6 +276,14 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
 	    write(pipe_error.write_fd, message.c_str(), message.size());
 	    exit(17);
 	}
+        if (pipe_input) {
+            pipe_input->close_read();
+        }
+        else if (fd_input >= 0) {
+            close(fd_input);
+        }
+        pipe_output.close_write();
+        pipe_error.close_write();
 
 	for (auto pair : test->environment) {
 	    setenv(pair.first.c_str(), pair.second.c_str(), 1);
