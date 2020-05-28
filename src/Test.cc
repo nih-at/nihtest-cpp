@@ -145,7 +145,7 @@ Test::Result Test::execute_test() {
     // TODO: skip if limits &c not supported
     
     if (!required_features.empty()) {
-        for (auto feature : required_features) {
+        for (const auto &feature : required_features) {
             if (!has_feature(feature)) {
                 return SKIPPED;
             }
@@ -155,7 +155,7 @@ Test::Result Test::execute_test() {
     enter_sandbox();
     
     try {
-        for (auto file : files) {
+        for (const auto &file : files) {
             if (!file.input.empty()) {
                 OS::copy_file(find_file(file.input), file.name);
             }
@@ -375,7 +375,7 @@ void Test::print_result(Result result) const {
         case FAILED: {
             std::cout << "FAIL: ";
             auto first = true;
-            for (auto type : failed) {
+            for (const auto &type : failed) {
                 if (first) {
                     first = false;
                 }
@@ -420,7 +420,7 @@ VariablesPointer Test::read_features() {
 
 void Test::rewrite_lines(const std::vector<Replace> &replacements, std::vector<std::string> *lines) {
     for (auto &line : *lines) {
-        for (auto replace : replacements) {
+        for (const auto &replace : replacements) {
             line = std::regex_replace(line, replace.pattern, replace.replacement);
         }
     }

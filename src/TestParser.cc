@@ -100,7 +100,7 @@ void TestParser::parse() {
         }
     }
     
-    for (auto pair : directives) {
+    for (const auto &pair : directives) {
         auto directive = pair.second;
         if (directive->required && seen_directives.find(directive) == seen_directives.end()) {
             print_error("directive '" + directive->name + "' is requried");

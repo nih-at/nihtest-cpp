@@ -77,14 +77,14 @@ public:
 
 
 Buffer::Buffer(const std::vector<std::string> &lines) : size(0), offset(0) {
-    for (auto line : lines) {
+    for (const auto &line : lines) {
 	size += line.size() + 1;
     }
     if ((data = (char *)malloc(size)) == NULL) {
 	throw Exception("can't allocate buffer of size " + std::to_string(size));
     }
 
-    for (auto line : lines) {
+    for (const auto &line : lines) {
 	memcpy(data + offset, line.c_str(), line.size());
 	offset += line.size();
 	data[offset++] = '\n';
@@ -285,7 +285,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
         pipe_output.close_write();
         pipe_error.close_write();
 
-	for (auto pair : test->environment) {
+	for (const auto &pair : test->environment) {
 	    setenv(pair.first.c_str(), pair.second.c_str(), 1);
 	}
 
@@ -293,7 +293,7 @@ std::string OS::run_command(const Test *test, std::vector<std::string> *output, 
 
 	size_t index = 0;
 	argv[index++] = test->program.c_str();
-	for (auto &arg : test->arguments) {
+	for (const auto &arg : test->arguments) {
 	    argv[index++] = arg.c_str();
 	}
 	argv[index++] = NULL;
