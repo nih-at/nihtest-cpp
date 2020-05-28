@@ -137,12 +137,12 @@ void TestParser::tokenize(std::vector<std::string> *args, const std::string &lin
                 }
                 arg += line.substr(start, next - start);
                 if (line[next] == '"') {
-                    start = next + 1;
+                    start = next;
                     break;
                 }
                 else {
                     if (next == end - 1) {
-                        print_error("trailing \\ esacpe");
+                        print_error("incomplete backslash esacpe");
                         return;
                     }
                     switch (line[next + 1]) {
