@@ -37,13 +37,13 @@
 #include "Parser.h"
 
 const std::vector<Parser::Directive> Configuration::directives = {
-    Parser::Directive("default_program", "directory", 1, true),
+    Parser::Directive("default-program", "directory", 1, true),
     Parser::Directive("file-compare", "test-extension source-extension command [args ...]", 3, false, false, -1),
-    Parser::Directive("keep_sandbox", "when", 1, true),
-    Parser::Directive("print_results", "when", 1, true),
-    Parser::Directive("sandbox_directory", "directory", 1, true),
-    Parser::Directive("source_directory", "directory", 1, true),
-    Parser::Directive("top_build_directory", "directory", 1, true)
+    Parser::Directive("keep-sandbox", "when", 1, true),
+    Parser::Directive("print-results", "when", 1, true),
+    Parser::Directive("sandbox-directory", "directory", 1, true),
+    Parser::Directive("source-directory", "directory", 1, true),
+    Parser::Directive("top-build-directory", "directory", 1, true)
 };
 
 Configuration::Configuration(const std::string &file_name) : keep_sandbox(NEVER), print_results(WHEN_FAILED) {
@@ -53,7 +53,7 @@ Configuration::Configuration(const std::string &file_name) : keep_sandbox(NEVER)
 
 
 void Configuration::process_directive(const Parser::Directive *directive, const std::vector<std::string> &args) {
-    if (directive->name == "default_program") {
+    if (directive->name == "default-program") {
         default_program = args[0];
     }
     else if (directive->name == "file-compare") {
@@ -65,19 +65,19 @@ void Configuration::process_directive(const Parser::Directive *directive, const 
         command.insert(command.begin(), args.begin() + 2, args.end());
         file_compare[key] = command;
     }
-    else if (directive->name == "keep_sandbox") {
+    else if (directive->name == "keep-sandbox") {
         keep_sandbox = get_when(args[0]);
     }
-    else if (directive->name == "print_results") {
+    else if (directive->name == "print-results") {
         print_results = get_when(args[0]);
     }
-    else if (directive->name == "sandbox_directory") {
+    else if (directive->name == "sandbox-directory") {
         sandbox_directory = args[0];
     }
-    else if (directive->name == "source_directory") {
+    else if (directive->name == "source-directory") {
         source_directory = args[0];
     }
-    else if (directive->name == "top_build_directory") {
+    else if (directive->name == "top-build-directory") {
         top_build_directory = args[0];
     }
 }
