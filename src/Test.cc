@@ -83,6 +83,16 @@ Test::Test(const std::string &test_case, Configuration configuration_) : configu
     auto parser = Parser(test_file_name, this, directives);
     
     parser.parse();
+    
+    if (environment.find("TZ") == environment.end()) {
+        environment["TZ"] = "UTC";
+    }
+    if (environment.find("LC_CTYPE") == environment.end()) {
+        environment["LC_CTYPE"] = "C";
+    }
+    if (environment.find("POSIXLY_CORRECT") == environment.end()) {
+        environment["POSIXLY_CORRECT"] = "1";
+    }
 
     if (program.empty()) {
         program = configuration.default_program;
