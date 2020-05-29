@@ -1,5 +1,5 @@
 /*
-  CompareFiles.h -- compare files
+  Configuration.h - nihtest configuratin
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,32 +31,40 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef HAD_COMPARE_FILES_H
-#define HAD_COMPARE_FILES_H
+#ifndef HAD_CONFIGURATION_H
+#define HAD_CONFIGURATION_H
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
-#include "Configuration.h"
-#include "Test.h"
+#include "Parser.h"
 
-class CompareFiles {
+typedef std::unordered_map<std::string, std::vector<std::string>> FileComparators;
+
+class Configuration: ParserConsumer {
 public:
-    CompareFiles(const std::vector<Test::File> &expected_, const std::vector<std::string> &got_, Test *test_, bool verbose_) : expected(expected_), got(got_), test(test_), comparators(&test_->configuration.file_compare), verbose(verbose_), ok(true) { }
+    enum When {
+        NEVER,
+        WHEN_FAILED,
+        ALWAYS
+    };
+    
+    Configuration(const std::string &file_name);
+    virtual void process_directive(const Parser::Directive *directive, const std::vector<std::string> &args);
 
-    bool compare();
+    std::string default_program;
+    FileComparators file_compare;
+    When keep_sandbox;
+    When print_results;
+    std::string sandbox_directory;
+    std::string source_directory;
+    std::string top_build_directory;
     
 private:
-    void compare_files(const std::vector<std::string> &argv, const std::string &got, const std::string &expected);
-    void print_line(char indicator, const std::string &line);
+    static const std::vector<Parser::Directive> directives;
     
-    const std::vector<Test::File> &expected;
-    const std::vector<std::string> &got;
-    FileComparators *comparators;
-    Test *test;
-    bool verbose;
-    
-    bool ok;
+    When get_when(const std::string &arg);
 };
 
-#endif // HAD_COMPARE_FILES_H
+#endif // HAD_CONFIGURATION_H

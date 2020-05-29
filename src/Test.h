@@ -39,16 +39,12 @@
 #include <unordered_map>
 #include <vector>
 
+#include "Configuration.h"
+#include "Parser.h"
 #include "Variables.h"
 
-class Test {
+class Test : ParserConsumer {
 public:
-    enum When {
-        NEVER,
-        WHEN_BROKEN,
-        ALWAYS
-    };
-
     enum Result {
         PASSED = 0,
         FAILED = 1,
@@ -56,17 +52,6 @@ public:
         ERROR = 99
     };
     
-    struct Directive {
-        std::string name;
-        std::string usage;
-        bool only_once;
-        bool required;
-        int minimum_arguments;
-        int maximum_arguments;
-        
-        Directive(const std::string name_, const std::string usage_, int minimum_arguments_, bool required_ = false, bool only_once = false, int maximum_arguments_ = 0);
-    };
-
     struct File {
         std::string name;
         std::string input;
@@ -84,21 +69,16 @@ public:
         Replace(const std::regex &pattern_, const std::string &replacement_) : pattern(pattern_), replacement(replacement_) { }
     };
 
-    Test() : keep_sandbox(NEVER), print_results(WHEN_BROKEN), run_test(true), in_sandbox(false) { }
+    Test(const std::string &test_case, Configuration configuration_);
     
-    void initialize(const std::string &name, const Variables &variables);
     Result run();
 
     std::string find_file(const std::string &name) const;
-    void process_directive(const Directive *directive, const std::vector<std::string> &args);
-    
+    virtual void process_directive(const Parser::Directive *directive, const std::vector<std::string> &args);
+
+    Configuration configuration;
     std::string name;
-    When keep_sandbox;
-    When print_results;
     bool run_test;
-    std::string sandbox_directory;
-    std::string source_directory;
-    std::string top_build_directory;
     
     std::vector<std::string> arguments;
     std::unordered_map<std::string, int> directories;
@@ -118,8 +98,8 @@ public:
     std::unordered_map<std::string, time_t> touch_files;
     
 private:
-    static const std::vector<Directive> directives;
-    
+    static const std::vector<Parser::Directive> directives;
+
     void compare_arrays(const std::vector<std::string> &expected, const std::vector<std::string> &got, const std::string &what);
     void compare_files();
     void enter_sandbox();

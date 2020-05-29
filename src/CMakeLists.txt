@@ -5,10 +5,11 @@ SET(NIHTEST_SOURCES
     nihtest.cc
     CompareArrays.cc
     CompareFiles.cc
+    Configuration.cc
     Exception.cc
     OS.cc
+    Parser.cc
     Test.cc
-    TestParser.cc
     Variables.cc
 )
 

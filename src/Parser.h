@@ -1,5 +1,5 @@
 /*
-  TestParser.h -- parse test case
+  Parser.h -- parse config file or test case
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -31,19 +31,31 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef HAD_TEST_PARSER_H
-#define HAD_TEST_PARSER_H
+#ifndef HAD_PARSER_H
+#define HAD_PARSER_H
 
 #include <fstream>
 #include <map>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
-#include "Test.h"
+class ParserConsumer;
 
-class TestParser {
+class Parser {
 public:
-    TestParser(const std::string &file_name_, Test *test_, const std::vector<Test::Directive> &directives_);
+    struct Directive {
+        std::string name;
+        std::string usage;
+        bool only_once;
+        bool required;
+        int minimum_arguments;
+        int maximum_arguments;
+        
+        Directive(const std::string name_, const std::string usage_, int minimum_arguments_, bool required_ = false, bool only_once = false, int maximum_arguments_ = 0);
+    };
+    
+    Parser(const std::string &file_name_, ParserConsumer *consuemr_, const std::vector<Directive> &directives_);
     
     void parse();
     
@@ -51,15 +63,19 @@ private:
     void print_error(const std::string &message);
     void tokenize(std::vector<std::string> *args, const std::string &line, std::string::size_type start);
     
-    Test *test;
+    ParserConsumer *consumer;
     std::string file_name;
     size_t line_no;
     std::ifstream file;
     bool ok;
-    std::unordered_set<const Test::Directive *> seen_directives;
+    std::unordered_set<const Directive *> seen_directives;
     
-    std::map<std::string, const Test::Directive *> directives;
+    std::map<std::string, const Directive *> directives;
 };
 
-#endif // HAD_TEST_PARSER_H
+class ParserConsumer {
+public:
+    virtual void process_directive(const Parser::Directive *directive, const std::vector<std::string> &args) = 0;
+};
 
+#endif // HAD_PARSER_H

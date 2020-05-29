@@ -42,40 +42,32 @@
 #include "CompareFiles.h"
 #include "Exception.h"
 #include "OS.h"
-#include "TestParser.h"
+#include "Parser.h"
 
-Test::Directive::Directive(const std::string name_, const std::string usage_, int minimum_arguments_, bool only_once_, bool required_, int maximum_arguments_) : name(name_), usage(usage_), only_once(only_once_), required(required_), minimum_arguments(minimum_arguments_) {
-    maximum_arguments = maximum_arguments_ == 0 ? minimum_arguments : maximum_arguments_;
-}
-
-const std::vector<Test::Directive> Test::directives = {
-    Test::Directive("args", "[arg ...]", 0, true, false, -1),
-    Test::Directive("description", "text", -1, true),
-    Test::Directive("features", "feature ...", 1, true, false, -1),
-    Test::Directive("file", "test in [out]", 2, false, false, 3),
-    Test::Directive("file-del", "test in", 2),
-    Test::Directive("file-new", "test out", 2),
-    Test::Directive("mkdir", "mode name", 2),
-    Test::Directive("pipefile", "file", 1, true),
-    Test::Directive("precheck", "command [args ...]", 1, false, false, -1),
-    Test::Directive("preload", "library", 1, true),
-    Test::Directive("program", "name", 1, true),
-    Test::Directive("return", "exit-code", 1, true, true),
-    Test::Directive("setenv", "variable value", 2),
-    Test::Directive("stderr", "text", -1),
-    Test::Directive("stderr-replace", "pattern replacement", 2),
-    Test::Directive("stdin", "text", -1),
-    Test::Directive("stdout", "text", -1),
-    Test::Directive("touch", "mtime file", 2),
-    Test::Directive("ulimit", "limit value", 2)
+const std::vector<Parser::Directive> Test::directives = {
+    Parser::Directive("args", "[arg ...]", 0, true, false, -1),
+    Parser::Directive("description", "text", -1, true),
+    Parser::Directive("features", "feature ...", 1, true, false, -1),
+    Parser::Directive("file", "test in [out]", 2, false, false, 3),
+    Parser::Directive("file-del", "test in", 2),
+    Parser::Directive("file-new", "test out", 2),
+    Parser::Directive("mkdir", "mode name", 2),
+    Parser::Directive("pipefile", "file", 1, true),
+    Parser::Directive("precheck", "command [args ...]", 1, false, false, -1),
+    Parser::Directive("preload", "library", 1, true),
+    Parser::Directive("program", "name", 1, true),
+    Parser::Directive("return", "exit-code", 1, true, true),
+    Parser::Directive("setenv", "variable value", 2),
+    Parser::Directive("stderr", "text", -1),
+    Parser::Directive("stderr-replace", "pattern replacement", 2),
+    Parser::Directive("stdin", "text", -1),
+    Parser::Directive("stdout", "text", -1),
+    Parser::Directive("touch", "mtime file", 2),
+    Parser::Directive("ulimit", "limit value", 2)
 };
 
 
-void Test::initialize(const std::string &test_case, const Variables &variables) {
-    sandbox_directory = variables.get("SANDBOX_DIRECTORY");
-    source_directory = variables.get("SOURCE_DIRECTORY");
-    top_build_directory = variables.get("TOP_BUILD_DIRECTORY");
-    
+Test::Test(const std::string &test_case, Configuration configuration_) : configuration(configuration_), run_test(true), in_sandbox(false) {
     auto file_name = test_case;
     name = OS::basename(test_case);
     auto dot = name.find('.');
@@ -85,15 +77,15 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
     else {
         file_name += ".test";
     }
-    
+        
     auto test_file_name = find_file(file_name);
     
-    auto parser = TestParser(test_file_name, this, directives);
+    auto parser = Parser(test_file_name, this, directives);
     
     parser.parse();
 
     if (program.empty()) {
-        program = variables.get("DEFAULT_PROGRAM");
+        program = configuration.default_program;
         if (program.empty()) {
             throw Exception("no program specified");
         }
@@ -105,7 +97,7 @@ void Test::initialize(const std::string &test_case, const Variables &variables) 
 }
 
 void Test::compare_arrays(const std::vector<std::string> &expected, const std::vector<std::string> &got, const std::string &what) {
-    auto compare = CompareArrays(expected, got, what, print_results != NEVER);
+    auto compare = CompareArrays(expected, got, what, configuration.print_results != Configuration::NEVER);
     if (!compare.compare()) {
         failed.push_back(what);
     }
@@ -115,7 +107,7 @@ void Test::compare_arrays(const std::vector<std::string> &expected, const std::v
 void Test::compare_files() {
     std::vector<std::string> files_got = OS::list_files(".");
     
-    auto compare = CompareFiles(files, files_got, print_results != NEVER);
+    auto compare = CompareFiles(files, files_got, this, configuration.print_results != Configuration::NEVER);
     if (!compare.compare()) {
         failed.push_back("files");
     }
@@ -127,7 +119,7 @@ void Test::enter_sandbox() {
 	throw Exception("already in sandbox");
     }
 
-    sandbox_name = OS::make_temp_directory(sandbox_directory, "sandbox_" + name);
+    sandbox_name = OS::make_temp_directory(configuration.sandbox_directory, "sandbox_" + name);
 
     OS::change_directory(sandbox_name);
     in_sandbox = true;
@@ -177,7 +169,7 @@ Test::Result Test::execute_test() {
             command.limits = &limits;
         }
         command.path.push_back("..");
-        command.path.push_back(OS::append_path_component(source_directory, ".."));
+        command.path.push_back(OS::append_path_component(configuration.source_directory, ".."));
         command.preload_library = preload_library;
         command.program = program;
 
@@ -185,7 +177,7 @@ Test::Result Test::execute_test() {
         
         if (exit_code != exit_code_got) {
             failed.push_back("exit status");
-            if (print_results != NEVER) {
+            if (configuration.print_results != Configuration::NEVER) {
                 std::cout << "Unexpected exit status:\n";
                 std::cout << "-" << exit_code << "\n";
                 std::cout << "+" << exit_code_got << "\n";
@@ -205,11 +197,11 @@ Test::Result Test::execute_test() {
         compare_files();
     }
     catch (Exception e) {
-        leave_sandbox(keep_sandbox != NEVER);
+        leave_sandbox(configuration.keep_sandbox != Configuration::NEVER);
         throw;
     }
     
-    leave_sandbox(keep_sandbox == ALWAYS || (keep_sandbox == WHEN_BROKEN && !failed.empty()));
+    leave_sandbox(configuration.keep_sandbox == Configuration::ALWAYS || (configuration.keep_sandbox == Configuration::WHEN_FAILED && !failed.empty()));
     return failed.empty() ? PASSED : FAILED;
 }
 
@@ -231,8 +223,8 @@ std::string Test::find_file(const std::string &name) const {
         return build_name;
     }
     
-    if (!source_directory.empty()) {
-        auto source_name = make_filename(source_directory, name);
+    if (!configuration.source_directory.empty()) {
+        auto source_name = make_filename(configuration.source_directory, name);
         if (OS::file_exists(source_name)) {
             return source_name;
         }
@@ -278,7 +270,7 @@ std::string Test::make_filename(const std::string &directory, const std::string 
 }
 
 
-void Test::process_directive(const Directive *directive, const std::vector<std::string> &args) {
+void Test::process_directive(const Parser::Directive *directive, const std::vector<std::string> &args) {
     if (directive->name == "args") {
         arguments = args;
     }
@@ -369,12 +361,12 @@ void Test::print_result(Result result) const {
     switch (result) {
         case PASSED:
         case SKIPPED:
-            if (print_results != ALWAYS) {
+        if (configuration.print_results != Configuration::ALWAYS) {
                 return;
             }
         case FAILED:
         case ERROR:
-            if (print_results == NEVER) {
+        if (configuration.print_results == Configuration::NEVER) {
                 return;
             }
     }
@@ -414,7 +406,7 @@ void Test::print_result(Result result) const {
 VariablesPointer Test::read_features() {
     VariablesPointer features(new Variables());
     
-    auto config_file_name = make_filename(top_build_directory, "config.h");
+    auto config_file_name = make_filename(configuration.top_build_directory, "config.h");
     
     auto config_file = std::ifstream(config_file_name);
     if (!config_file) {

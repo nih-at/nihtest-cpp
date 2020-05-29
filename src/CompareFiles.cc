@@ -35,6 +35,8 @@
 
 #include <iostream>
 
+#include "OS.h"
+
 bool CompareFiles::compare() {
     auto iter_expected = expected.cbegin();
     auto iter_got = got.cbegin();
@@ -46,7 +48,17 @@ bool CompareFiles::compare() {
         }
         
         if (iter_expected->name == *iter_got) {
-            // TODO: compare files
+            std::string key = OS::extension(iter_expected->name) + "." + OS::extension(iter_expected->output);
+            
+            auto compare = comparators->find(key);
+            
+            if (compare != comparators->end()) {
+                compare_files(compare->second, iter_expected->name, iter_expected->output);
+            }
+            else {
+                // TODO: compare binary files
+            }
+
             iter_expected++;
             iter_got++;
         }
@@ -73,6 +85,33 @@ bool CompareFiles::compare() {
     }
  
     return ok;
+}
+
+
+void CompareFiles::compare_files(const std::vector<std::string> &argv, const std::string &got, const std::string &expected) {
+    OS::Command command;
+    command.program = argv[0];
+    command.arguments.insert(command.arguments.begin(), argv.begin() + 1, argv.end());
+    command.arguments.push_back(got);
+    command.arguments.push_back(test->find_file(expected));
+    command.path.push_back("..");
+    
+    std::vector<std::string> output;
+    std::vector<std::string> error_output;
+    
+    auto result = OS::run_command(&command, &output, &error_output);
+    
+    if (result != "0") {
+        print_line('!', expected);
+        if (verbose) {
+            for (const auto &line : output) {
+                std::cout << line << "\n";
+            }
+            for (const auto &line : error_output) {
+                std::cout << line << "\n";
+            }
+        }
+    }
 }
 
 

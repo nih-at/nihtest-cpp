@@ -1,6 +1,6 @@
 
 /*
-  TestParser.cc -- parse test case
+  Parser.cc -- parse test case
   Copyright (C) 2020 Dieter Baron and Thomas Klausner
 
   This file is part of nihtest, regression tests for command line utilities.
@@ -32,13 +32,17 @@
   IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "TestParser.h"
+#include "Parser.h"
 
 #include <iostream>
 
 #include "Exception.h"
 
-TestParser::TestParser(const std::string &file_name_, Test *test_, const std::vector<Test::Directive> &directives_) : test(test_), file_name(file_name_), line_no(0), ok(true) {
+Parser::Directive::Directive(const std::string name_, const std::string usage_, int minimum_arguments_, bool only_once_, bool required_, int maximum_arguments_) : name(name_), usage(usage_), only_once(only_once_), required(required_), minimum_arguments(minimum_arguments_) {
+    maximum_arguments = maximum_arguments_ == 0 ? minimum_arguments : maximum_arguments_;
+}
+
+Parser::Parser(const std::string &file_name_, ParserConsumer *consumer_, const std::vector<Parser::Directive> &directives_) : consumer(consumer_), file_name(file_name_), line_no(0), ok(true) {
     file = std::ifstream(file_name);
     if (!file) {
         throw Exception("cannot open test case '" + file_name + "'", true);
@@ -49,7 +53,7 @@ TestParser::TestParser(const std::string &file_name_, Test *test_, const std::ve
 }
 
 
-void TestParser::parse() {
+void Parser::parse() {
     std::string line;
     while (std::getline(file, line)) {
         line_no += 1;
@@ -93,7 +97,7 @@ void TestParser::parse() {
         }
         
         try {
-            test->process_directive(directive, args);
+            consumer->process_directive(directive, args);
         }
         catch (Exception e) {
             print_error(e.what());
@@ -113,13 +117,13 @@ void TestParser::parse() {
 }
 
 
-void TestParser::print_error(const std::string &message) {
+void Parser::print_error(const std::string &message) {
     std::cerr << file_name << ":" << line_no << ": " << message << "\n";
     ok = false;
 }
 
 
-void TestParser::tokenize(std::vector<std::string> *args, const std::string &line, std::string::size_type start) {
+void Parser::tokenize(std::vector<std::string> *args, const std::string &line, std::string::size_type start) {
     auto whitespace = " \t";
     
     start = line.find_first_not_of(whitespace, start);

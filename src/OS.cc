@@ -96,3 +96,14 @@ std::string OS::dirname(const std::string &name) {
         return name.substr(0, pos);
     }
 }
+
+
+std::string OS::extension(const std::string &file_name) {
+    auto pos = file_name.rfind(".");
+    if (pos == std::string::npos) {
+        return "";
+    }
+    else {
+        return file_name.substr(pos + 1);
+    }
+}

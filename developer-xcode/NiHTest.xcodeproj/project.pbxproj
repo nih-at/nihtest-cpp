@@ -13,7 +13,8 @@
 		4B55D950247573D500CE8C38 /* OS-Unix.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D94E247573D500CE8C38 /* OS-Unix.cc */; };
 		4B55D9522475745700CE8C38 /* OS.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9512475745700CE8C38 /* OS.cc */; };
 		4B55D95C2476C78D00CE8C38 /* Exception.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D95A2476C78D00CE8C38 /* Exception.cc */; };
-		4B55D95F2478249B00CE8C38 /* TestParser.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D95D2478249B00CE8C38 /* TestParser.cc */; };
+		4B55D95F2478249B00CE8C38 /* Parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D95D2478249B00CE8C38 /* Parser.cc */; };
+		4B79E98C248172B40038438C /* Configuration.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B79E98A248172B40038438C /* Configuration.cc */; };
 		4BD78B81247E6AF800F9D720 /* CompareFiles.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4BD78B7F247E6AF800F9D720 /* CompareFiles.cc */; };
 		4BF1D825247CF90000353959 /* OS-Unix-run.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4BF1D824247CF90000353959 /* OS-Unix-run.cc */; };
 		4BF1D828247D242900353959 /* CompareArrays.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4BF1D826247D242900353959 /* CompareArrays.cc */; };
@@ -58,8 +59,10 @@
 		4B55D95924767D5400CE8C38 /* appveyor.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = appveyor.yml; sourceTree = "<group>"; };
 		4B55D95A2476C78D00CE8C38 /* Exception.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cc; sourceTree = "<group>"; };
 		4B55D95B2476C78D00CE8C38 /* Exception.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
-		4B55D95D2478249B00CE8C38 /* TestParser.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestParser.cc; sourceTree = "<group>"; };
-		4B55D95E2478249B00CE8C38 /* TestParser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestParser.h; sourceTree = "<group>"; };
+		4B55D95D2478249B00CE8C38 /* Parser.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cc; sourceTree = "<group>"; };
+		4B55D95E2478249B00CE8C38 /* Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
+		4B79E98A248172B40038438C /* Configuration.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Configuration.cc; sourceTree = "<group>"; };
+		4B79E98B248172B40038438C /* Configuration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Configuration.h; sourceTree = "<group>"; };
 		4BD78B7F247E6AF800F9D720 /* CompareFiles.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompareFiles.cc; sourceTree = "<group>"; };
 		4BD78B80247E6AF800F9D720 /* CompareFiles.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompareFiles.h; sourceTree = "<group>"; };
 		4BF1D824247CF90000353959 /* OS-Unix-run.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "OS-Unix-run.cc"; sourceTree = "<group>"; };
@@ -111,6 +114,8 @@
 				4BD78B7F247E6AF800F9D720 /* CompareFiles.cc */,
 				4BD78B80247E6AF800F9D720 /* CompareFiles.h */,
 				4B55D943247530CF00CE8C38 /* compat */,
+				4B79E98A248172B40038438C /* Configuration.cc */,
+				4B79E98B248172B40038438C /* Configuration.h */,
 				4B55D95A2476C78D00CE8C38 /* Exception.cc */,
 				4B55D95B2476C78D00CE8C38 /* Exception.h */,
 				4B55D93B2475208900CE8C38 /* nihtest.cc */,
@@ -120,10 +125,10 @@
 				4B55D9532475783400CE8C38 /* OS-Windows.cc */,
 				4B55D9512475745700CE8C38 /* OS.cc */,
 				4B55D94F247573D500CE8C38 /* OS.h */,
+				4B55D95D2478249B00CE8C38 /* Parser.cc */,
+				4B55D95E2478249B00CE8C38 /* Parser.h */,
 				4B55D94B24756B0E00CE8C38 /* Test.cc */,
 				4B55D94C24756B0E00CE8C38 /* Test.h */,
-				4B55D95D2478249B00CE8C38 /* TestParser.cc */,
-				4B55D95E2478249B00CE8C38 /* TestParser.h */,
 				4B55D9482475355700CE8C38 /* Variables.cc */,
 				4B55D9492475355700CE8C38 /* Variables.h */,
 			);
@@ -244,11 +249,12 @@
 				4B55D9522475745700CE8C38 /* OS.cc in Sources */,
 				4BF1D828247D242900353959 /* CompareArrays.cc in Sources */,
 				4B55D95C2476C78D00CE8C38 /* Exception.cc in Sources */,
-				4B55D95F2478249B00CE8C38 /* TestParser.cc in Sources */,
+				4B55D95F2478249B00CE8C38 /* Parser.cc in Sources */,
 				4B55D94D24756B0E00CE8C38 /* Test.cc in Sources */,
 				4BF1D825247CF90000353959 /* OS-Unix-run.cc in Sources */,
 				4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */,
 				4BD78B81247E6AF800F9D720 /* CompareFiles.cc in Sources */,
+				4B79E98C248172B40038438C /* Configuration.cc in Sources */,
 				4B55D94A2475355700CE8C38 /* Variables.cc in Sources */,
 				4B55D950247573D500CE8C38 /* OS-Unix.cc in Sources */,
 			);

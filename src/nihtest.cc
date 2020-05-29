@@ -45,11 +45,12 @@
 #include "getopt_long.h"
 #endif
 
+#include "Configuration.h"
 #include "Exception.h"
 #include "Test.h"
 #include "Variables.h"
 
-static const std::string usage_tail = " [-hqVv] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
+static const std::string usage_tail = " [-ChqVv] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
 
 static const std::string help_head = PACKAGE " by Dieter Baron and Thomas Klausner\n\n";
 
@@ -72,12 +73,13 @@ enum {
     OPT_SETUP_ONLY
 };
 
-#define OPTIONS "hVv"
+#define OPTIONS "ChVv"
 
 struct option options[] = {
     { "help", 0, 0, 'h' },
     { "version", 0, 0, 'V' },
     
+    { "config-file", 0, 0, 'C' },
     { "keep-broken", 0, 0, OPT_KEEP_BROKEN },
     { "no-cleanup", 0, 0, OPT_NO_CLEANUP },
     { "quiet", 0, 0, 'q' },
@@ -91,8 +93,12 @@ static void print_usage(std::ostream &stream);
 
 int main(int argc, char *argv[]) {
     int c;
-    auto variables = Variables(true);
-    auto test = Test();
+    auto keep_sandbox = Configuration::NEVER;
+    auto keep_sandbox_set = false;
+    auto print_results = Configuration::NEVER;
+    auto print_results_set = false;
+    std::string configuration_file = "nihtest.conf";
+    bool run_test = true;
     
     setprogname(argv[0]);
     
@@ -109,27 +115,34 @@ int main(int argc, char *argv[]) {
             std::cout << version_string;
             exit(0);
             
+        case 'C': // config-file
+            configuration_file = argv[optind];
+            break;
+
         case 'q': // quiet
-            test.print_results = Test::NEVER;
+            print_results = Configuration::NEVER;
+            print_results_set = true;
             break;
             
         case 'v': // verbose
-            test.print_results = Test::ALWAYS;
+            print_results = Configuration::ALWAYS;
+            print_results_set = true;
             break;
             
         case OPT_KEEP_BROKEN:
-            if (test.keep_sandbox != Test::ALWAYS) {
-                test.keep_sandbox = Test::WHEN_BROKEN;
-            }
+            keep_sandbox = Configuration::WHEN_FAILED;
+            keep_sandbox_set = true;
             break;
             
         case OPT_NO_CLEANUP:
-            test.keep_sandbox = Test::ALWAYS;
+            keep_sandbox = Configuration::ALWAYS;
+            keep_sandbox_set = true;
             break;
             
         case OPT_SETUP_ONLY:
-            test.keep_sandbox = Test::ALWAYS;
-            test.run_test = false;
+            keep_sandbox = Configuration::ALWAYS;
+            keep_sandbox_set = true;
+            run_test = false;
             break;
             
         default:
@@ -138,25 +151,40 @@ int main(int argc, char *argv[]) {
         }
     }
     
-    while (optind < argc && strchr(argv[optind], '=') != NULL) {
-        variables.add(argv[optind]);
-        optind += 1;
-    }
-    
     if (optind != argc - 1) {
         print_usage(std::cerr);
         exit(1);
     }
     
-    if (test.print_results != Test::NEVER && variables.is_set("VERBOSE")) {
-        test.print_results = Test::ALWAYS;
+    if (!print_results_set) {
+        auto value = getenv("VERBOSE");
+        if (value != NULL) {
+            print_results = Configuration::ALWAYS;
+            print_results_set = true;
+        }
     }
-    if (test.keep_sandbox == Test::NEVER && variables.is_set("KEEP_BROKEN")) {
-        test.print_results = Test::WHEN_BROKEN;
+
+    if (!keep_sandbox_set) {
+        auto value = getenv("KEEP_BROKEN");
+        if (value != NULL) {
+            keep_sandbox = Configuration::WHEN_FAILED;
+            keep_sandbox_set = true;
+        }
     }
     
     try {
-        test.initialize(argv[optind], variables);
+        auto configuration = Configuration(configuration_file);
+        
+        if (keep_sandbox_set) {
+            configuration.keep_sandbox = keep_sandbox;
+        }
+        if (print_results_set) {
+            configuration.print_results = print_results;
+        }
+        
+        auto test = Test(argv[optind], configuration);
+        
+        test.run_test = run_test;
         exit(test.run());
     }
     catch (Exception e) {
