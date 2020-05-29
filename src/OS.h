@@ -60,6 +60,7 @@ public:
     static void change_directory(const std::string &directory);
     static std::string dirname(const std::string &name);
     static void copy_file(const std::string &from, const std::string &to);
+    static bool compare_files(const std::string &from, const std::string &to);
     static std::string extension(const std::string &file_name);
     static bool file_exists(const std::string &file_name);
     static std::string get_error_string();

@@ -56,7 +56,9 @@ bool CompareFiles::compare() {
                 compare_files(compare->second, iter_expected->name, iter_expected->output);
             }
             else {
-                // TODO: compare binary files
+                if (!OS::compare_files(iter_expected->name, test->find_file(iter_expected->output))) {
+                    print_line('!', iter_expected->name);
+                }
             }
 
             iter_expected++;
@@ -115,14 +117,19 @@ void CompareFiles::compare_files(const std::vector<std::string> &argv, const std
 }
 
 
-void CompareFiles::print_line(char indicator, const std::string &line) {
+void CompareFiles::print_header() {
     if (verbose) {
         if (ok) {
             std::cout << "Unexpected files:\n";
         }
-    
+    }
+    ok = false;
+}
+
+
+void CompareFiles::print_line(char indicator, const std::string &line) {
+    print_header();
+    if (verbose) {
         std::cout << indicator << line << "\n";
     }
-    
-    ok = false;
 }

@@ -48,6 +48,7 @@ public:
     
 private:
     void compare_files(const std::vector<std::string> &argv, const std::string &got, const std::string &expected);
+    void print_header();
     void print_line(char indicator, const std::string &line);
     
     const std::vector<Test::File> &expected;

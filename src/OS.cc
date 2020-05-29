@@ -59,6 +59,47 @@ std::string OS::basename(const std::string &name) {
 }
 
 
+bool OS::compare_files(const std::string &left, const std::string &right) {
+    auto left_file = std::ifstream(left);
+    if (!left_file) {
+        throw Exception("cannot open '" + left + "'", true);
+    }
+
+    auto right_file = std::ifstream(right);
+    if (!right_file) {
+        throw Exception("cannot open '" + right + "'", true);
+    }
+    
+    while (!left_file.eof()) {
+        char left_buf[8192], right_buf[8192];
+        
+        left_file.read(left_buf, sizeof(left_buf));
+        if (left_file.bad()) {
+            throw Exception("error reading from '" + left + "'", true);
+        }
+        
+        right_file.read(right_buf, sizeof(right_buf));
+        if (right_file.bad()) {
+            throw Exception("error reading from '" + right + "'", true);
+        }
+
+        if (left_file.gcount() != right_file.gcount()) {
+            return false;
+        }
+        
+        if (memcmp(left_buf, right_buf, left_file.gcount()) != 0) {
+            return false;
+        }
+    }
+    
+    if (!right_file.eof()) {
+        return false;
+    }
+    
+    return true;
+}
+
+
 void
 OS::copy_file(const std::string &from, const std::string &to) {
     auto from_file = std::ifstream(from);
