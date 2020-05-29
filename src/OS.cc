@@ -33,6 +33,8 @@
 
 #include "OS.h"
 
+#include <string.h>
+
 #include <fstream>
 
 #include "Exception.h"
