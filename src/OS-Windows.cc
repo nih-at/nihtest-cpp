@@ -85,7 +85,7 @@ static std::string utf16_to_utf8(const wchar_t *utf16) {
 
 
 void OS::change_directory(const std::string &directory) {
-    if (chdir(directory.c_str()) < 0) {
+    if (_chdir(directory.c_str()) < 0) {
         throw Exception("can't change into directory '" + directory + "'", true);
     }
 }
