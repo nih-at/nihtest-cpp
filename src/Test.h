@@ -90,7 +90,7 @@ public:
     std::vector<std::string> input;
     std::unordered_map<char, int> limits;
     std::vector<std::string> output;
-    std::string pipe_file;
+    std::string input_file;
     std::vector<std::string> precheck_command;
     std::string preload_library;
     std::string program;

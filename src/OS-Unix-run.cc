@@ -268,9 +268,7 @@ std::string OS::run_command(const Command *command, std::vector<std::string> *ou
 	pipe_error.close_read();
 
         auto ok = true;
-        
-        // TODO: handle pipein-file
-        
+                
         if (pipe_input) {
             if (dup2(pipe_input->read_fd, 0) < 0) {
                 ok = false;

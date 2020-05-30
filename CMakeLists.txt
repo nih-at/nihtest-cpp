@@ -5,6 +5,7 @@ PROJECT(nihtest
   DESCRIPTION "NiH testing framework"
   HOMEPAGE_URL "https://github.com/nih-at/nihtest"
   LANGUAGES C CXX)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_STANDARD 14)
 
 INCLUDE(CheckFunctionExists)

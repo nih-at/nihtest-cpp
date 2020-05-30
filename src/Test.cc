@@ -52,7 +52,6 @@ const std::vector<Parser::Directive> Test::directives = {
     Parser::Directive("file-del", "test in", 2),
     Parser::Directive("file-new", "test out", 2),
     Parser::Directive("mkdir", "mode name", 2),
-    Parser::Directive("pipefile", "file", 1, true),
     Parser::Directive("precheck", "command [args ...]", 1, false, false, -1),
     Parser::Directive("preload", "library", 1, true),
     Parser::Directive("program", "name", 1, true),
@@ -61,6 +60,7 @@ const std::vector<Parser::Directive> Test::directives = {
     Parser::Directive("stderr", "text", -1),
     Parser::Directive("stderr-replace", "pattern replacement", 2),
     Parser::Directive("stdin", "text", -1),
+    Parser::Directive("stdin-file", "file", 1, true),
     Parser::Directive("stdout", "text", -1),
     Parser::Directive("touch", "mtime file", 2),
     Parser::Directive("ulimit", "limit value", 2)
@@ -84,6 +84,23 @@ Test::Test(const std::string &test_case, Configuration configuration_) : configu
     
     parser.parse();
     
+    if (program.empty()) {
+        program = configuration.default_program;
+        if (program.empty()) {
+            throw Exception("no program specified");
+        }
+    }
+
+    if (!directories.empty()) {
+        throw Exception("mkdir not implemented yet");
+    }
+    if (!limits.empty()) {
+        throw Exception("ulimit not implemented yet");
+    }
+    if (!touch_files.empty()) {
+        throw Exception("touch not implemented yet");
+    }
+
     if (environment.find("TZ") == environment.end()) {
         environment["TZ"] = "UTC";
     }
@@ -92,13 +109,6 @@ Test::Test(const std::string &test_case, Configuration configuration_) : configu
     }
     if (environment.find("POSIXLY_CORRECT") == environment.end()) {
         environment["POSIXLY_CORRECT"] = "1";
-    }
-
-    if (program.empty()) {
-        program = configuration.default_program;
-        if (program.empty()) {
-            throw Exception("no program specified");
-        }
     }
 
     std::sort(files.begin(), files.end());
@@ -154,6 +164,22 @@ Test::Result Test::execute_test() {
         }
     }
     
+    if (!precheck_command.empty()) {
+        OS::Command command;
+        command.program = find_file(precheck_command[0]);
+        command.arguments.insert(command.arguments.begin(), precheck_command.begin() + 1, precheck_command.end());
+        command.path.push_back(".");
+
+        std::vector<std::string> output;
+        std::vector<std::string> error_output;
+        
+        auto result = OS::run_command(&command, &output, &error_output);
+        if (result != "0") {
+            // TODO: print output if verbose?
+            return SKIPPED;
+        }
+    }
+    
     enter_sandbox();
     
     try {
@@ -174,7 +200,7 @@ Test::Result Test::execute_test() {
         if (!input.empty()) {
             command.input = &input;
         }
-        command.input_file = pipe_file;
+        command.input_file = input_file;
         if (!limits.empty()) {
             command.limits = &limits;
         }
@@ -307,11 +333,11 @@ void Test::process_directive(const Parser::Directive *directive, const std::vect
         }
         directories[args[1]] = get_int(args[2]);
     }
-    else if (directive->name == "pipefile") {
+    else if (directive->name == "stdin-file") {
         if (!input.empty()) {
-            throw Exception("only one of 'pipefile' or 'stdin' allowed");
+            throw Exception("only one of 'stdin-file' or 'stdin' allowed");
         }
-        pipe_file = args[0];
+        input_file = args[0];
     }
     else if (directive->name == "precheck") {
         precheck_command = args;
@@ -338,8 +364,8 @@ void Test::process_directive(const Parser::Directive *directive, const std::vect
         error_output_replace.push_back(Replace(std::regex(args[0]), args[1]));
     }
     else if (directive->name == "stdin") {
-        if (!pipe_file.empty()) {
-            throw Exception("only one of 'pipefile' or 'stdin' allowed");
+        if (!input_file.empty()) {
+            throw Exception("only one of 'stdin-file' or 'stdin' allowed");
         }
         input.push_back(args[0]);
     }
