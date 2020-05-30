@@ -48,7 +48,6 @@
 #include "Configuration.h"
 #include "Exception.h"
 #include "Test.h"
-#include "Variables.h"
 
 static const std::string usage_tail = " [-ChqVv] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
 

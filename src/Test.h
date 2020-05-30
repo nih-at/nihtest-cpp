@@ -41,7 +41,6 @@
 
 #include "Configuration.h"
 #include "Parser.h"
-#include "Variables.h"
 
 class Test : ParserConsumer {
 public:
@@ -109,13 +108,15 @@ private:
     void leave_sandbox(bool keep);
     std::string make_filename(const std::string &directory, const std::string name) const;
     void print_result(Result result) const;
-    VariablesPointer read_features();
+    void read_features();
     void rewrite_lines(const std::vector<Replace> &replacements, std::vector<std::string> *lines);
     
     bool in_sandbox;
     std::string sandbox_name;
     std::vector<std::string> failed;
-    VariablesPointer features;
+
+    std::unordered_set<std::string> features;
+    bool features_read;
 };
 
 #endif // HAD_TEST_H

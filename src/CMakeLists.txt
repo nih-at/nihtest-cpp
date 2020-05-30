@@ -10,7 +10,6 @@ SET(NIHTEST_SOURCES
     OS.cc
     Parser.cc
     Test.cc
-    Variables.cc
 )
 
 IF(WIN32)

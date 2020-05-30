@@ -41,10 +41,10 @@
 class OS {
 public:
     struct Command {
-        Command() : environment(NULL), input(NULL), limits(NULL) { }
+        Command() : input(NULL), limits(NULL) { }
         
         std::vector<std::string> arguments;
-        std::unordered_map<std::string, std::string> *environment;
+        std::vector<const std::unordered_map<std::string, std::string> *> environments;
         std::vector<std::string> *input;
         std::string input_file;
         std::unordered_map<char, int> *limits;
@@ -54,6 +54,7 @@ public:
     };
 
     static const std::string path_separator;
+    static const std::unordered_map<std::string, std::string> standard_environment;
 
     static std::string append_path_component(const std::string &directory, const std::string &name);
     static std::string basename(const std::string &name);

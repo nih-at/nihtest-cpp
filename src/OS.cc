@@ -40,7 +40,7 @@
 #include "Exception.h"
 
 std::string OS::append_path_component(const std::string &directory, const std::string &name) {
-    if (directory.empty()) {
+    if (directory.empty() || directory == ".") {
         return name;
     }
     else {

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D93B2475208900CE8C38 /* nihtest.cc */; };
-		4B55D94A2475355700CE8C38 /* Variables.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9482475355700CE8C38 /* Variables.cc */; };
 		4B55D94D24756B0E00CE8C38 /* Test.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D94B24756B0E00CE8C38 /* Test.cc */; };
 		4B55D950247573D500CE8C38 /* OS-Unix.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D94E247573D500CE8C38 /* OS-Unix.cc */; };
 		4B55D9522475745700CE8C38 /* OS.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B55D9512475745700CE8C38 /* OS.cc */; };
@@ -45,8 +44,6 @@
 		4B55D945247530E200CE8C38 /* getopt_long.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = getopt_long.c; sourceTree = "<group>"; };
 		4B55D946247530E200CE8C38 /* getopt_long.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = getopt_long.h; sourceTree = "<group>"; };
 		4B55D947247530EF00CE8C38 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compat.h; sourceTree = "<group>"; };
-		4B55D9482475355700CE8C38 /* Variables.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Variables.cc; sourceTree = "<group>"; };
-		4B55D9492475355700CE8C38 /* Variables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Variables.h; sourceTree = "<group>"; };
 		4B55D94B24756B0E00CE8C38 /* Test.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Test.cc; sourceTree = "<group>"; tabWidth = 8; };
 		4B55D94C24756B0E00CE8C38 /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
 		4B55D94E247573D500CE8C38 /* OS-Unix.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "OS-Unix.cc"; sourceTree = "<group>"; };
@@ -129,8 +126,6 @@
 				4B55D95E2478249B00CE8C38 /* Parser.h */,
 				4B55D94B24756B0E00CE8C38 /* Test.cc */,
 				4B55D94C24756B0E00CE8C38 /* Test.h */,
-				4B55D9482475355700CE8C38 /* Variables.cc */,
-				4B55D9492475355700CE8C38 /* Variables.h */,
 			);
 			name = nihtest;
 			path = ../src;
@@ -255,7 +250,6 @@
 				4B55D93D2475208900CE8C38 /* nihtest.cc in Sources */,
 				4BD78B81247E6AF800F9D720 /* CompareFiles.cc in Sources */,
 				4B79E98C248172B40038438C /* Configuration.cc in Sources */,
-				4B55D94A2475355700CE8C38 /* Variables.cc in Sources */,
 				4B55D950247573D500CE8C38 /* OS-Unix.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

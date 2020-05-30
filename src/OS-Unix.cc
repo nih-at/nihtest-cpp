@@ -48,6 +48,12 @@
 
 const std::string OS::path_separator = "/";
 
+const std::unordered_map<std::string, std::string> OS::standard_environment = {
+    { "LC_CTYPE", "C"},
+    { "POSIXLY_CORRECT", "1" },
+    { "TZ", "UTC" }
+};
+
 
 void OS::change_directory(const std::string &directory) {
     if (chdir(directory.c_str()) < 0) {
@@ -76,12 +82,22 @@ bool OS::is_absolute(const std::string &file_name) {
 }
 
 
-std::vector<std::string> OS::list_files(const std::string &directory) {
+static bool is_directory(const std::string &directory) {
+    struct stat st;
+    
+    if (stat(directory.c_str(), &st) < 0) {
+        throw Exception("can't stat '" + directory + "'", true);
+    }
+    return S_ISDIR(st.st_mode);
+}
+
+
+static void list_files_recurse(const std::string &directory, std::vector<std::string> *all_files) {
     DIR *dir = opendir(directory.c_str());
     if (dir == NULL) {
         throw Exception("can't list directory '" + directory + "'", true);
     }
-
+    
     std::vector<std::string> files;
     
     struct dirent *entry;
@@ -92,8 +108,25 @@ std::vector<std::string> OS::list_files(const std::string &directory) {
         files.push_back(entry->d_name);
     }
     closedir(dir);
-
+    
     std::sort(files.begin(), files.end());
+    
+    for (const auto &file : files) {
+        auto name = OS::append_path_component(directory, file);
+        if (is_directory(name)) {
+            list_files_recurse(name, all_files);
+        }
+        else {
+            all_files->push_back(name);
+        }
+    }
+}
+
+
+std::vector<std::string> OS::list_files(const std::string &directory) {
+    std::vector<std::string> files;
+
+    list_files_recurse(directory, &files);
     
     return files;
 }

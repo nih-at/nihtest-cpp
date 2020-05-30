@@ -299,8 +299,8 @@ std::string OS::run_command(const Command *command, std::vector<std::string> *ou
         pipe_output.close_write();
         pipe_error.close_write();
 
-        if (command->environment != NULL) {
-            for (const auto &pair : *command->environment) {
+        for (const auto &environment : command->environments) {
+            for (const auto &pair : *environment) {
                 setenv(pair.first.c_str(), pair.second.c_str(), 1);
             }
         }

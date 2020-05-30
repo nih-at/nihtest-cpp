@@ -7,15 +7,14 @@
 * documentation
 * make mkdir, ulimit less unix centric
 * use readable time format for touch
-* list files recursively
 
 ## enhancements
 
-* implement limits, touch, mkdir, precheck
+* implement limits, touch, mkdir
 * don't use system to remove directory
 * add timeout directive (and default-timeout in configuration)
 * default environment variables in configuration
+* unsetenv
 
 ## cleanup
 
-remove Variables class

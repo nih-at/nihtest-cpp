@@ -67,7 +67,7 @@ const std::vector<Parser::Directive> Test::directives = {
 };
 
 
-Test::Test(const std::string &test_case, Configuration configuration_) : configuration(configuration_), run_test(true), in_sandbox(false) {
+Test::Test(const std::string &test_case, Configuration configuration_) : configuration(configuration_), run_test(true), in_sandbox(false), features_read(false) {
     auto file_name = test_case;
     name = OS::basename(test_case);
     auto dot = name.find('.');
@@ -99,16 +99,6 @@ Test::Test(const std::string &test_case, Configuration configuration_) : configu
     }
     if (!touch_files.empty()) {
         throw Exception("touch not implemented yet");
-    }
-
-    if (environment.find("TZ") == environment.end()) {
-        environment["TZ"] = "UTC";
-    }
-    if (environment.find("LC_CTYPE") == environment.end()) {
-        environment["LC_CTYPE"] = "C";
-    }
-    if (environment.find("POSIXLY_CORRECT") == environment.end()) {
-        environment["POSIXLY_CORRECT"] = "1";
     }
 
     std::sort(files.begin(), files.end());
@@ -194,8 +184,9 @@ Test::Result Test::execute_test() {
         
         OS::Command command;
         command.arguments = arguments;
+        command.environments.push_back(&OS::standard_environment);
         if (!environment.empty()) {
-            command.environment = &environment;
+            command.environments.push_back(&environment);
         }
         if (!input.empty()) {
             command.input = &input;
@@ -277,11 +268,11 @@ int Test::get_int(const std::string &string) {
 
 
 bool Test::has_feature(const std::string &name) {
-    if (!features) {
-        features = read_features();
+    if (!features_read) {
+        read_features();
     }
     
-    return features->is_set(name);
+    return features.find(name) != features.end();
 }
 
 
@@ -439,9 +430,7 @@ void Test::print_result(Result result) const {
 }
 
 
-VariablesPointer Test::read_features() {
-    VariablesPointer features(new Variables());
-    
+void Test::read_features() {
     auto config_file_name = make_filename(configuration.top_build_directory, "config.h");
     
     auto config_file = std::ifstream(config_file_name);
@@ -455,11 +444,9 @@ VariablesPointer Test::read_features() {
     while (std::getline(config_file, line)) {
         std::smatch match;
         if (std::regex_search(line, match, define)) {
-            features->set(match.str(1), "YES");
+            features.insert(match.str(1));
         }
     }
-
-    return features;
 }
 
 
