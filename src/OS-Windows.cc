@@ -38,6 +38,9 @@
 
 const std::string OS::path_separator = "\\";
 
+const std::unordered_map<std::string, std::string> OS::standard_environment = {
+};
+
 
 void OS::change_directory(const std::string &directory) {
     // TODO: implement
