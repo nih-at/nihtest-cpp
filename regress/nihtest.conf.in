@@ -1,0 +1,3 @@
+default-program nihtest
+source-directory @CMAKE_CURRENT_SOURCE_DIR@
+top-build-directory @PROJECT_BINARY_DIR@
