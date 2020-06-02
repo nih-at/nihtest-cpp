@@ -7,6 +7,7 @@
 
 ## required for release
 
+- README.md, INSTALL.md, etc.
 * documentation
 * make intermediary directories when copying file
 
