@@ -47,8 +47,29 @@ const std::unordered_map<std::string, std::string> OS::standard_environment = {
 };
 
 
-static std::wstring utf8_to_utf16(const char *utf8) {
-    int size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8, -1, NULL, 0);
+static bool has_drive_letter(const std::string &path) {
+    if (path.size() < 2) {
+        return false;
+    }
+    
+    if ((path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z')) {
+        return path[1] == ':';
+    }
+    else {
+        return false;
+    }
+}
+
+
+static std::string native_path(const std::string &path) {
+    auto native_path = path;
+    native_path.replace(native_path.begin(), native_path.end(), '/', '\\');
+    return native_path;
+}
+
+
+static std::wstring utf8_to_utf16(const std::string &utf8) {
+    int size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8.c_str(), -1, NULL, 0);
     if (size == 0) {
         throw Exception("invalid UTF-8 string", true);
     }
@@ -57,7 +78,7 @@ static std::wstring utf8_to_utf16(const char *utf8) {
         throw Exception("out of memory");
     }
 
-    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8, -1, utf16_c, size);
+    MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8.c_str(), -1, utf16_c, size);
 
     auto utf16 =  std::wstring(utf16_c);
     free(utf16_c);
@@ -84,15 +105,27 @@ static std::string utf16_to_utf8(const wchar_t *utf16) {
 }
 
 
+std::string OS::append_path_component(const std::string &directory, const std::string &name) {
+    if (directory.empty() || directory == ".") {
+        return native_path(name);
+    }
+    else {
+        // TODO: handle drive letter in name
+        return native_path(directory) + path_separator + native_path(name);
+    }
+}
+
+
 void OS::change_directory(const std::string &directory) {
-    if (_chdir(directory.c_str()) < 0) {
-        throw Exception("can't change into directory '" + directory + "'", true);
+    auto native_directory = native_path(directory);
+    if (_chdir(native_directory.c_str()) < 0) {
+        throw Exception("can't change into directory '" + native_directory + "'", true);
     }
 }
 
 
 bool OS::file_exists(const std::string &file_name) {
-    auto w_file_name = utf8_to_utf16(file_name.c_str());
+    auto w_file_name = utf8_to_utf16(native_path(file_name));
     
     return GetFileAttributesW(w_file_name.c_str()) != INVALID_FILE_ATTRIBUTES;
 }
@@ -111,8 +144,16 @@ bool OS::is_absolute(const std::string &file_name) {
     if (file_name.empty()) {
         return false;
     }
-    // TODO: handle drive letters
-    return file_name[0] == '\\';
+    
+    size_t offset = 0;
+    
+    if (has_drive_letter(file_name)) {
+        if (file_name.size() < 3) {
+            return false;
+        }
+        offset = 2;
+    }
+    return file_name[offset] == '/' || file_name[offset] == '\\';
 }
 
 

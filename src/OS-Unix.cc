@@ -55,6 +55,16 @@ const std::unordered_map<std::string, std::string> OS::standard_environment = {
 };
 
 
+std::string OS::append_path_component(const std::string &directory, const std::string &name) {
+    if (directory.empty() || directory == ".") {
+        return name;
+    }
+    else {
+        return directory + path_separator + name;
+    }
+}
+
+
 void OS::change_directory(const std::string &directory) {
     if (chdir(directory.c_str()) < 0) {
 	throw Exception("can't change into directory '" + directory + "'", true);

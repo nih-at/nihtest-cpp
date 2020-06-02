@@ -39,15 +39,6 @@
 
 #include "Exception.h"
 
-std::string OS::append_path_component(const std::string &directory, const std::string &name) {
-    if (directory.empty() || directory == ".") {
-        return name;
-    }
-    else {
-        return directory + path_separator + name;
-    }
-}
-
 
 std::string OS::basename(const std::string &name) {
     auto pos = name.rfind(path_separator);
