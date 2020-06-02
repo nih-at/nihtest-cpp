@@ -55,7 +55,7 @@
 #include "Exception.h"
 #include "Test.h"
 
-static const std::string usage_tail = " [-ChqVv] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
+static const std::string usage_tail = " [-hqVv] [-C config] [--keep-broken] [--no-cleanup] [--setup-only] [VARIABLE=VALUE ...] testcase\n";
 
 static const std::string help_head = PACKAGE " by Dieter Baron and Thomas Klausner\n\n";
 
@@ -64,6 +64,7 @@ static const std::string version_string = PACKAGE " " VERSION "\n"
     PACKAGE " comes with ABSOLUTELY NO WARRANTY, to the extent permitted by law.\n";
 
 static const std::string help_tail = "\n"
+    "  -C, --config-file  Use the argument as config file\n"
     "  -h, --help         display this help message and exit\n"
     "      --keep-broken  keep sandbox if test fails\n"
     "      --no-cleanup   keep sandbox\n"
