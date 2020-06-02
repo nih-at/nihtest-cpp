@@ -174,35 +174,5 @@ commands are used, the messages are expected in the order given.
 .\" command
 .\" .Dl ulimit -n 16 .
 .El
-.Sh ENVIRONMENT
-.Xr nihtest 1
-honors the following environment variables:
-.Bl -tag -width 20n
-.It Ev RUN_GDB
-If set, run
-.Xr gdb 1
-on program in test environment.
-.It Ev KEEP_BROKEN
-If set, don't delete test environment if test failed.
-.It Ev NO_CLEANUP
-If set, don't delete test environment after running the test.
-.It Ev SETUP_ONLY
-If set, exit after creating the test environment.
-.It Ev VERBOSE
-If set, be more verbose (e. g., output diffs).
-.El
-.Sh EXIT STATUS
-.Xr nihtest 1
-uses the following exit codes:
-.Bl -tag -width 3n -compact -offset 8n
-.It 0
-Test passed
-.It 1
-Test failed
-.It 2
-Other error
-.It 77
-Test was skipped.
-.El
 .Sh SEE ALSO
 .Xr nihtest 1
