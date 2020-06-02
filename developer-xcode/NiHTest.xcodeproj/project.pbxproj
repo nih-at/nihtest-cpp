@@ -32,6 +32,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B4CB57A24868E3A005C5428 /* echo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = echo.c; sourceTree = "<group>"; };
+		4B4CB57B24868E3A005C5428 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		4B4CB57C24868E3A005C5428 /* true-fail.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = "true-fail.test"; sourceTree = "<group>"; };
+		4B4CB57D24868E3A005C5428 /* false-pass.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = "false-pass.test"; sourceTree = "<group>"; };
+		4B4CB57E24868E3A005C5428 /* false.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = false.c; sourceTree = "<group>"; };
+		4B4CB57F24868E3A005C5428 /* true.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = true.c; sourceTree = "<group>"; };
+		4B4CB58024868E3A005C5428 /* nihtest.conf.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = nihtest.conf.in; sourceTree = "<group>"; };
+		4B4CB58124868E3A005C5428 /* false-fail.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = "false-fail.test"; sourceTree = "<group>"; };
+		4B4CB58224868E3A005C5428 /* true-pass.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = "true-pass.test"; sourceTree = "<group>"; };
 		4B55D92E24751DD300CE8C38 /* nihtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nihtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B55D93924751FE300CE8C38 /* NiHTest.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = NiHTest.pm; path = ../NiHTest.pm; sourceTree = "<group>"; };
 		4B55D93A24751FE300CE8C38 /* runtest.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = runtest.in; path = ../runtest.in; sourceTree = "<group>"; };
@@ -177,8 +186,17 @@
 			isa = PBXGroup;
 			children = (
 				4BF1D82A247D2CCF00353959 /* cat.test */,
+				4B4CB57B24868E3A005C5428 /* CMakeLists.txt */,
+				4B4CB57A24868E3A005C5428 /* echo.c */,
 				4BF1D82C247D2CDD00353959 /* echo.test */,
+				4B4CB58124868E3A005C5428 /* false-fail.test */,
+				4B4CB57D24868E3A005C5428 /* false-pass.test */,
+				4B4CB57E24868E3A005C5428 /* false.c */,
+				4B4CB58024868E3A005C5428 /* nihtest.conf.in */,
 				4BF1D82B247D2CCF00353959 /* skip.test */,
+				4B4CB57C24868E3A005C5428 /* true-fail.test */,
+				4B4CB58224868E3A005C5428 /* true-pass.test */,
+				4B4CB57F24868E3A005C5428 /* true.c */,
 			);
 			name = regress;
 			path = ../regress;
