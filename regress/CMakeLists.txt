@@ -21,26 +21,23 @@ set(NIHTEST_TESTS
   false-pass
   true-fail
   true-pass
+  description-pass
   stdout-fail
   stdout-pass
   stderr-fail
   stderr-pass
-  )
-# subset of NIHTEST_TESTS of those tests which are expected to fail
-set(NIHTEST_EXPECTED_FAILS
-  false-fail
-  true-fail
-  stderr-fail
-  stdout-fail
+  features-fail
+  features-pass
+  features-skip
   )
 
 # Tests for nihtest itself
 foreach(CASE ${NIHTEST_TESTS})
   add_test(NAME ${CASE} COMMAND nihtest ${PROJECT_SOURCE_DIR}/regress/${CASE})
   set_tests_properties(${CASE} PROPERTIES SKIP_RETURN_CODE 77)
-endforeach()
-foreach(CASE ${NIHTEST_EXPECTED_FAILS})
-  set_tests_properties(${CASE} PROPERTIES WILL_FAIL TRUE)
+  if(${CASE} MATCHES ".*-fail$") 
+    set_tests_properties(${CASE} PROPERTIES WILL_FAIL TRUE)
+  endif()
 endforeach()
 
 configure_file(nihtest.conf.in ${CMAKE_CURRENT_BINARY_DIR}/nihtest.conf @ONLY)

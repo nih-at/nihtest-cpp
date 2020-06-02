@@ -8,4 +8,8 @@
 #cmakedefine HAVE_GETPROGNAME
 #cmakedefine HAVE_UNISTD_H
 
+/* for testing */
+#cmakedefine HAVE_TEST_EXISTING_FEATURE
+#cmakedefine HAVE_TEST_MISSING_FEATURE
+
 #endif // HAD_NIHTEST_CONFIG_H
