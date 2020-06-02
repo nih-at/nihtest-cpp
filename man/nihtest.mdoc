@@ -69,8 +69,8 @@ The directory is populated according to the test configuration, see
 .Xr nihtest-config 5 .
 .Pp
 .Nm
-supports the following options
-.Bl -tag -width 10n
+msupports the following options
+.Bl -tag -width 15n -offset 8n
 .It Fl C Ar config , Fl Fl config-file Ar config
 Use
 .Ar config
@@ -94,7 +94,7 @@ Print
 version number and exit.
 .El
 .Sh ENVIRONMENT
-.Xr nihtest 1
+.Nm
 honors the following environment variables:
 .Bl -tag -width 20n
 .\" .It Ev RUN_GDB
@@ -111,7 +111,7 @@ If set, don't delete test environment if test failed.
 If set, be more verbose (e. g., output diffs).
 .El
 .Sh EXIT STATUS
-.Xr nihtest 1
+.Nm
 uses the following exit codes:
 .Bl -tag -width 3n -compact -offset 8n
 .It 0
@@ -124,4 +124,4 @@ Other error
 Test was skipped.
 .El
 .Sh SEE ALSO
-.Xr nihtest-case 1
+.Xr nihtest-case 5
