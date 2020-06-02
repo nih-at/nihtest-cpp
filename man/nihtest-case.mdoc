@@ -95,14 +95,6 @@ is created by the program and compare it against
 .\" .Ar NAME
 .\" with permissions
 .\" .Ar MODE .
-.It Ic stdin Ar ARGS ...
-Provide
-.Ar ARGS
-to the program's standard input.
-.It Ic stdin-file Ar FILE
-Provide the contents of the file
-.Ar FILE
-to the program's standard input.
 .It Ic precheck Ar COMMAND ARGS ...
 If
 .Ar COMMAND
@@ -143,6 +135,14 @@ is the replacement expression.
 See
 .Xr re_format 7
 for details.
+.It Ic stdin Ar ARGS ...
+Provide
+.Ar ARGS
+to the program's standard input.
+.It Ic stdin-file Ar FILE
+Provide the contents of the file
+.Ar FILE
+to the program's standard input.
 .It Ic stdout Ar TEXT
 The program is expected to print
 .Ar TEXT
@@ -159,20 +159,20 @@ commands are used, the messages are expected in the order given.
 .\" If
 .\" .Ar FILE
 .\" doesn't exist, an empty file is created.
-.It Ic ulimit Ar C VALUE
-Set
-.Xr ulimit 1
-flag
-.Fl Ar C
-to
-.Ar VALUE
-while running the program.
-E.g.,
-.Dl ulimit n 16
-would run the equivalent of the
-.Xr sh 1
-command
-.Dl ulimit -n 16 .
+.\" .It Ic ulimit Ar C VALUE
+.\" Set
+.\" .Xr ulimit 1
+.\" flag
+.\" .Fl Ar C
+.\" to
+.\" .Ar VALUE
+.\" while running the program.
+.\" E.g.,
+.\" .Dl ulimit n 16
+.\" would run the equivalent of the
+.\" .Xr sh 1
+.\" command
+.\" .Dl ulimit -n 16 .
 .El
 .Sh ENVIRONMENT
 .Xr nihtest 1
