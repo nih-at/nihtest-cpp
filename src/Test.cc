@@ -51,7 +51,7 @@ const std::vector<Parser::Directive> Test::directives = {
     Parser::Directive("file", "test in [out]", 2, false, false, 3),
     Parser::Directive("file-del", "test in", 2),
     Parser::Directive("file-new", "test out", 2),
-    Parser::Directive("mkdir", "mode name", 2),
+//    Parser::Directive("mkdir", "mode name", 2),
     Parser::Directive("precheck", "command [args ...]", 1, false, false, -1),
     Parser::Directive("preload", "library", 1, true),
     Parser::Directive("program", "name", 1, true),
@@ -62,8 +62,8 @@ const std::vector<Parser::Directive> Test::directives = {
     Parser::Directive("stdin", "text", -1),
     Parser::Directive("stdin-file", "file", 1, true),
     Parser::Directive("stdout", "text", -1),
-    Parser::Directive("touch", "mtime file", 2),
-    Parser::Directive("ulimit", "limit value", 2)
+//    Parser::Directive("touch", "date time file", 3),
+//    Parser::Directive("ulimit", "limit value", 2)
 };
 
 
