@@ -21,12 +21,17 @@ set(NIHTEST_TESTS
   false-pass
   true-fail
   true-pass
-  stdout
+  stdout-fail
+  stdout-pass
+  stderr-fail
+  stderr-pass
   )
 # subset of NIHTEST_TESTS of those tests which are expected to fail
 set(NIHTEST_EXPECTED_FAILS
   false-fail
   true-fail
+  stderr-fail
+  stdout-fail
   )
 
 # Tests for nihtest itself

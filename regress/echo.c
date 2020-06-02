@@ -1,9 +1,16 @@
+#include <string.h>
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-    for (int i=1; i<argc; i++) {
-	printf("%s%s", (i == 1 ? "" : " "), argv[i]);
+    FILE *out = stdout;
+    int start = 1;
+    if (argc > 1 && strcmp(argv[1], "-e") == 0) {
+	start = 2;
+	out = stderr;
     }
-    printf("\n");
+    for (int i=start; i<argc; i++) {
+	fprintf(out, "%s%s", (i == start ? "" : " "), argv[i]);
+    }
+    fprintf(out, "\n");
     return 0;
 }

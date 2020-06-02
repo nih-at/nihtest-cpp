@@ -1,0 +1,4 @@
+program echo
+return 0
+args -e This is not a successful test.
+stderr This is a successful test.
