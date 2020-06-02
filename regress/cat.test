@@ -1,5 +1,0 @@
-program /bin/cat
-args
-return 0
-stdin Test
-stdout Test

@@ -1,4 +1,0 @@
-features NOT_SET
-program /bin/cat
-args
-return 0
