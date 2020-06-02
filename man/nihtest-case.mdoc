@@ -71,7 +71,7 @@ If the string
 is defined in the file, the feature
 .Dv FOO
 is assumed to be available, otherwise not.
-.It Ic file Ar test in [out]
+.It Ic file Ar test in Op Ar out
 Copy file
 .Ar in
 into the testing directory as
@@ -99,7 +99,7 @@ is created by the program and compare it against
 .\" .Ar NAME
 .\" with permissions
 .\" .Ar MODE .
-.It Ic precheck Ar command [args ...]
+.It Ic precheck Ar command Op Ar args ...
 If
 .Ar command
 exits with non-zero status, skip the test.
@@ -134,8 +134,8 @@ If multiple
 .Ic stderr
 commands are used, the messages are expected in the order given.
 .It Ic stderr-replace Ar pattern replacement
-Run regualr expression replacement over the standard error output before and the
-expected output as provided by
+Run regular expression replacement over the standard error output
+and the expected output as provided by
 .Ic stderr
 before comparing them.
 .Ar pattern
