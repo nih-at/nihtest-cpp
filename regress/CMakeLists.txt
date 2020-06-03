@@ -35,7 +35,16 @@ set(NIHTEST_TESTS
   features-skip
   stdin-pass
   stdin-file-pass
+  precheck-fail
+  precheck-pass
+  precheck-skip
   )
+# TODO:
+# file
+# file-del
+# file-new
+# preload
+# setenv
 
 # Tests for nihtest itself
 foreach(CASE ${NIHTEST_TESTS})
