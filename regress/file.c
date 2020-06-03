@@ -1,7 +1,12 @@
+#ifdef _MSC_VER
+// We're okay with using the incredibly insecure functions fopen() and sterror().
+// (Yes, it's not thread save, and we're not multi-threaded.)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 /* supported commands
  *
@@ -16,7 +21,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "not enough arguments for delete");
 		return 1;
 	    }
-	    if (unlink(argv[i]) != 0) {
+	    if (remove(argv[i]) != 0) {
 		fprintf(stderr, "error deleting '%s': %s", argv[i], strerror(errno));
 		return 1;
 	    }

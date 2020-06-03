@@ -1,3 +1,9 @@
+#ifdef _MSC_VER
+// We're okay with using the incredibly insecure functions fopen() and sterror().
+// (Yes, it's not thread save, and we're not multi-threaded.)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
