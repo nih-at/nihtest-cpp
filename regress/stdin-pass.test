@@ -1,0 +1,5 @@
+program cat
+return 0
+args -
+stdin This is a successful test.
+stdout This is a successful test.

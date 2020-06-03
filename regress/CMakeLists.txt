@@ -2,6 +2,7 @@ set(TEST_PROGRAMS
   false
   true
   echo
+  cat
 )
 
 foreach(PROGRAM ${TEST_PROGRAMS})
@@ -14,6 +15,8 @@ add_test(NAME false COMMAND false)
 set_tests_properties(false PROPERTIES WILL_FAIL TRUE)
 add_test(NAME echo COMMAND echo "This test was successful.")
 set_tests_properties(echo PROPERTIES PASS_REGULAR_EXPRESSION "This test was successful.")
+add_test(NAME cat COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/success.txt)
+set_tests_properties(cat PROPERTIES PASS_REGULAR_EXPRESSION "This test was successful.")
 
 # these are not sorted alphabetically but by features
 set(NIHTEST_TESTS
@@ -29,6 +32,8 @@ set(NIHTEST_TESTS
   features-fail
   features-pass
   features-skip
+  stdin-pass
+  stdin-file-pass
   )
 
 # Tests for nihtest itself
