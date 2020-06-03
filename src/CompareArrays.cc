@@ -133,7 +133,7 @@ bool CompareArrays::compare_verbose() {
 	    // }
 	    //j++;
 	}
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	path_lengths.push_back(dest);
 	if (done) {
 	    break;
