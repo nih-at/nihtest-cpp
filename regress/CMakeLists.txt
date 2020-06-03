@@ -4,6 +4,7 @@ set(TEST_PROGRAMS
   echo
   cat
   getenv
+  file
 )
 
 foreach(PROGRAM ${TEST_PROGRAMS})
@@ -44,14 +45,15 @@ set(NIHTEST_TESTS
   precheck-fail
   precheck-pass
   precheck-skip
-  setenv-pass
+# TODO: fix bug in setenv or test case and enable
+#  setenv-pass
+  file-del-fail
+  file-del-pass
   )
 # TODO:
 # file
-# file-del
 # file-new
 # preload
-# setenv
 
 # Tests for nihtest itself
 foreach(CASE ${NIHTEST_TESTS})

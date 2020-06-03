@@ -1,0 +1,4 @@
+program file
+args delete testfile
+file-del testfile success.txt
+return 0

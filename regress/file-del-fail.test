@@ -1,0 +1,3 @@
+program true
+file-del testfile success.txt
+return 0
