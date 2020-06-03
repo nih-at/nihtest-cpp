@@ -73,16 +73,16 @@ bool CompareArrays::compare_verbose() {
      * Eugene W. Myers - A O(ND) Difference algorithm and Its Variations
      */
     bool done = false;
-    const auto N = expected.size();
-    const auto M = got.size();
+    const int N = static_cast<int>(expected.size());
+    const int M = static_cast<int>(got.size());
     /* maximum size of differences accepted (could be set lower than M + N) */
-    const auto max_size = M + N;
+    const int max_size = M + N;
     int w[2*max_size+1];
     /* for retracing our steps and getting the actual diff */
     std::vector<std::vector<int> > path_lengths;
     /* re-index w so that v[-max_size .. max_size] are valid */
     /* v[k] = highest x we can reach after d non-diagonal steps, where y = x - k */
-    auto v = w+max_size;
+    int *v = w+max_size;
     int d;
 
     /* initialize variable, only needed for debugging */
