@@ -365,7 +365,7 @@ void Test::process_directive(const Parser::Directive *directive, const std::vect
     }
     else if (directive->name == "touch") {
         if (touch_files.find(args[1]) != touch_files.end()) {
-            throw Exception("duplicate setenv for '" + args[1], "'");
+            throw Exception("duplicate touch for '" + args[1], "'");
         }
         touch_files[args[1]] = get_int(args[0]);
     }
