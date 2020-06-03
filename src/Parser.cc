@@ -91,8 +91,13 @@ void Parser::parse() {
             if (space != std::string::npos) {
                 tokenize(&args, line, space + 1);
             }
-            if (args.size() < directive->minimum_arguments || args.size() > directive->maximum_arguments) {
-                
+            if (args.size() < directive->minimum_arguments) {
+                print_error("too few arguments");
+                continue;
+            }
+            else if (directive->maximum_arguments != -1 && args.size() > directive->maximum_arguments) {
+                print_error("too many arguments");
+                continue;
             }
         }
         
