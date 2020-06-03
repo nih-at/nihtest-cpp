@@ -11,6 +11,9 @@ foreach(PROGRAM ${TEST_PROGRAMS})
   add_executable(${PROGRAM} ${PROGRAM}.c)
 endforeach()
 
+ADD_LIBRARY(ineffective-remove MODULE ineffective-remove.c)
+TARGET_LINK_LIBRARIES(ineffective-remove ${CMAKE_DL_LIBS})
+
 # Tests for helper programs
 add_test(NAME true COMMAND true)
 add_test(NAME false COMMAND false)
@@ -53,9 +56,8 @@ set(NIHTEST_TESTS
   file-new-pass
   file-fail
   file-pass
+  preload-pass
   )
-# TODO:
-# preload
 
 # Tests for nihtest itself
 foreach(CASE ${NIHTEST_TESTS})
