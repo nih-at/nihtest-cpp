@@ -16,7 +16,7 @@ set_tests_properties(false PROPERTIES WILL_FAIL TRUE)
 add_test(NAME echo COMMAND echo "This test was successful.")
 set_tests_properties(echo PROPERTIES PASS_REGULAR_EXPRESSION "This test was successful.")
 add_test(NAME cat COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/success.txt)
-set_tests_properties(cat PROPERTIES PASS_REGULAR_EXPRESSION "This test was successful.")
+set_tests_properties(cat PROPERTIES PASS_REGULAR_EXPRESSION "This is a successful test.")
 
 # these are not sorted alphabetically but by features
 set(NIHTEST_TESTS
