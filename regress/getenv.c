@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 	char *ret;
 	ret = getenv(argv[i]);
         if (ret != NULL) {
-            printf("%s=\"%s\"\n", argv[i], ret);
+            printf("%s=%s\n", argv[i], ret);
         }
         else {
             printf("%s=<null>\n", argv[i]);
