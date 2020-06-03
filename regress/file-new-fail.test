@@ -1,0 +1,3 @@
+program true
+file-new testfile success.txt
+return 0
