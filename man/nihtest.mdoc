@@ -45,7 +45,7 @@
 .Ar testcase
 .Sh DESCRIPTION
 .Nm
-is a testing tool.
+is a testing tool for command line utilities.
 It uses
 .Pa .test
 files as input.
@@ -62,12 +62,6 @@ in the file
 or
 .Pa testcase.test .
 .Pp
-A test case is created in a separate directory especially created for
-the test, the sandbox, which is deleted after the test finishes.
-The directory is populated according to the test configuration, see
-.Xr nihtest-case 5 .
-.Pp
-.\" TODO: document VARIABLE=VALUE
 .Nm
 msupports the following options
 .Bl -tag -width 15n -offset 8n
@@ -92,6 +86,22 @@ Print detailed test results.
 Print
 .Nm
 version number and exit.
+.El
+.Pp
+A test run consists of the following steps:
+.Bl -bullet -compact -offset 8n
+.It
+check if test should be skipped
+.It
+create sandbox directory
+.It
+populate sandbox directory with input files
+.It
+run program
+.It
+compare program output, exit code, and output files
+.It
+remove sandbox
 .El
 .Sh ENVIRONMENT
 .Nm
