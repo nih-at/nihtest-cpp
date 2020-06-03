@@ -125,13 +125,13 @@ bool CompareArrays::compare_verbose() {
 	}
 	std::vector<int> dest;
 	//	std::cout << "array of level " << d << ": ";
-	int j = -max_size;
+	//int j = -max_size;
 	for (int i: w) {
 	    dest.push_back(i);
 	    // if (i < 10000) {
 	    // std::cout << "[" << i << "/" << (i-j) << "] (" << j << "), ";
 	    // }
-	    j++;
+	    //j++;
 	}
 	std::cout << std::endl;
 	path_lengths.push_back(dest);
