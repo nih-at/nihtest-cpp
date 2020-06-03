@@ -51,9 +51,10 @@ set(NIHTEST_TESTS
   file-del-pass
   file-new-fail
   file-new-pass
+  file-fail
+  file-pass
   )
 # TODO:
-# file
 # preload
 
 # Tests for nihtest itself
