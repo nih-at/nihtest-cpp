@@ -191,7 +191,7 @@ Test::Result Test::execute_test() {
         if (!input.empty()) {
             command.input = &input;
         }
-        command.input_file = input_file;
+        command.input_file = find_file(input_file);
         if (!limits.empty()) {
             command.limits = &limits;
         }
