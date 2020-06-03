@@ -146,6 +146,14 @@ before comparing them.
 is the match expression,
 .Ar replacement
 is the replacement expression.
+In the replacement expression,
+.Dq $1
+to
+.Dq $9
+are replaced with the content of the corresponding
+.Dq (...)
+match in the
+.Ar pattern .
 See
 .Xr re_format 7
 for details.

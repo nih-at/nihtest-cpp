@@ -29,6 +29,7 @@ set(NIHTEST_TESTS
   stdout-pass
   stderr-fail
   stderr-pass
+  stderr-replace-pass
   features-fail
   features-pass
   features-skip
