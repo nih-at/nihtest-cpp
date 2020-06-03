@@ -24,9 +24,9 @@ add_test(NAME cat COMMAND cat ${CMAKE_CURRENT_SOURCE_DIR}/success.txt)
 set_tests_properties(cat PROPERTIES PASS_REGULAR_EXPRESSION "This is a successful test.")
 add_test(NAME getenv-defined COMMAND getenv "DEFINED")
 set_tests_properties(getenv-defined PROPERTIES ENVIRONMENT DEFINED="This is a successful test.")
-set_tests_properties(getenv-defined PROPERTIES PASS_REGULAR_EXPRESSION "DEFINED=\"This is a successful test.\"")
+set_tests_properties(getenv-defined PROPERTIES PASS_REGULAR_EXPRESSION "DEFINED=\"\"This is a successful test.\"\"")
 add_test(NAME getenv-undefined COMMAND getenv "UNDEFINED")
-set_tests_properties(getenv-undefined PROPERTIES PASS_REGULAR_EXPRESSION "UNDEFINED=<NULL>")
+set_tests_properties(getenv-undefined PROPERTIES PASS_REGULAR_EXPRESSION "UNDEFINED=<null>")
 
 # these are not sorted alphabetically but by features
 set(NIHTEST_TESTS
