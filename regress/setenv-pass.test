@@ -1,4 +1,5 @@
-program getenv TEST_ENV
+program getenv
+args TEST_ENV
 setenv TEST_ENV "This is a successful test."
 stdout TEST_ENV="This is a successful test."
 return 0
