@@ -113,6 +113,26 @@
 		4B467DF8248799D0007E631D /* nihtest-config.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nihtest-config.mdoc"; sourceTree = "<group>"; };
 		4B467DF9248799D0007E631D /* nihtest-case.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nihtest-case.mdoc"; sourceTree = "<group>"; };
 		4B467DFA248799D0007E631D /* nihtest.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nihtest.mdoc; sourceTree = "<group>"; };
+		4B467DFB2487F298007E631D /* getenv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = getenv.c; sourceTree = "<group>"; };
+		4B467DFC2487F298007E631D /* file.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = file.c; sourceTree = "<group>"; };
+		4B467DFD2487F298007E631D /* cat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cat.c; sourceTree = "<group>"; };
+		4B467DFF2487F302007E631D /* file-del-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "file-del-pass.test"; sourceTree = "<group>"; };
+		4B467E002487F303007E631D /* file-fail.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "file-fail.test"; sourceTree = "<group>"; };
+		4B467E012487F303007E631D /* file-del-fail.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "file-del-fail.test"; sourceTree = "<group>"; };
+		4B467E022487F303007E631D /* file-new-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "file-new-pass.test"; sourceTree = "<group>"; };
+		4B467E032487F303007E631D /* file-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "file-pass.test"; sourceTree = "<group>"; };
+		4B467E042487F303007E631D /* precheck-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "precheck-pass.test"; sourceTree = "<group>"; };
+		4B467E052487F303007E631D /* stdin-file-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "stdin-file-pass.test"; sourceTree = "<group>"; };
+		4B467E062487F303007E631D /* preload-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "preload-pass.test"; sourceTree = "<group>"; };
+		4B467E072487F303007E631D /* stdin-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "stdin-pass.test"; sourceTree = "<group>"; };
+		4B467E082487F303007E631D /* stderr-replace-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "stderr-replace-pass.test"; sourceTree = "<group>"; };
+		4B467E092487F303007E631D /* setenv-pass.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "setenv-pass.test"; sourceTree = "<group>"; };
+		4B467E0A2487F303007E631D /* file-new-fail.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "file-new-fail.test"; sourceTree = "<group>"; };
+		4B467E0B2487F303007E631D /* precheck-fail.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "precheck-fail.test"; sourceTree = "<group>"; };
+		4B467E0C2487F303007E631D /* precheck-skip.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "precheck-skip.test"; sourceTree = "<group>"; };
+		4B467E0D2487F30F007E631D /* ineffective-remove.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "ineffective-remove.c"; sourceTree = "<group>"; };
+		4B467E0E2487F337007E631D /* failure.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = failure.txt; sourceTree = "<group>"; };
+		4B467E0F2487F337007E631D /* success.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = success.txt; sourceTree = "<group>"; };
 		4B4CB57A24868E3A005C5428 /* echo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = echo.c; sourceTree = "<group>"; };
 		4B4CB57B24868E3A005C5428 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		4B4CB57C24868E3A005C5428 /* true-fail.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = "true-fail.test"; sourceTree = "<group>"; };
@@ -211,6 +231,20 @@
 			path = ../man;
 			sourceTree = "<group>";
 		};
+		4B467DFE2487F2D2007E631D /* programs */ = {
+			isa = PBXGroup;
+			children = (
+				4B467DFD2487F298007E631D /* cat.c */,
+				4B4CB57A24868E3A005C5428 /* echo.c */,
+				4B4CB57E24868E3A005C5428 /* false.c */,
+				4B467DFC2487F298007E631D /* file.c */,
+				4B467DFB2487F298007E631D /* getenv.c */,
+				4B467E0D2487F30F007E631D /* ineffective-remove.c */,
+				4B4CB57F24868E3A005C5428 /* true.c */,
+			);
+			name = programs;
+			sourceTree = "<group>";
+		};
 		4B4CB58B2486B1E0005C5428 /* test cases */ = {
 			isa = PBXGroup;
 			children = (
@@ -220,8 +254,22 @@
 				4B4CB5892486B1CA005C5428 /* features-fail.test */,
 				4B4CB5832486B1C9005C5428 /* features-pass.test */,
 				4B4CB5842486B1C9005C5428 /* features-skip.test */,
+				4B467E012487F303007E631D /* file-del-fail.test */,
+				4B467DFF2487F302007E631D /* file-del-pass.test */,
+				4B467E002487F303007E631D /* file-fail.test */,
+				4B467E0A2487F303007E631D /* file-new-fail.test */,
+				4B467E022487F303007E631D /* file-new-pass.test */,
+				4B467E032487F303007E631D /* file-pass.test */,
+				4B467E0B2487F303007E631D /* precheck-fail.test */,
+				4B467E042487F303007E631D /* precheck-pass.test */,
+				4B467E0C2487F303007E631D /* precheck-skip.test */,
+				4B467E062487F303007E631D /* preload-pass.test */,
+				4B467E092487F303007E631D /* setenv-pass.test */,
 				4B4CB5862486B1C9005C5428 /* stderr-fail.test */,
 				4B4CB5882486B1CA005C5428 /* stderr-pass.test */,
+				4B467E082487F303007E631D /* stderr-replace-pass.test */,
+				4B467E052487F303007E631D /* stdin-file-pass.test */,
+				4B467E072487F303007E631D /* stdin-pass.test */,
 				4B4CB58A2486B1CA005C5428 /* stdout-fail.test */,
 				4B4CB5872486B1CA005C5428 /* stdout-pass.test */,
 				4B4CB57C24868E3A005C5428 /* true-fail.test */,
@@ -330,11 +378,11 @@
 			isa = PBXGroup;
 			children = (
 				4B4CB57B24868E3A005C5428 /* CMakeLists.txt */,
-				4B4CB57A24868E3A005C5428 /* echo.c */,
-				4B4CB57E24868E3A005C5428 /* false.c */,
+				4B467E0E2487F337007E631D /* failure.txt */,
 				4B4CB58024868E3A005C5428 /* nihtest.conf.in */,
+				4B467DFE2487F2D2007E631D /* programs */,
+				4B467E0F2487F337007E631D /* success.txt */,
 				4B4CB58B2486B1E0005C5428 /* test cases */,
-				4B4CB57F24868E3A005C5428 /* true.c */,
 			);
 			name = regress;
 			path = ../regress;
