@@ -11,7 +11,7 @@
 int main(int argc, char *argv[]) {
     for (int i=1; i<argc; i++) {
 	FILE *in;
-	int ret;
+	size_t ret;
 	char buf[1024];
 	if (strcmp(argv[i], "-") == 0) {
 	    in = stdin;
@@ -24,9 +24,6 @@ int main(int argc, char *argv[]) {
 	}
 	while ((ret=fread(buf, 1, sizeof(buf), in)) > 0) {
 	    printf("%.*s", ret, buf);
-	}
-	if (ret == -1) {
-	    fprintf(stderr, "read error from '%s': %s", argv[i], strerror(errno));
 	}
 	if (in != stdin) {
 	    fclose(in);
