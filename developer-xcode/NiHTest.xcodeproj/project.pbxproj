@@ -110,6 +110,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4B467DF8248799D0007E631D /* nihtest-config.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nihtest-config.mdoc"; sourceTree = "<group>"; };
+		4B467DF9248799D0007E631D /* nihtest-case.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nihtest-case.mdoc"; sourceTree = "<group>"; };
+		4B467DFA248799D0007E631D /* nihtest.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nihtest.mdoc; sourceTree = "<group>"; };
 		4B4CB57A24868E3A005C5428 /* echo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = echo.c; sourceTree = "<group>"; };
 		4B4CB57B24868E3A005C5428 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		4B4CB57C24868E3A005C5428 /* true-fail.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = "true-fail.test"; sourceTree = "<group>"; };
@@ -197,6 +200,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B467DF7248799D0007E631D /* man */ = {
+			isa = PBXGroup;
+			children = (
+				4B467DF8248799D0007E631D /* nihtest-config.mdoc */,
+				4B467DF9248799D0007E631D /* nihtest-case.mdoc */,
+				4B467DFA248799D0007E631D /* nihtest.mdoc */,
+			);
+			name = man;
+			path = ../man;
+			sourceTree = "<group>";
+		};
 		4B4CB58B2486B1E0005C5428 /* test cases */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,6 +237,7 @@
 				4B55D940247527CC00CE8C38 /* Build */,
 				4B55D93024751DD300CE8C38 /* nihtest */,
 				4BF1D829247D2CA300353959 /* regress */,
+				4B467DF7248799D0007E631D /* man */,
 				4B55D93824751FCA00CE8C38 /* perl */,
 				4B55D92F24751DD300CE8C38 /* Products */,
 			);

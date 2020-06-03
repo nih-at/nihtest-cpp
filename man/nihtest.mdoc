@@ -41,8 +41,7 @@
 .Op Fl C Ar config
 .Op Fl Fl keep-broken
 .Op Fl Fl no-cleanup
-.Op Fl FL setup-only
-.Op Ar VARIABLE Ns No = Ns Ar VALUE ...
+.Op Fl Fl setup-only
 .Ar testcase
 .Sh DESCRIPTION
 .Nm
@@ -50,8 +49,8 @@ is a testing tool.
 It uses
 .Pa .test
 files as input.
-The format of these files is described
-.Xr nihtest-config 5 .
+The format of these files is described in
+.Xr nihtest-case 5 .
 .Pp
 .Nm
 runs the test case
@@ -66,7 +65,7 @@ or
 A test case is created in a separate directory especially created for
 the test, the sandbox, which is deleted after the test finishes.
 The directory is populated according to the test configuration, see
-.Xr nihtest-config 5 .
+.Xr nihtest-case 5 .
 .Pp
 .\" TODO: document VARIABLE=VALUE
 .Nm
@@ -125,4 +124,5 @@ Other error
 Test was skipped.
 .El
 .Sh SEE ALSO
-.Xr nihtest-case 5
+.Xr nihtest-case 5 ,
+.Xr nihtest-config 5

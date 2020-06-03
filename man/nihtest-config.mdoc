@@ -49,9 +49,9 @@ This man page describes the format of this configuration file.
 .Pp
 The following commands are recognized:
 .Bl -tag -width 20n
-.It Ic default-program Ar PROGRAM
+.It Ic default-program Ar program
 Test
-.Ar PROGRAM
+.Ar program
 if no
 .Ic program
 directive is found in the test.
@@ -83,6 +83,8 @@ flags
 .Fl Fl keep-broken
 or
 .Fl Fl no-cleanup .
+The default is
+.Dv never .
 .It Ic print-results
 Describe when to print the test results verbosely.
 The following values are supported:
@@ -100,17 +102,21 @@ flags
 .Fl Fl quiet
 or
 .Fl Fl verbose .
+The default is
+.Dv failed .
 .It Ic sandbox-directory Ar directory
-Use
-.Ar directory
-for creating the sandboxes.
+Create sandboxes in
+.Ar directory .
+.
 By default, the sandboxes will be created in the current directory.
 A random directory of the pattern
 .Pa sandbox_*
 will be used.
 .It Ic source-directory Ar directory
-Look for test files in
-.Ar directory .
+.Xr nihtest 1
+searches the current directory and
+.Ar directory
+for test cases, input and output files.
 .It Ic top-build-directory Ar directory
 Where to look for the
 .Pa config.h
