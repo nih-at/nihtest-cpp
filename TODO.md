@@ -1,15 +1,18 @@
 ## required for libzip
 
-* tests
 * implement OS on Windows
 * allow embedding in other projects without installing
 * improve text diffing
+* improve test failure output
+* remove stderr rewrite to remove program name if argv[0] is deterministic on all platforms
 
 ## required for release
 
 - README.md, INSTALL.md, etc.
 * documentation
 * make intermediary directories when copying file
+* install man pages
+* test errors in test case description
 
 ## enhancements
 
