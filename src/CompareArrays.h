@@ -47,6 +47,7 @@ private:
     bool compare_quiet();
     bool compare_verbose();
     void print_line(char indicator, const std::string &line);
+    void output(std::vector<std::vector<int> > &path_lengths, int max_size, int d, int x, int y);
     
     const std::vector<std::string> &expected;
     const std::vector<std::string> &got;

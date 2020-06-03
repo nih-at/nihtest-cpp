@@ -33,7 +33,10 @@
 
 #include "CompareArrays.h"
 
+#include <array>
+#include <cstring>
 #include <iostream>
+#include <vector>
 
 bool CompareArrays::compare() {
     if (verbose) {
@@ -62,37 +65,127 @@ bool CompareArrays::compare_quiet() {
 bool CompareArrays::compare_verbose() {
     printed_header = false;
 
-    auto expected_iter = expected.cbegin();
-    auto got_iter = got.cbegin();
-    
-    // TODO: find more common lines
-    
-    bool ok = true;
-    while (expected_iter != expected.cend() && got_iter != got.cend()) {
-        if (*expected_iter != *got_iter) {
-            ok = false;
-
-            print_line('-', *expected_iter);
-            print_line('+', *got_iter);
-        }
-
-        expected_iter++;
-        got_iter++;
+    if (compare_quiet()) {
+	return true;
     }
 
-    while (expected_iter != expected.cend()) {
-        print_line('-', *expected_iter);
-        ok = false;
-        expected_iter++;
+    /* Algorithm from
+     * Eugene W. Myers - A O(ND) Difference algorithm and Its Variations
+     */
+    bool done = false;
+    const auto N = expected.size();
+    const auto M = got.size();
+    /* maximum size of differences accepted (could be set lower than M + N) */
+    const auto max_size = M + N;
+    int w[2*max_size+1];
+    /* for retracing our steps and getting the actual diff */
+    std::vector<std::vector<int> > path_lengths;
+    /* re-index w so that v[-max_size .. max_size] are valid */
+    /* v[k] = highest x we can reach after d non-diagonal steps, where y = x - k */
+    auto v = w+max_size;
+    int d;
+
+    /* initialize variable, only needed for debugging */
+    for (int i=0; i<2*max_size+1; i++) {
+	w[i] = 999999999;
     }
 
-    while (got_iter != got.cend()) {
-        print_line('+', *got_iter);
-        ok = false;
-        got_iter++;
+    /* no differences before start of file */
+    v[1] = 0;
+    /* loop over all possible diagonals */
+    for (d=0; d <= max_size; d++) {
+	/* update path lengths */
+	for (int k=-d; k<=d; k+=2) {
+	    /* find best candidate for shortest path */
+            /*
+             * x -- offset into first array (expected), <= N
+             * y -- offset into second array (got), <= M
+	     */
+	    int x, y;
+	    
+	    if (k == -d || (k != d && v[k-1] < v[k+1])) {
+		/* step down, x does not increase */
+		x = v[k+1];
+	    } else {
+		/* step right, x increases */
+		x = v[k-1]+1;
+	    }
+	    y = x - k;
+	    /* go diagonally as far as possible */
+	    while (x < N && y < M && expected[x] == got[y]) {
+		/* both lines are equal, so shortest path doesn't grow */
+		x++;
+		y++;
+	    }
+	    v[k] = x;
+	    if (x >= N && y >= M) {
+		done = true;
+		break;
+	    }
+	}
+	std::vector<int> dest;
+	//	std::cout << "array of level " << d << ": ";
+	int j = -max_size;
+	for (int i: w) {
+	    dest.push_back(i);
+	    // if (i < 10000) {
+	    // std::cout << "[" << i << "/" << (i-j) << "] (" << j << "), ";
+	    // }
+	    j++;
+	}
+	std::cout << std::endl;
+	path_lengths.push_back(dest);
+	if (done) {
+	    break;
+	}
+    }
+    if (done) {
+	output(path_lengths, max_size, d, N, M);
+    }		
+    return false;
+}
+
+void CompareArrays::output(std::vector<std::vector<int> > &path_lengths, int max_size, int d, int x, int y) {
+    std::vector<std::string> lines;
+    if (d == 0) {
+	return;
     }
     
-    return ok;
+    auto wdprev = path_lengths[d-1];
+    auto k = x - y;
+    bool change;
+
+    /* walking backwards we cannot follow all diagonals completely,
+     * going forward we might have entered in the middle of one */
+    do {
+	change = false;
+	if (x == wdprev[max_size + k - 1] + 1) {
+	    output(path_lengths, max_size, d-1, x-1, y);
+	    print_line('-', expected[x-1]);
+	    for (auto el : lines) {
+		print_line(' ', el);
+	    }
+	    return;
+	}
+	if (x == wdprev[max_size + k + 1]) {
+	    output(path_lengths, max_size, d-1, x, y-1);
+	    print_line('+', got[y-1]);
+	    for (auto el : lines) {
+		print_line(' ', el);
+	    }
+	    return;
+	}
+	/* if possible, walk one step backward on the diagonal and try again */
+	if (x > 0 && y > 0 && expected[x-1] == got[y-1]) {
+	    /* for context */
+	    lines.insert(lines.begin(), expected[x-1]);
+	    x--;
+	    y--;
+	    change = true;
+	}
+    } while (change);
+
+    std::cerr << "internal error creating diff" << std::endl;
 }
 
 
