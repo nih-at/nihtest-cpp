@@ -1,27 +1,30 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
+cmake_minimum_required(VERSION 3.12)
 
-PROJECT(nihtest
+project(nihtest
   VERSION 0.1.0
   DESCRIPTION "NiH testing framework"
   HOMEPAGE_URL "https://github.com/nih-at/nihtest"
   LANGUAGES C CXX)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-SET(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 14)
 
-INCLUDE(CheckFunctionExists)
-INCLUDE(CheckIncludeFiles)
-INCLUDE(GNUInstallDirs)
+include(CheckFunctionExists)
+include(CheckIncludeFiles)
+include(GNUInstallDirs)
 
-SET(ARCHIVE_NAME ${PROJECT_NAME}-${PROJECT_VERSION})
+# added so nihtest can be used as subproject without installing it
+option(NIHTEST_DO_INSTALL "Install nihtest and its man pages" ON)
 
-IF(NOT TARGET dist)
-ADD_CUSTOM_TARGET(dist
+set(ARCHIVE_NAME ${PROJECT_NAME}-${PROJECT_VERSION})
+
+if(NOT TARGET dist)
+add_custom_target(dist
   COMMAND git config tar.tar.xz.command "xz -c"
   COMMAND git archive --prefix=${ARCHIVE_NAME}/ -o ${ARCHIVE_NAME}.tar.gz HEAD
   COMMAND git archive --prefix=${ARCHIVE_NAME}/ -o ${ARCHIVE_NAME}.tar.xz HEAD
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
-ADD_CUSTOM_TARGET(distcheck
+add_custom_target(distcheck
   COMMAND chmod -R u+w ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest 2>/dev/null || true
   COMMAND rm -rf ${ARCHIVE_NAME} ${ARCHIVE_NAME}-build ${ARCHIVE_NAME}-dest
   COMMAND ${CMAKE_COMMAND} -E tar xf ${ARCHIVE_NAME}.tar.gz
@@ -40,32 +43,33 @@ ADD_CUSTOM_TARGET(distcheck
   COMMAND echo "${ARCHIVE_NAME}.tar.gz is ready for distribution."
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
-ADD_DEPENDENCIES(distcheck dist)
-ENDIF(NOT TARGET dist)
+add_dependencies(distcheck dist)
+endif(NOT TARGET dist)
 
-FIND_PROGRAM(MDOCTOOL NAMES mandoc groff)
-IF (MDOCTOOL)
-  SET(DOCUMENTATION_FORMAT "mdoc" CACHE STRING "Documentation format")
-ELSE()
-  FIND_PROGRAM(MANTOOL NAMES nroff)
-  IF (MANTOOL)
-    SET(DOCUMENTATION_FORMAT "man" CACHE STRING "Documentation format")
-  ELSE()
-    SET(DOCUMENTATION_FORMAT "html" CACHE STRING "Documentation format")
-  ENDIF()
-ENDIF()
+find_program(MDOCTOOL NAMES mandoc groff)
+if (MDOCTOOL)
+  set(DOCUMENTATION_FORMAT "mdoc" CACHE STRING "Documentation format")
+else()
+  find_program(MANTOOL NAMES nroff)
+  if (MANTOOL)
+    set(DOCUMENTATION_FORMAT "man" CACHE STRING "Documentation format")
+  else()
+    set(DOCUMENTATION_FORMAT "html" CACHE STRING "Documentation format")
+  endif()
+endif()
 
-CHECK_FUNCTION_EXISTS(getopt_long HAVE_GETOPT_LONG)
-CHECK_FUNCTION_EXISTS(getprogname HAVE_GETPROGNAME)
-CHECK_INCLUDE_FILES(unistd.h HAVE_UNISTD_H)
+check_function_exists(getopt_long HAVE_GETOPT_LONG)
+check_function_exists(getprogname HAVE_GETPROGNAME)
+check_include_files(unistd.h HAVE_UNISTD_H)
 
-SET(HAVE_TEST_EXISTING_FEATURE 1)
-SET(HAVE_TEST_MISSING_FEATURE 0)
+# for testing the "features" keyword
+set(HAVE_TEST_EXISTING_FEATURE 1)
+set(HAVE_TEST_MISSING_FEATURE 0)
 
-ENABLE_TESTING()
+enable_testing()
 
-ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(man)
-ADD_SUBDIRECTORY(regress)
+add_subdirectory(src)
+add_subdirectory(man)
+add_subdirectory(regress)
 
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
