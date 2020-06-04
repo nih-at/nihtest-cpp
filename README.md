@@ -2,7 +2,7 @@ This is NiHTest, a testing tool for command line utilities.
 
 Tests are run in a sandbox directory to guarantee a clean separation of the test.
 
-It checks that exit code, standard and error outputs are as expcted and compares the files in the sandbox after the run with the expected results.
+It checks that exit code, standard and error outputs are as expected and compares the files in the sandbox after the run with the expected results.
 
 It is written in C++ and a bit of C and only needs the standard library.
 
