@@ -56,14 +56,20 @@ The format of these files is described in
 runs the test case
 .Ar testcase
 expected in the test case directory (see
-.Xr nihtest-config 5 )
+.Xr nihtest.conf 5 )
 in the file
 .Pa testcase
 or
 .Pa testcase.test .
+.Nm
+searches the current directory and the
+.Ic source-directory
+specified in
+.Xr nihtest.conf 5
+for test cases, input and output files.
 .Pp
 .Nm
-msupports the following options
+supports the following options
 .Bl -tag -width 15n -offset 8n
 .It Fl C Ar config , Fl Fl config-file Ar config
 Use
@@ -107,16 +113,8 @@ remove sandbox
 .Nm
 honors the following environment variables:
 .Bl -tag -width 20n
-.\" .It Ev RUN_GDB
-.\" If set, run
-.\" .Xr gdb 1
-.\" on program in test environment.
 .It Ev KEEP_BROKEN
 If set, don't delete test environment if test failed.
-.\" .It Ev NO_CLEANUP
-.\" If set, don't delete test environment after running the test.
-.\" .It Ev SETUP_ONLY
-.\" If set, exit after creating the test environment.
 .It Ev VERBOSE
 If set, be more verbose (e. g., output diffs).
 .El
@@ -125,7 +123,7 @@ If set, be more verbose (e. g., output diffs).
 .It Pa nihtest.conf
 .Nm
 configuration file, see
-.Xr nihtest-config 5
+.Xr nihtest.conf 5
 for details
 .El
 .Sh EXIT STATUS
@@ -165,4 +163,4 @@ will report
 .Dq Files in sandbox not as expected .
 .Sh SEE ALSO
 .Xr nihtest-case 5 ,
-.Xr nihtest-config 5
+.Xr nihtest.conf 5

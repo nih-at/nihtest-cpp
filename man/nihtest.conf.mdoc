@@ -1,5 +1,4 @@
-.\" Automatically generated from an mdoc input file.  Do not edit.
-.\" nihtest-config.mdoc -- nihtest config file format
+.\" nihtest.conf.mdoc -- nihtest config file format
 .\" Copyright (C) 2020 Dieter Baron and Thomas Klausner
 .\"
 .\" This file is part of nihtest, a testing framework.
@@ -30,122 +29,101 @@
 .\" OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 .\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 .\"
-.TH "NIHTEST-CONFIG" "5" "June 2, 2020" "NiH" "File Formats Manual"
-.nh
-.if n .ad l
-.SH "NAME"
-\fBnihtest-config\fR
-\- testing tool configuration file format
-.SH "DESCRIPTION"
-nihtest(1)
+.Dd June 2, 2020
+.Dt NIHTEST.CONF 5
+.Os
+.Sh NAME
+.Nm nihtest.conf
+.Nd testing tool configuration file format
+.Sh DESCRIPTION
+.Xr nihtest 1
 is a testing tool.
 It reads a configuration file to get its default settings.
 The default path for the file is
-\fInihtest.conf\fR
+.Pa nihtest.conf
 in the current directory; this can be overridden with
-nihtest(1)'s
-\fB\-C\fR
+.Xr nihtest 1 Ap s
+.Fl C
 flag.
 This man page describes the format of this configuration file.
-.PP
+.Pp
 The following commands are recognized:
-.TP 22n
-\fBdefault-program\fR \fIprogram\fR
+.Bl -tag -width 20n
+.It Ic default-program Ar program
 Test
-\fIprogram\fR
+.Ar program
 if no
-\fBprogram\fR
+.Ic program
 directive is found in the test.
-.TP 22n
-\fBfile-compare\fR \fItest-extension source-extension command\fR [\fIargs ...\fR]
+.It Ic file-compare Ar test-extension source-extension command Op Ar args ...
 When comparing files after test runs, use
-\fIcommand\fR
+.Ar command
 with argument
-\fIargs\fR
+.Ar args
 for files where the file in the sandbox ends with the extension
-\fItext-extension\fR
+.Ar text-extension
 or the file to compare against ends with the extension
-\fIsource-extension\fR.
+.Ar source-extension .
 I.e., the complete command line used will be:
-.RS 28n
-command args ... expected-file test-result
-.RE
-.TP 22n
-\fBkeep-sandbox\fR
+.Dl command args ... expected-file test-result
+.It Ic keep-sandbox
 Describe when to keep the sandbox (i.e., not delete it) after running the test.
 The following values are supported:
-.RS 30n
-.PD 0
-.TP 8n
-\fRnever\fR
+.Bl -tag -width 6n -compact -offset 8n
+.It Dv never
 Never keep the sandbox.
-.TP 8n
-\fRfailed\fR
+.It Dv failed
 Keep the sandbox when the test failed.
-.TP 8n
-\fRalways\fR
+.It Dv always
 Always keep the sandbox.
-.RE
-.RS 22n
+.El
 This can be overridden with the
-nihtest(1)
+.Xr nihtest 1
 flags
-\fB\-\fR\fB\-keep-broken\fR
+.Fl Fl keep-broken
 or
-\fB\-\fR\fB\-no-cleanup\fR.
+.Fl Fl no-cleanup .
 The default is
-\fRnever\fR.
-.RE
-.PD
-.TP 22n
-\fBprint-results\fR
+.Dv never .
+.It Ic print-results
 Describe when to print the test results verbosely.
 The following values are supported:
-.RS 30n
-.PD 0
-.TP 8n
-\fRnever\fR
+.Bl -tag -width 6n -compact -offset 8n
+.It Dv never
 Quiet mode.
-.TP 8n
-\fRfailed\fR
+.It Dv failed
 Print details when the test failed.
-.TP 8n
-\fRalways\fR
+.It Dv always
 Verbose mode.
-.RE
-.RS 22n
+.El
 This can be overridden with the
-nihtest(1)
+.Xr nihtest 1
 flags
-\fB\-\fR\fB\-quiet\fR
+.Fl Fl quiet
 or
-\fB\-\fR\fB\-verbose\fR.
+.Fl Fl verbose .
 The default is
-\fRfailed\fR.
-.RE
-.PD
-.TP 22n
-\fBsandbox-directory\fR \fIdirectory\fR
+.Dv failed .
+.It Ic sandbox-directory Ar directory
 Create sandboxes in
-\fIdirectory\fR.
+.Ar directory .
 By default, the sandboxes will be created in the current directory.
 A random directory of the pattern
-\fIsandbox_*\fR
+.Pa sandbox_*
 will be used.
-.TP 22n
-\fBsource-directory\fR \fIdirectory\fR
-nihtest(1)
+.It Ic source-directory Ar directory
+.Xr nihtest 1
 searches the current directory and
-\fIdirectory\fR
+.Ar directory
 for test cases, input and output files.
-.TP 22n
-\fBtop-build-directory\fR \fIdirectory\fR
+.It Ic top-build-directory Ar directory
 Where to look for the
-\fIconfig.h\fR
+.Pa config.h
 file that defines the available features.
 See the
-\fBfeatures\fR
+.Ic features
 command in
-nihtest-case(5).
-.SH "SEE ALSO"
-nihtest(1)
+.Xr nihtest-case 5 .
+.El
+.Sh SEE ALSO
+.Xr nihtest 1

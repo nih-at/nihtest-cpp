@@ -1,7 +1,7 @@
 set(MAN_PAGES
   nihtest.1
   nihtest-case.5
-  nihtest-config.5
+  nihtest.conf.5
   )
 
 foreach(MAN_PAGE ${MAN_PAGES})
