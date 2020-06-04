@@ -58,14 +58,20 @@ nihtest-case(5).
 runs the test case
 \fItestcase\fR
 expected in the test case directory (see
-nihtest-config(5))
+nihtest.conf(5))
 in the file
 \fItestcase\fR
 or
 \fItestcase.test\fR.
+\fBnihtest\fR
+searches the current directory and the
+\fBsource-directory\fR
+specified in
+nihtest.conf(5)
+for test cases, input and output files.
 .PP
 \fBnihtest\fR
-msupports the following options
+supports the following options
 .RS 8n
 .TP 17n
 \fB\-C\fR \fIconfig\fR, \fB\-\fR\fB\-config-file\fR \fIconfig\fR
@@ -132,6 +138,13 @@ If set, don't delete test environment if test failed.
 .TP 22n
 \fRVERBOSE\fR
 If set, be more verbose (e. g., output diffs).
+.SH "FILES"
+.TP 17n
+\fInihtest.conf\fR
+\fBnihtest\fR
+configuration file, see
+nihtest.conf(5)
+for details
 .SH "EXIT STATUS"
 \fBnihtest\fR
 uses the following exit codes:
@@ -151,6 +164,28 @@ Other error
 Test was skipped.
 .RE
 .PD
+.SH "DIAGNOSTICS"
+In general, differences to the test case expectation are marked up with
+\(lq\&-\(rq
+if something expected did not happen and
+\(lq\&+\(rq
+if something unexpected happened.
+.PP
+In case the return value does not match,
+\fBnihtest\fR
+will report
+\(lqExit code not as expected\(rq.
+If the standard output or standard error output are not correct,
+\fBnihtest\fR
+will report
+\(lqOutput not as expected\(rq
+or
+\(lqError output not as expected\(rq
+respectively.
+And finally, if the file contents of the sandbox are not correct,
+\fBnihtest\fR
+will report
+\(lqFiles in sandbox not as expected\(rq.
 .SH "SEE ALSO"
 nihtest-case(5),
-nihtest-config(5)
+nihtest.conf(5)

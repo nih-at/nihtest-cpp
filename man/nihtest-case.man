@@ -55,7 +55,7 @@ and
 \fBargs\fR
 commands must appear exactly once, the others are optional.
 .TP 22n
-\fBargs\fR \fIargs ...\fR
+\fBargs\fR [\fIargs ...\fR]
 Run the program with command line arguments
 \fIargs\fR.
 .TP 22n
