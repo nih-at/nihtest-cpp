@@ -5,7 +5,6 @@
 
 ## required for release
 
-* page on nih.at
 * make intermediary directories when copying file
 
 ## enhancements

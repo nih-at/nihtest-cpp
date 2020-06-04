@@ -43,33 +43,80 @@ public:
     struct Command {
         Command() : input(NULL), limits(NULL) { }
         
+        // The command line arguments, not including the program itself (argv[0]).
         std::vector<std::string> arguments;
+        
+        // Environment variables to set in sub process.
         std::vector<const std::unordered_map<std::string, std::string> *> environments;
+        
+        // Lines to feed program on stdandard input.
         std::vector<std::string> *input;
+        
+        // File to redirect standard input from.
         std::string input_file;
+        
+        // Limits to set, currently not used.
         std::unordered_map<char, int> *limits;
+        
+        // List of directories to search for program in.
         std::vector<std::string> path;
+        
+        // Preload shared library (not used on Windows).
         std::string preload_library;
+        
+        // Name of the program. This is used to search the executable and also as argv[0].
         std::string program;
     };
 
+    // Character used to separate path components.
     static const std::string path_separator;
+    
+    // Environment variables to set for standard environment (e. g. time zone, language).
     static const std::unordered_map<std::string, std::string> standard_environment;
 
+    // Append `name` to `directory`, converting to use platform native path separator.
     static std::string append_path_component(const std::string &directory, const std::string &name);
+    
+    // Return last path component.
     static std::string basename(const std::string &name);
+    
+    // Change the working directory to `directory`.
     static void change_directory(const std::string &directory);
+    
+    // Get all but last path components.
     static std::string dirname(const std::string &name);
+    
+    // Copy file `from` to file `to`, creating intermdiary directories if neccessary.
     static void copy_file(const std::string &from, const std::string &to);
+    
+    // Compare files `from` and `to`, returning true if they have identical contents.
     static bool compare_files(const std::string &from, const std::string &to);
-    static std::string extension(const std::string &file_name);
-    static bool file_exists(const std::string &file_name);
+    
+    // Get file name extension.
+    static std::string extension(const std::string &name);
+    
+    // Check wether `file` exists.
+    static bool file_exists(const std::string &file);
+    
+    // Get string describing last system error.
     static std::string get_error_string();
+    
+    // Return a list of files in `directory` and its subdirectories, sorted alphabetically.
     static std::vector<std::string> list_files(const std::string &directory);
-    static bool is_absolute(const std::string &file_name);
+
+    // Check wether `name` is an absolute path name.
+    static bool is_absolute(const std::string &name);
+    
+    // Make unique temporary directory in `directory`, using `name` as part of its name.
     static std::string make_temp_directory(const std::string &directory, const std::string &name);
+    
+    // Recursively remove `directory`.
     static void remove_directory(const std::string &directory);
-    static std::string run_command(const Command *test, std::vector<std::string> *output, std::vector<std::string> *error_output);
+    
+    // Run command described by `command`, returning lines from standard output in `output` and error output  in `error_output`.
+    static std::string run_command(const Command *command, std::vector<std::string> *output, std::vector<std::string> *error_output);
+    
+    // Get name of the operating system.
     static std::string operating_system();
 };
 
