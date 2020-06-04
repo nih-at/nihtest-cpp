@@ -45,7 +45,7 @@ Parser::Directive::Directive(const std::string name_, const std::string usage_, 
 Parser::Parser(const std::string &file_name_, ParserConsumer *consumer_, const std::vector<Parser::Directive> &directives_) : consumer(consumer_), file_name(file_name_), line_no(0), ok(true) {
     file = std::ifstream(file_name);
     if (!file) {
-        throw Exception("cannot open test case '" + file_name + "'", true);
+        throw Exception("cannot open '" + file_name + "'", true);
     }
     for (auto &directive : directives_) {
         directives[directive.name] = &directive;

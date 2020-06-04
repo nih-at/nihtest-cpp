@@ -56,8 +56,10 @@ bool CompareFiles::compare() {
                 compare_files(compare->second, iter_expected->name, iter_expected->output);
             }
             else {
-                if (!OS::compare_files(iter_expected->name, test->find_file(iter_expected->output))) {
-                    print_line('!', iter_expected->name);
+                auto expected_file = test->find_file(iter_expected->output);
+                if (!OS::compare_files(expected_file, iter_expected->name)) {
+                    print_header();
+                    std::cout << "Files '" + expected_file + "' and '" + iter_expected->name + "' differ.\n";
                 }
             }
 
