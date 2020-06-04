@@ -1,8 +1,6 @@
 ## required for libzip
 
 * implement OS on Windows
-* allow embedding in other projects without installing
-* improve test failure output
 * remove stderr rewrite to remove program name if argv[0] is deterministic on all platforms
 
 ## required for release
