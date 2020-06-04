@@ -1,4 +1,4 @@
-This is NiHTest, a testing tool for command line utilities.
+This is nihtest, a testing tool for command line utilities.
 
 Tests are run in a sandbox directory to guarantee a clean separation of the test.
 
