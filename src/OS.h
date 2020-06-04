@@ -49,7 +49,7 @@ public:
         // Environment variables to set in sub process.
         std::vector<const std::unordered_map<std::string, std::string> *> environments;
         
-        // Lines to feed program on stdandard input.
+        // Lines to feed program on standard input.
         std::vector<std::string> *input;
         
         // File to redirect standard input from.
@@ -58,7 +58,7 @@ public:
         // Limits to set, currently not used.
         std::unordered_map<char, int> *limits;
         
-        // List of directories to search for program in.
+        // List of directories in which to search for program.
         std::vector<std::string> path;
         
         // Preload shared library (not used on Windows).
@@ -86,7 +86,7 @@ public:
     // Get all but last path components.
     static std::string dirname(const std::string &name);
     
-    // Copy file `from` to file `to`, creating intermdiary directories if neccessary.
+    // Copy file `from` to file `to`, creating intermediary directories if neccessary.
     static void copy_file(const std::string &from, const std::string &to);
     
     // Compare files `from` and `to`, returning true if they have identical contents.
@@ -95,7 +95,7 @@ public:
     // Get file name extension.
     static std::string extension(const std::string &name);
     
-    // Check wether `file` exists.
+    // Check whether `file` exists.
     static bool file_exists(const std::string &file);
     
     // Get string describing last system error.
@@ -104,7 +104,7 @@ public:
     // Return a list of files in `directory` and its subdirectories, sorted alphabetically.
     static std::vector<std::string> list_files(const std::string &directory);
 
-    // Check wether `name` is an absolute path name.
+    // Check whether `name` is an absolute path name.
     static bool is_absolute(const std::string &name);
     
     // Make unique temporary directory in `directory`, using `name` as part of its name.
