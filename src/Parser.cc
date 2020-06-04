@@ -57,7 +57,7 @@ void Parser::parse() {
     std::string line;
     while (std::getline(file, line)) {
         line_no += 1;
-        if (line[0] == '#') {
+        if (line.empty() || line[0] == '#') {
             continue;
         }
         auto space = line.find(' ');
