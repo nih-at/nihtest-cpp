@@ -48,8 +48,7 @@ set(NIHTEST_TESTS
   precheck-fail
   precheck-pass
   precheck-skip
-# TODO: fix bug in setenv or test case and enable
-#  setenv-pass
+  setenv-pass
   file-del-fail
   file-del-pass
   file-new-fail
@@ -57,6 +56,10 @@ set(NIHTEST_TESTS
   file-fail
   file-pass
   preload-pass
+  parameter-tests-1
+  parameter-tests-2
+  parameter-tests-3
+  parameter-tests-4
   )
 
 # Tests for nihtest itself
