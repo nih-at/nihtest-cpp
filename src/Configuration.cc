@@ -47,19 +47,17 @@ const std::vector<Parser::Directive> Configuration::directives = {
 };
 
 Configuration::Configuration(const std::string &file_name) : keep_sandbox(NEVER), print_results(WHEN_FAILED) {
+    auto ignore_errors = true;
+    
     try {
         auto parser = Parser(file_name, this, directives);
-        try {
-            parser.parse();
-        }
-        catch (Exception e) {
-            // parse errors are fatal
-            throw;
-        }
+        ignore_errors = false;
+        parser.parse();
     }
     catch (Exception e) {
-        // config file is optional, so ignore errors opening it
-        return;
+        if (!ignore_errors) {
+            throw;
+        }
     }
 }
 
