@@ -91,12 +91,15 @@ void Parser::parse() {
             if (space != std::string::npos) {
                 tokenize(&args, line, space + 1);
             }
-            if (args.size() < directive->minimum_arguments) {
-                print_error("too few arguments");
-                continue;
-            }
-            else if (directive->maximum_arguments != -1 && args.size() > directive->maximum_arguments) {
-                print_error("too many arguments");
+            if (args.size() < directive->minimum_arguments || (directive->maximum_arguments != -1 && args.size() > directive->maximum_arguments)) {
+                auto expected_count = std::to_string(directive->minimum_arguments);
+                if (directive->maximum_arguments != directive->minimum_arguments) {
+                    expected_count += "-";
+                    if (directive->maximum_arguments != -1) {
+                        expected_count += std::to_string(directive->maximum_arguments);
+                    }
+                }
+                print_error("directive '" + directive->name + "' called with " + std::to_string(args.size()) + " arguments, expected " + expected_count);
                 continue;
             }
         }
