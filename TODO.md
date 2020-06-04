@@ -7,9 +7,8 @@
 
 ## required for release
 
-* README.md, INSTALL.md, etc.
+* page on nih.at
 * make intermediary directories when copying file
-* test errors in test case description
 
 ## enhancements
 
