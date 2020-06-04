@@ -1,0 +1,10 @@
+program ../cat
+args -
+return 0
+stdin E
+stdin A
+stdin B
+stdout A
+stdout A
+stdout B
+stdout B

@@ -60,6 +60,8 @@ set(NIHTEST_TESTS
   parameter-tests-2
   parameter-tests-3
   parameter-tests-4
+  diff-1
+  diff-2
   )
 
 # Tests for nihtest itself

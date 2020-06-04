@@ -1,0 +1,11 @@
+program ../src/nihtest
+return 1
+args diff-2.test
+file diff-2.test diff-2.input diff-2.input
+stdout Output not as expected:
+stdout +E
+stdout  A
+stdout -A
+stdout  B
+stdout -B
+stdout diff-2 -- FAIL: Output
