@@ -215,7 +215,7 @@ void CompareArrays::output(std::vector<std::vector<int> > &path_lengths, int max
 
 void CompareArrays::print_line(char indicator, const std::string &line) {
     if (!printed_header) {
-        std::cout << "Unexpected " << what << ":\n";
+        std::cout << what << " not as expected:\n";
         printed_header = true;
     }
 

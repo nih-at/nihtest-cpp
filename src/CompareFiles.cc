@@ -120,7 +120,7 @@ void CompareFiles::compare_files(const std::vector<std::string> &argv, const std
 void CompareFiles::print_header() {
     if (verbose) {
         if (ok) {
-            std::cout << "Unexpected files:\n";
+            std::cout << "Files in sandbox not as expected:\n";
         }
     }
     ok = false;

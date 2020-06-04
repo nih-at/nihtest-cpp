@@ -205,7 +205,7 @@ Test::Result Test::execute_test() {
         if (exit_code != exit_code_got) {
             failed.push_back("exit status");
             if (configuration.print_results != Configuration::NEVER) {
-                std::cout << "Unexpected exit status:\n";
+                std::cout << "Exit code not as expected:\n";
                 std::cout << "-" << exit_code << "\n";
                 std::cout << "+" << exit_code_got << "\n";
             }
@@ -218,8 +218,8 @@ Test::Result Test::execute_test() {
         
         rewrite_lines(replacements, &error_output_got);
         
-        compare_arrays(output, output_got, "output");
-        compare_arrays(error_output, error_output_got, "error output");
+        compare_arrays(output, output_got, "Output");
+        compare_arrays(error_output, error_output_got, "Error output");
         
         compare_files();
     }

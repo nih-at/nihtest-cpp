@@ -120,6 +120,14 @@ If set, don't delete test environment if test failed.
 .It Ev VERBOSE
 If set, be more verbose (e. g., output diffs).
 .El
+.Sh FILES
+.Bl -tag -width 15n
+.It Pa nihtest.conf
+.Nm
+configuration file, see
+.Xr nihtest-config 5
+for details
+.El
 .Sh EXIT STATUS
 .Nm
 uses the following exit codes:
@@ -133,6 +141,28 @@ Other error
 .It 77
 Test was skipped.
 .El
+.Sh DIAGNOSTICS
+In general, differences to the test case expectation are marked up with
+.Dq \&-
+if something expected did not happen and
+.Dq \&+
+if something unexpected happened.
+.Pp
+In case the return value does not match,
+.Nm
+will report
+.Dq Exit code not as expected .
+If the standard output or standard error output are not correct,
+.Nm
+will report
+.Dq Output not as expected
+or
+.Dq Error output not as expected
+respectively.
+And finally, if the file contents of the sandbox are not correct,
+.Nm
+will report
+.Dq Files in sandbox not as expected .
 .Sh SEE ALSO
 .Xr nihtest-case 5 ,
 .Xr nihtest-config 5
