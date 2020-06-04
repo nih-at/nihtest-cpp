@@ -27,8 +27,8 @@ build_script:
   cmd: >-
     cmake --build . --config %CMAKE_CONFIG% --target INSTALL
 
-test_script:
-  cmd: >-
-    set VERBOSE=yes
-
-    ctest -C %CMAKE_CONFIG% --output-on-failure
+#test_script:
+#  cmd: >-
+#    set VERBOSE=yes
+#
+#    ctest -C %CMAKE_CONFIG% --output-on-failure
