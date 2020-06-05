@@ -126,9 +126,9 @@ void OS::change_directory(const std::string &directory) {
 
 void OS::create_directory(const std::string &directory) {
     auto native_directory = native_path(directory);
-    auto w_native_directory = utf8_to_16(native_directory);
+    auto w_native_directory = utf8_to_utf16(native_directory);
 
-    if (!CreateDirectoryW(w_native_directory.c_str())) {
+    if (!CreateDirectoryW(w_native_directory.c_str(), NULL)) {
         throw Exception("can't change into directory '" + native_directory + "'", true);
     }
 }
