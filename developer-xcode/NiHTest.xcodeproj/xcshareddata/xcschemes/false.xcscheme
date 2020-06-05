@@ -17,7 +17,7 @@
                BlueprintIdentifier = "4B4CB5982486B2D1005C5428"
                BuildableName = "false"
                BlueprintName = "false"
-               ReferencedContainer = "container:NiHTest.xcodeproj">
+               ReferencedContainer = "container:nihtest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "4B4CB5982486B2D1005C5428"
             BuildableName = "false"
             BlueprintName = "false"
-            ReferencedContainer = "container:NiHTest.xcodeproj">
+            ReferencedContainer = "container:nihtest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "4B4CB5982486B2D1005C5428"
             BuildableName = "false"
             BlueprintName = "false"
-            ReferencedContainer = "container:NiHTest.xcodeproj">
+            ReferencedContainer = "container:nihtest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

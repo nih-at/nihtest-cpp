@@ -1,6 +1,6 @@
 /build
-developer-xcode/NiHTest.xcodeproj/project.xcworkspace/xcuserdata
-developer-xcode/NiHTest.xcodeproj/xcuserdata
+developer-xcode/nihtest.xcodeproj/project.xcworkspace/xcuserdata
+developer-xcode/nihtest.xcodeproj/xcuserdata
 /.clangd
 /compile_commands.json
 /.vs

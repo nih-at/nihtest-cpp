@@ -17,7 +17,7 @@
                BlueprintIdentifier = "4B4CB5AC2486B309005C5428"
                BuildableName = "all"
                BlueprintName = "all"
-               ReferencedContainer = "container:NiHTest.xcodeproj">
+               ReferencedContainer = "container:nihtest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -53,7 +53,7 @@
             BlueprintIdentifier = "4B4CB5AC2486B309005C5428"
             BuildableName = "all"
             BlueprintName = "all"
-            ReferencedContainer = "container:NiHTest.xcodeproj">
+            ReferencedContainer = "container:nihtest.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

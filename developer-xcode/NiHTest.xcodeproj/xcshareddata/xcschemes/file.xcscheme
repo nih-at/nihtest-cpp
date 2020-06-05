@@ -17,7 +17,7 @@
                BlueprintIdentifier = "4B467E1A2487F64F007E631D"
                BuildableName = "file"
                BlueprintName = "file"
-               ReferencedContainer = "container:NiHTest.xcodeproj">
+               ReferencedContainer = "container:nihtest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "4B467E1A2487F64F007E631D"
             BuildableName = "file"
             BlueprintName = "file"
-            ReferencedContainer = "container:NiHTest.xcodeproj">
+            ReferencedContainer = "container:nihtest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "4B467E1A2487F64F007E631D"
             BuildableName = "file"
             BlueprintName = "file"
-            ReferencedContainer = "container:NiHTest.xcodeproj">
+            ReferencedContainer = "container:nihtest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

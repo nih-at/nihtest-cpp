@@ -17,7 +17,7 @@
                BlueprintIdentifier = "4B467E242487F66B007E631D"
                BuildableName = "getenv"
                BlueprintName = "getenv"
-               ReferencedContainer = "container:NiHTest.xcodeproj">
+               ReferencedContainer = "container:nihtest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "4B467E242487F66B007E631D"
             BuildableName = "getenv"
             BlueprintName = "getenv"
-            ReferencedContainer = "container:NiHTest.xcodeproj">
+            ReferencedContainer = "container:nihtest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "4B467E242487F66B007E631D"
             BuildableName = "getenv"
             BlueprintName = "getenv"
-            ReferencedContainer = "container:NiHTest.xcodeproj">
+            ReferencedContainer = "container:nihtest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
