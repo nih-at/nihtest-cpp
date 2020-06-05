@@ -124,6 +124,15 @@ void OS::change_directory(const std::string &directory) {
 }
 
 
+void OS::create_directory(const std::string &directory) {
+    auto native_directory = native_path(directory);
+    auto w_native_directory = utf8_to_16(native_directory);
+
+    if (!CreateDirectoryW(w_native_directory.c_str())) {
+        throw Exception("can't change into directory '" + native_directory + "'", true);
+    }
+}
+
 bool OS::directory_exists(const std::string &name) {
     auto w_file_name = utf8_to_utf16(native_path(name));
     
