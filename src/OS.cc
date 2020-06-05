@@ -100,6 +100,8 @@ OS::copy_file(const std::string &from, const std::string &to) {
         throw Exception("cannot open '" + from + "'", true);
     }
     
+    OS::ensure_directory(OS::dirname(to));
+    
     auto to_file = std::ofstream(to);
     if (!to_file) {
         throw Exception("cannot create '" + from + "'", true);
@@ -129,6 +131,16 @@ std::string OS::dirname(const std::string &name) {
     else {
         return name.substr(0, pos);
     }
+}
+
+
+void OS::ensure_directory(const std::string &directory) {
+    if (directory_exists(directory)) {
+        return;
+    }
+    
+    ensure_directory(dirname(directory));
+    create_directory(directory);
 }
 
 

@@ -5,8 +5,6 @@
 
 ## required for release
 
-* make intermediary directories when copying file
-
 ## enhancements
 
 * make mkdir, ulimit less unix centric

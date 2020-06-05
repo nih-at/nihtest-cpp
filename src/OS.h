@@ -92,11 +92,20 @@ public:
     // Compare files `from` and `to`, returning true if they have identical contents.
     static bool compare_files(const std::string &from, const std::string &to);
     
+    // Create directory `name`.
+    static void create_directory(const std::string &name);
+    
+    // Check wether `name` exists and is a directory.
+    static bool directory_exists(const std::string &name);
+
+    // Make sure directory `name` exists, creating it and all intermediary directories neccessary.
+    static void ensure_directory(const std::string &name);
+    
     // Get file name extension.
     static std::string extension(const std::string &name);
     
-    // Check whether `file` exists.
-    static bool file_exists(const std::string &file);
+    // Check whether `name` exists and is a regular file.
+    static bool file_exists(const std::string &name);
     
     // Get string describing last system error.
     static std::string get_error_string();

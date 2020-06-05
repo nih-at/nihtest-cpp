@@ -164,7 +164,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4B467DF8248799D0007E631D /* nihtest-config.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nihtest-config.mdoc"; sourceTree = "<group>"; };
 		4B467DF9248799D0007E631D /* nihtest-case.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "nihtest-case.mdoc"; sourceTree = "<group>"; };
 		4B467DFA248799D0007E631D /* nihtest.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nihtest.mdoc; sourceTree = "<group>"; };
 		4B467DFB2487F298007E631D /* getenv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = getenv.c; sourceTree = "<group>"; };
@@ -211,8 +210,6 @@
 		4B4CB5A02486B2D1005C5428 /* false */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = false; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B4CB5AA2486B2E5005C5428 /* true */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = true; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B55D92E24751DD300CE8C38 /* nihtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nihtest; sourceTree = BUILT_PRODUCTS_DIR; };
-		4B55D93924751FE300CE8C38 /* NiHTest.pm */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; name = NiHTest.pm; path = ../NiHTest.pm; sourceTree = "<group>"; };
-		4B55D93A24751FE300CE8C38 /* runtest.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = runtest.in; path = ../runtest.in; sourceTree = "<group>"; };
 		4B55D93B2475208900CE8C38 /* nihtest.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = nihtest.cc; sourceTree = "<group>"; };
 		4B55D93C2475208900CE8C38 /* nihtest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nihtest.h; sourceTree = "<group>"; };
 		4B55D93E2475271500CE8C38 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -243,6 +240,11 @@
 		4BF1D824247CF90000353959 /* OS-Unix-run.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "OS-Unix-run.cc"; sourceTree = "<group>"; };
 		4BF1D826247D242900353959 /* CompareArrays.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompareArrays.cc; sourceTree = "<group>"; };
 		4BF1D827247D242900353959 /* CompareArrays.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompareArrays.h; sourceTree = "<group>"; };
+		4BF1D82D248A42CB00353959 /* nihtest.conf.mdoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nihtest.conf.mdoc; sourceTree = "<group>"; };
+		4BF1D82E248A42CB00353959 /* update-html.cmake */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "update-html.cmake"; sourceTree = "<group>"; };
+		4BF1D82F248A42CC00353959 /* update-man.cmake */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "update-man.cmake"; sourceTree = "<group>"; };
+		4BF1D830248A42CC00353959 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		4BF1D831248A47BC00353959 /* file-subdirectory-pass.test */ = {isa = PBXFileReference; lastKnownFileType = text; path = "file-subdirectory-pass.test"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,9 +303,12 @@
 		4B467DF7248799D0007E631D /* man */ = {
 			isa = PBXGroup;
 			children = (
-				4B467DF8248799D0007E631D /* nihtest-config.mdoc */,
+				4BF1D830248A42CC00353959 /* CMakeLists.txt */,
 				4B467DF9248799D0007E631D /* nihtest-case.mdoc */,
+				4BF1D82D248A42CB00353959 /* nihtest.conf.mdoc */,
 				4B467DFA248799D0007E631D /* nihtest.mdoc */,
+				4BF1D82E248A42CB00353959 /* update-html.cmake */,
+				4BF1D82F248A42CC00353959 /* update-man.cmake */,
 			);
 			name = man;
 			path = ../man;
@@ -338,6 +343,7 @@
 				4B467E0A2487F303007E631D /* file-new-fail.test */,
 				4B467E022487F303007E631D /* file-new-pass.test */,
 				4B467E032487F303007E631D /* file-pass.test */,
+				4BF1D831248A47BC00353959 /* file-subdirectory-pass.test */,
 				4B467E0B2487F303007E631D /* precheck-fail.test */,
 				4B467E042487F303007E631D /* precheck-pass.test */,
 				4B467E0C2487F303007E631D /* precheck-skip.test */,
@@ -364,7 +370,6 @@
 				4B55D93024751DD300CE8C38 /* nihtest */,
 				4BF1D829247D2CA300353959 /* regress */,
 				4B467DF7248799D0007E631D /* man */,
-				4B55D93824751FCA00CE8C38 /* perl */,
 				4B55D92F24751DD300CE8C38 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -411,15 +416,6 @@
 			);
 			name = nihtest;
 			path = ../src;
-			sourceTree = "<group>";
-		};
-		4B55D93824751FCA00CE8C38 /* perl */ = {
-			isa = PBXGroup;
-			children = (
-				4B55D93924751FE300CE8C38 /* NiHTest.pm */,
-				4B55D93A24751FE300CE8C38 /* runtest.in */,
-			);
-			name = perl;
 			sourceTree = "<group>";
 		};
 		4B55D940247527CC00CE8C38 /* Build */ = {

@@ -72,10 +72,32 @@ void OS::change_directory(const std::string &directory) {
 }
 
 
+void OS::create_directory(const std::string &directory) {
+    if (mkdir(directory.c_str(), 0777) < 0) {
+        throw Exception("can't create directory '" + directory + "'", true);
+    }
+}
+
+
 bool OS::file_exists(const std::string &file_name) {
     struct stat st;
     
-    return stat(file_name.c_str(), &st) == 0;
+    if (stat(file_name.c_str(), &st) < 0) {
+        return false;
+    }
+    
+    return S_ISREG(st.st_mode);
+}
+
+
+bool OS::directory_exists(const std::string &name) {
+    struct stat st;
+    
+    if (stat(name.c_str(), &st) < 0) {
+        return false;
+    }
+    
+    return S_ISDIR(st.st_mode);
 }
 
 

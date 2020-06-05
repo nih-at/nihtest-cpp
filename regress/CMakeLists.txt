@@ -55,6 +55,7 @@ set(NIHTEST_TESTS
   file-new-pass
   file-fail
   file-pass
+  file-subdirectory-pass
   preload-pass
   parameter-tests-1
   parameter-tests-2
