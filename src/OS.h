@@ -95,7 +95,7 @@ public:
     // Create directory `name`.
     static void create_directory(const std::string &name);
     
-    // Check wether `name` exists and is a directory.
+    // Check whether `name` exists and is a directory.
     static bool directory_exists(const std::string &name);
 
     // Make sure directory `name` exists, creating it and all intermediary directories neccessary.
