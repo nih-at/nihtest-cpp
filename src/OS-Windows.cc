@@ -125,7 +125,7 @@ void OS::change_directory(const std::string &directory) {
 
 
 bool OS::directory_exists(const std::string &name) {
-    auto w_file_name = utf8_to_utf16(native_path(file_name));
+    auto w_file_name = utf8_to_utf16(native_path(name));
     
     return GetFileAttributesW(w_file_name.c_str()) != INVALID_FILE_ATTRIBUTES;
     // TODO: check for directory
