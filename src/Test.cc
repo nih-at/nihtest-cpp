@@ -346,7 +346,7 @@ void Test::process_directive(const Parser::Directive *directive, const std::vect
     }
     else if (directive->name == "setenv") {
         if (environment.find(args[0]) != environment.end()) {
-            throw Exception("duplicate setenv for '" + args[0], "'");
+            throw Exception("duplicate setenv for '" + args[0] + "'");
         }
         environment[args[0]] = args[1];
     }
