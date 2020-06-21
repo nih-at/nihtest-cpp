@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 	    continue;
 	}
 	while ((ret=fread(buf, 1, sizeof(buf), in)) > 0) {
-	    printf("%.*s", (int)ret, buf);
+            fwrite(buf, 1, ret, stdout);
 	}
 	if (in != stdin) {
 	    fclose(in);

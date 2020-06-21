@@ -393,6 +393,7 @@ void Test::print_result(Result result) const {
         if (configuration.print_results != Configuration::ALWAYS) {
                 return;
             }
+        break;
         case FAILED:
         case ERROR:
         if (configuration.print_results == Configuration::NEVER) {
