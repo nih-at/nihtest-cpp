@@ -14,8 +14,8 @@ foreach(MAN_PAGE ${MAN_PAGES})
       install(FILES ${PROJECT_BINARY_DIR}/man/${MAN_PAGE} DESTINATION ${CMAKE_INSTALL_MANDIR}/${SUBDIR})
     endif()
   endif()
-  # CONFIGURE_FILE does not find out about updates to the sources, and it does not provide a target
-  #CONFIGURE_FILE(${SOURCE_FILE} ${MAN_PAGE} COPYONLY)
+  # configure_file does not find out about updates to the sources, and it does not provide a target
+  #configure_file(${SOURCE_FILE} ${MAN_PAGE} COPYONLY)
   add_custom_command(OUTPUT ${MAN_PAGE}
     DEPENDS ${SOURCE_FILE}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${PROJECT_SOURCE_DIR}/man/${SOURCE_FILE} ${PROJECT_BINARY_DIR}/man/${MAN_PAGE}
