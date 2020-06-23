@@ -28,7 +28,7 @@ endif()
 add_executable(nihtest ${NIHTEST_SOURCES})
 
 # for config.h
-target_include_directories(nihtest BEFORE PRIVATE ${PROJECT_BINARY_DIR})
+target_include_directories(nihtest BEFORE PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
 
 if(NIHTEST_DO_INSTALL)
   install(TARGETS nihtest RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
