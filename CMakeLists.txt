@@ -14,6 +14,23 @@ include(GNUInstallDirs)
 
 # added so nihtest can be used as subproject without installing it
 option(NIHTEST_DO_INSTALL "Install nihtest and its man pages" ON)
+# enable additional linting for development
+option(ENABLE_LINTERS "Run linting tools during build" OFF)
+
+if(ENABLE_LINTERS)
+  find_program(CLANG_TIDY NAMES clang-tidy)
+  find_program(INCLUDE_WHAT_YOU_USE NAMES include-what-you-use iwyu)
+  find_program(CPPLINT NAMES cpplint)
+  if(CLANG_TIDY)
+    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY} -checks=-*,readability-*)
+  endif()
+  if(INCLUDE_WHAT_YOU_USE)
+    set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${INCLUDE_WHAT_YOU_USE})
+  endif()
+  if(CPPLINT)
+    set(CMAKE_CXX_CPPLINT ${CPPLINT})
+  endif()
+endif()
 
 set(ARCHIVE_NAME ${PROJECT_NAME}-${PROJECT_VERSION})
 
