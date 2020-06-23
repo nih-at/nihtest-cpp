@@ -1,6 +1,3 @@
-# for config.h
-include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/..)
-
 set(NIHTEST_SOURCES
     nihtest.cc
     CompareArrays.cc
@@ -29,6 +26,9 @@ if(NOT HAVE_GETPROGNAME)
 endif()
 
 add_executable(nihtest ${NIHTEST_SOURCES})
+
+# for config.h
+target_include_directories(nihtest BEFORE PRIVATE ${PROJECT_BINARY_DIR})
 
 if(NIHTEST_DO_INSTALL)
   install(TARGETS nihtest RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
