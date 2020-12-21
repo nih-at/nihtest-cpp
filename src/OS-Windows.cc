@@ -35,6 +35,7 @@
 #include "OS.h"
 
 #include <direct.h>
+#include <fileapi.h>
 #include <windows.h>
 
 #include <algorithm>
@@ -51,7 +52,7 @@ static bool has_drive_letter(const std::string &path) {
     if (path.size() < 2) {
         return false;
     }
-    
+
     if ((path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z')) {
         return path[1] == ':';
     }
@@ -95,9 +96,9 @@ static std::string utf16_to_utf8(const wchar_t *utf16) {
     if (utf8_c == NULL) {
         throw Exception("out of memory");
     }
-    
+
     WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, utf16, -1, utf8_c, size, NULL, NULL);
-    
+
     auto utf8 =  std::string(utf8_c);
     free(utf8_c);
     return utf8;
@@ -156,9 +157,9 @@ bool OS::file_exists(const std::string &file_name) {
 
 std::string OS::get_error_string() {
     wchar_t error_string[8192];
-    
+
     FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), error_string, (sizeof(error_string) / sizeof(wchar_t)), NULL);
-    
+
     return utf16_to_utf8(error_string);
 }
 
@@ -167,9 +168,9 @@ bool OS::is_absolute(const std::string &file_name) {
     if (file_name.empty()) {
         return false;
     }
-    
+
     size_t offset = 0;
-    
+
     if (has_drive_letter(file_name)) {
         if (file_name.size() < 3) {
             return false;
@@ -182,18 +183,16 @@ bool OS::is_absolute(const std::string &file_name) {
 
 std::vector<std::string> OS::list_files(const std::string &directory) {
     std::vector<std::string> files;
-    auto pattern = directory + OS::path_separator + "*";
+    auto pattern = append_path_component(directory, "*");
     WIN32_FIND_DATA directory_iterator;
 
     if (pattern.length() > MAX_PATH) {
-	// directory path too long
-	return files;
+	throw Exception("directory path too long");
     }
 
     HANDLE dir_handle = FindFirstFile(pattern.c_str(), &directory_iterator);
     if (dir_handle == INVALID_HANDLE_VALUE) {
-	// problem opening directory
-	return files;
+	throw Exception("error opening directory");
     }
 
     do {
@@ -202,16 +201,62 @@ std::vector<std::string> OS::list_files(const std::string &directory) {
 
     DWORD last_error = GetLastError();
     if (last_error != ERROR_NO_MORE_FILES) {
-	// problem reading the whole file list
+	throw Exception("error reading file list from directory");
     }
     std::sort(files.begin(), files.end());
-    
+
     return files;
 }
-    
+
 std::string OS::make_temp_directory(const std::string &directory, const std::string &name) {
-    // TODO: implement
-    return "";
+    auto directory_template = append_path_component(directory, name + ".XXXXXXXX");
+    // start points to first X, end after last
+    size_t end = directory_template.size();
+    size_t start = end - 1;
+    size_t xcnt = 0;
+
+    while (start > 0 && directory_template[start] == 'X') {
+	xcnt++;
+	start--;
+    }
+    if (xcnt == 0) {
+	throw Exception("internal error, no letter X in directory template");
+    }
+    start++;
+    for (;;) {
+	uint32_t value;
+	if (!BCRYPT_SUCCESS(BCryptGenRandom(NULL, &value, 4, BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
+	    throw Exception("error generating random number");
+	}
+
+	auto xs = start;
+	// replace letters X in template with random letters/numbers
+	while (xs < end) {
+	    char digit = value % 36;
+	    if (digit < 10) {
+		directory_template[xs++] = digit + '0';
+	    } else {
+		directory_template[xs++] = digit - 10 + 'a';
+	    }
+	    value /= 36;
+	}
+
+	auto w_directory_template = utf8_to_utf16(directory_template);
+
+	if (CreateDirectoryW(w_directory_template.c_str(), NULL) == 0) {
+	    // success
+	    char *temp_directory = strdup(directory_template.c_str());
+	    if (temp_directory == NULL) {
+		throw Exception("out of memory");
+	    }
+	    return temp_directory;
+	}
+
+	DWORD last_error = GetLastError();
+	if (last_error != ERROR_ALREADY_EXISTS) {
+	    throw Exception("error creating temporary directory");
+	}
+    }
 }
 
 
