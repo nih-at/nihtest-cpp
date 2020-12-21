@@ -182,9 +182,28 @@ bool OS::is_absolute(const std::string &file_name) {
 
 std::vector<std::string> OS::list_files(const std::string &directory) {
     std::vector<std::string> files;
-    
-    // TODO: implement
+    auto pattern = directory + OS::path_separator + "*";
+    WIN32_FIND_DATA directory_iterator;
 
+    if (pattern.length() > MAX_PATH) {
+	// directory path too long
+	return files;
+    }
+
+    HANDLE dir_handle = FindFirstFile(pattern.c_str(), &directory_iterator);
+    if (dir_handle == INVALID_HANDLE_VALUE) {
+	// problem opening directory
+	return files;
+    }
+
+    do {
+	files.push_back(directory_iterator.cFileName);
+    } while (FindNextFile(dir_handle, &directory_iterator) != 0);
+
+    DWORD last_error = GetLastError();
+    if (last_error != ERROR_NO_MORE_FILES) {
+	// problem reading the whole file list
+    }
     std::sort(files.begin(), files.end());
     
     return files;
