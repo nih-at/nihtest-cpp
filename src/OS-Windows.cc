@@ -35,7 +35,6 @@
 #include "OS.h"
 
 #include <direct.h>
-#include <fileapi.h>
 #include <windows.h>
 
 #include <algorithm>
@@ -119,7 +118,9 @@ std::string OS::append_path_component(const std::string &directory, const std::s
 
 void OS::change_directory(const std::string &directory) {
     auto native_directory = native_path(directory);
-    if (_chdir(native_directory.c_str()) < 0) {
+    auto w_native_directory = utf8_to_utf16(native_directory);
+
+    if (!SetCurrentDirectoryW(w_native_directory.c_str()) < 0) {
         throw Exception("can't change into directory '" + native_directory + "'", true);
     }
 }
