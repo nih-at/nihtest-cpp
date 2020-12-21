@@ -1,4 +1,4 @@
-set(NIHTEST_SOURCES
+add_executable(nihtest
     nihtest.cc
     CompareArrays.cc
     CompareFiles.cc
@@ -10,22 +10,23 @@ set(NIHTEST_SOURCES
 )
 
 if(WIN32)
-  list(APPEND NIHTEST_SOURCES OS-Windows.cc)
+  target_sources(nihtest PRIVATE
+    OS-Windows.cc
+    )
+  target_link_libraries(nihtest PRIVATE bcrypt)
 else()
-  list(APPEND NIHTEST_SOURCES
+  target_sources(nihtest PRIVATE
     OS-Unix.cc
     OS-Unix-run.cc
   )
 endif()
 
 if(NOT HAVE_GETOPT_LONG)
-  list(APPEND NIHTEST_SOURCES getopt_long.c)
+  target_sources(nihtest PRIVATE getopt_long.c )
 endif()
 if(NOT HAVE_GETPROGNAME)
-  list(APPEND NIHTEST_SOURCES getprogname.c)
+  target_sources(nihtest PRIVATE getprogname.c)
 endif()
-
-add_executable(nihtest ${NIHTEST_SOURCES})
 
 # for config.h
 target_include_directories(nihtest BEFORE PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
