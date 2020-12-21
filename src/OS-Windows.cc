@@ -242,9 +242,10 @@ std::string OS::make_temp_directory(const std::string &directory, const std::str
 	    value /= 36;
 	}
 
-	auto w_directory_template = utf8_to_utf16(directory_template);
-
-	if (CreateDirectoryW(w_directory_template.c_str(), NULL) == 0) {
+	auto native_directory = native_path(directory_template);
+	auto w_native_directory = utf8_to_utf16(native_directory);
+    
+	if (!CreateDirectoryW(w_native_directory.c_str(), NULL)) {
 	    // success
 	    return directory_template;
 	}
@@ -258,7 +259,12 @@ std::string OS::make_temp_directory(const std::string &directory, const std::str
 
 
 void OS::remove_directory(const std::string &directory) {
-    // TODO: implement
+    auto native_directory = native_path(directory);
+    auto w_native_directory = utf8_to_utf16(native_directory);
+
+    if (!RemoveDirectoryW(w_native_directory.c_str())) {
+        throw Exception("can't remove directory '" + native_directory + "'", true);
+    }
 }
 
 
