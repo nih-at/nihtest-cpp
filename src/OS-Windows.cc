@@ -120,7 +120,7 @@ void OS::change_directory(const std::string &directory) {
     auto native_directory = native_path(directory);
     auto w_native_directory = utf8_to_utf16(native_directory);
 
-    if (!SetCurrentDirectoryW(w_native_directory.c_str()) < 0) {
+    if (!SetCurrentDirectoryW(w_native_directory.c_str())) {
         throw Exception("can't change into directory '" + native_directory + "'", true);
     }
 }
@@ -226,7 +226,7 @@ std::string OS::make_temp_directory(const std::string &directory, const std::str
     start++;
     for (;;) {
 	uint32_t value;
-	if (!BCRYPT_SUCCESS(BCryptGenRandom(NULL, &value, 4, BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
+	if (!BCRYPT_SUCCESS(BCryptGenRandom(NULL, reinterpret_cast<PUCHAR>(&value), 4, BCRYPT_USE_SYSTEM_PREFERRED_RNG))) {
 	    throw Exception("error generating random number");
 	}
 
@@ -246,11 +246,7 @@ std::string OS::make_temp_directory(const std::string &directory, const std::str
 
 	if (CreateDirectoryW(w_directory_template.c_str(), NULL) == 0) {
 	    // success
-	    char *temp_directory = strdup(directory_template.c_str());
-	    if (temp_directory == NULL) {
-		throw Exception("out of memory");
-	    }
-	    return temp_directory;
+	    return directory_template;
 	}
 
 	DWORD last_error = GetLastError();
