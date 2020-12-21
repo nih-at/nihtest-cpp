@@ -135,17 +135,22 @@ void OS::create_directory(const std::string &directory) {
 
 bool OS::directory_exists(const std::string &name) {
     auto w_file_name = utf8_to_utf16(native_path(name));
-    
-    return GetFileAttributesW(w_file_name.c_str()) != INVALID_FILE_ATTRIBUTES;
-    // TODO: check for directory
+    DWORD attrs = GetFileAttributesW(w_file_name.c_str());
+    if ((attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_DIRECTORY)) {
+	return true;
+    }
+    return false;
 }
 
 
 bool OS::file_exists(const std::string &file_name) {
     auto w_file_name = utf8_to_utf16(native_path(file_name));
-    
-    return GetFileAttributesW(w_file_name.c_str()) != INVALID_FILE_ATTRIBUTES;
-    // TODO: check for regular file
+    DWORD attrs = GetFileAttributesW(w_file_name.c_str());
+    if ((attrs != INVALID_FILE_ATTRIBUTES) && (attrs & FILE_ATTRIBUTE_NORMAL)) {
+	// TODO: Is this the proper check for a file?
+	return true;
+    }
+    return false;
 }
 
 
