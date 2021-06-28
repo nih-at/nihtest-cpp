@@ -10,5 +10,5 @@ It is documented in man pages: [nihtest(1)](https://raw.githack.com/nih-at/nihte
 file format [nihtest.conf(5)](https://raw.githack.com/nih-at/nihtest/master/man/nihtest.conf.html) and the test
 case language [nihtest-case(5)](https://raw.githack.com/nih-at/nihtest/master/man/nihtest-case.html).
 
-[![Travis Build Status](https://travis-ci.com/nih-at/nihtest.svg?branch=master)](https://travis-ci.com/nih-at/nihtest)
+[![Github Actions Build Status](https://github.com/nih-at/nihtest/workflows/build/badge.svg)](https://github.com/nih-at/nihtest/actions?query=workflow%3Abuild)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/15uyho5k9tmlrtyc?svg=true)](https://ci.appveyor.com/project/nih-at/nihtest)
